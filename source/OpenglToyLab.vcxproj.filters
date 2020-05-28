@@ -19,6 +19,9 @@
     <Filter Include="util">
       <UniqueIdentifier>{520a7356-b3ba-4efd-a941-4ffd099db67e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\shader">
+      <UniqueIdentifier>{6cb5d84e-6dcb-4972-86e7-a1978e54565b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="1.getting_started\hello_window.cpp">
@@ -61,8 +64,11 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="OpenglToyLab.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
+    <None Include="shader\shader.fs">
+      <Filter>Source Files\shader</Filter>
+    </None>
+    <None Include="shader\shader.vs">
+      <Filter>Source Files\shader</Filter>
+    </None>
   </ItemGroup>
 </Project>
