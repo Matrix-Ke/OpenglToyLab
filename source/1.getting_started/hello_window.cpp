@@ -1,7 +1,13 @@
 #include <iostream>
+#include <string>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
+#include "util/shader.h"
+#include "util/commonUtil.h"
+
+
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -9,13 +15,11 @@ void processInput(GLFWwindow* window);
 
 int main()
 {
+	//init  environment and create windows
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-
-
 	GLFWwindow* windows = glfwCreateWindow(800, 600, "openglToyLab", nullptr, nullptr);
 	if (windows == nullptr)
 	{
@@ -33,6 +37,42 @@ int main()
 		return -1;
 	}
 
+
+	//build and compiler our shader program 
+	//std::string  rootdir = std::string(getCurrentDir());
+	//std::string  vShaderPath = rootdir + "/shader/shader.vs";
+	//std::string  fShaderPath = rootdir + "/shader/shader.fs";
+	//Shader ourShader(vShaderPath.c_str(), fShaderPath.c_str());
+	Shader ourShader("./shader/shader.vs", "./shader/shader.fs");
+
+
+
+	//set vertex date and  set vbo
+	float vertices[] = {
+		// positions         // colors
+		 0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // bottom right
+		-0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom left
+		 0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // top 
+	};
+	unsigned int VBO, VAO;
+	glGenVertexArrays(1, &VAO);
+
+	glGenBuffers(1, &VBO);
+	glBindVertexArray(VAO);
+
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FLOAT, 6 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FLOAT, 6 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(1);
+
+
+
+
 	while (!glfwWindowShouldClose(windows))
 	{
 		// process input
@@ -42,13 +82,17 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 		glClearColor(0.2, 0.4, 0.4, 1.0);
 
-
+		//draw call 
+		ourShader.use();
+		glBindVertexArray(VAO);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		// poll event and swap buffer
 		glfwPollEvents();
 		glfwSwapBuffers(windows);
 	}
 
+	glfwTerminate();
 	return 0;
 }
 

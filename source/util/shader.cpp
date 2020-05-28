@@ -6,6 +6,7 @@
 #include "util/shader.h"
 
 
+
 Shader::Shader(const char* vertexPath, const char* fragmentPath)
 {
 	using namespace std;
@@ -23,6 +24,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 	{
 		vShaderFile.open(vertexPath);
 		fShaderFile.open(fragmentPath);
+
 		stringstream  vShaderStream;
 		stringstream  fShaderStream;
 
@@ -30,14 +32,15 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 		fShaderStream << fShaderFile.rdbuf();
 
 		vShaderFile.close();
-		vShaderFile.close();
+		fShaderFile.close();
 
 		vertexCode = vShaderStream.str();
 		fragmentCode = fShaderStream.str();
+		cout << vertexCode;
 	}
 	catch (ifstream::failure  err)
 	{
-		std::cout << "error shader file code not read sucessfully" << std::endl;
+		std::cout << "error shader file code not read sucessfully : " << err.what() << std::endl;
 	}
 
 	const char* vShaderCode = vertexCode.c_str();

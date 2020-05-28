@@ -36,6 +36,9 @@
     <ClCompile Include="util\shader.cpp">
       <Filter>util</Filter>
     </ClCompile>
+    <ClCompile Include="util\commonUtil.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -60,6 +63,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\util\shader_s.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="commonUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\util\commonUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

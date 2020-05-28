@@ -22,16 +22,19 @@
     <ClCompile Include="1.getting_started\hello_window.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="stb_image.cpp" />
+    <ClCompile Include="util\commonUtil.cpp" />
     <ClCompile Include="util\shader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\includes\util\camera.h" />
+    <ClInclude Include="..\includes\util\commonUtil.h" />
     <ClInclude Include="..\includes\util\filesystem.h" />
     <ClInclude Include="..\includes\util\mesh.h" />
     <ClInclude Include="..\includes\util\model.h" />
     <ClInclude Include="..\includes\util\shader.h" />
     <ClInclude Include="..\includes\util\shader_m.h" />
     <ClInclude Include="..\includes\util\shader_s.h" />
+    <ClInclude Include="commonUtil.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
