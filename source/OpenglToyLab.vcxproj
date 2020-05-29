@@ -41,6 +41,8 @@
   <ItemGroup>
     <None Include="shader\shader.fs" />
     <None Include="shader\shader.vs" />
+    <None Include="shader\textureShader.fs" />
+    <None Include="shader\textureShader.vs" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

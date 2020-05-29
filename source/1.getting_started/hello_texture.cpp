@@ -20,21 +20,21 @@ void processInput(GLFWwindow* window);
 
 int main()
 {
-	//init  environment and create windows
+	//init  environment and create window
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	GLFWwindow* windows = glfwCreateWindow(800, 600, "openglToyLab", nullptr, nullptr);
-	if (windows == nullptr)
+	GLFWwindow* window = glfwCreateWindow(800, 600, "openglToyLab", nullptr, nullptr);
+	if (window == nullptr)
 	{
-		std::cout << "create glfw  windows failure" << std::endl;
+		std::cout << "create glfw  window failure" << std::endl;
 		glfwTerminate();
 
 		return  -1;
 	}
-	glfwMakeContextCurrent(windows);
-	glfwSetFramebufferSizeCallback(windows, framebufferSizeCallback);
+	glfwMakeContextCurrent(window);
+	glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
@@ -44,11 +44,7 @@ int main()
 
 
 	//build and compiler our shader program 
-	//std::string  rootdir = std::string(getCurrentDir());
-	//std::string  vShaderPath = rootdir + "/shader/shader.vs";
-	//std::string  fShaderPath = rootdir + "/shader/shader.fs";
-	//Shader ourShader(vShaderPath.c_str(), fShaderPath.c_str());
-	Shader ourShader("./shader/shader.vs", "./shader/shader.fs");
+	Shader ourShader("./shader/textureShader.vs", "./shader/textureShader.fs");
 
 
 
@@ -99,32 +95,69 @@ int main()
 
 	int width, height, nrChannels;
 	stbi_set_flip_vertically_on_load(true);
-	unsigned char* data = stbi_load(FileSystem::getPath("resources/textures/awesomeface.png").c_str(), &width, &height, &nrChannels, 0);
+	unsigned char* data = stbi_load(FileSystem::getPath("resources/textures/container.jpg").c_str(), &width, &height, &nrChannels, 0);
+	if (data != nullptr)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "failed to load texture" << std::endl;
+	}
+	stbi_image_free(data);
 
 
+	glGenTextures(1, &texture2);
+	glBindTexture(GL_TEXTURE_2D, texture2);
 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+	data = stbi_load(FileSystem::getPath("resources/textures/awesomeface.png").c_str(), &width, &height, &nrChannels, 0);
+	if (data != nullptr)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	stbi_image_free(data);
 
+	ourShader.use();
+	ourShader.setInt("texture1", 0);
+	ourShader.setInt("texture2", 1);
 
-
-	while (!glfwWindowShouldClose(windows))
+	while (!glfwWindowShouldClose(window))
 	{
 		// process input
-		processInput(windows);
+		processInput(window);
 
 		//render command  
 		glClear(GL_COLOR_BUFFER_BIT);
 		glClearColor(0.2, 0.4, 0.4, 1.0);
 
+		//bind texture unit
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture1);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture2);
+
 		//draw call 
 		ourShader.use();
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		// poll event and swap buffer
 		glfwPollEvents();
-		glfwSwapBuffers(windows);
+		glfwSwapBuffers(window);
 	}
+
+
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
+
 
 	glfwTerminate();
 	return 0;

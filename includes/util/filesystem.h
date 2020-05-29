@@ -15,18 +15,18 @@ public:
   static std::string getPath(const std::string& path)
   {
     static std::string(*pathBuilder)(std::string const &) = getPathBuilder();
-    return (*pathBuilder)(path);
+    return (pathBuilder)(path);
   }
 
 private:
-  static std::string const & getRoot()
+  static std::string const getRoot()
   {
 	std::string logl_root(getCurrentDir());
 	logl_root += "/../";
-    static char const * envRoot = getenv("LOGL_ROOT_PATH");
-    static char const * givenRoot = (envRoot != nullptr ? envRoot : logl_root.c_str());
-    static std::string root = (givenRoot != nullptr ? givenRoot : "");
-    return root;
+    //static char const * envRoot = _dupenv_s("LOGL_ROOT_PATH");
+    //static char const * givenRoot = (envRoot != nullptr ? envRoot : logl_root.c_str());
+    //static std::string root = (givenRoot != nullptr ? givenRoot : "");
+    return logl_root;
   }
 
   //static std::string(*foo (std::string const &)) getPathBuilder()
