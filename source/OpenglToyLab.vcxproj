@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -19,10 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="1.getting_started\hello_camera.cpp" />
     <ClCompile Include="1.getting_started\hello_texture.cpp" />
     <ClCompile Include="1.getting_started\hello_window.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="stb_image.cpp" />
+    <ClCompile Include="util\camera.cpp" />
     <ClCompile Include="util\commonUtil.cpp" />
     <ClCompile Include="util\shader.cpp" />
   </ItemGroup>
@@ -39,10 +41,12 @@
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="shader\shader.fs" />
-    <None Include="shader\shader.vs" />
-    <None Include="shader\textureShader.fs" />
-    <None Include="shader\textureShader.vs" />
+    <None Include="shader\getting_started\camera.fs" />
+    <None Include="shader\getting_started\camera.vs" />
+    <None Include="shader\getting_started\shader.fs" />
+    <None Include="shader\getting_started\shader.vs" />
+    <None Include="shader\getting_started\textureShader.fs" />
+    <None Include="shader\getting_started\textureShader.vs" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

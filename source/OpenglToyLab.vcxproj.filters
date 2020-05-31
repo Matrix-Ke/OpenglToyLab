@@ -42,6 +42,12 @@
     <ClCompile Include="1.getting_started\hello_texture.cpp">
       <Filter>Source Files\1.getting_started</Filter>
     </ClCompile>
+    <ClCompile Include="util\camera.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="1.getting_started\hello_camera.cpp">
+      <Filter>Source Files\1.getting_started</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -76,17 +82,11 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shader\shader.fs">
-      <Filter>Source Files\shader</Filter>
-    </None>
-    <None Include="shader\shader.vs">
-      <Filter>Source Files\shader</Filter>
-    </None>
-    <None Include="shader\textureShader.fs">
-      <Filter>Source Files\shader</Filter>
-    </None>
-    <None Include="shader\textureShader.vs">
-      <Filter>Source Files\shader</Filter>
-    </None>
+    <None Include="shader\getting_started\camera.fs" />
+    <None Include="shader\getting_started\camera.vs" />
+    <None Include="shader\getting_started\shader.fs" />
+    <None Include="shader\getting_started\shader.vs" />
+    <None Include="shader\getting_started\textureShader.fs" />
+    <None Include="shader\getting_started\textureShader.vs" />
   </ItemGroup>
 </Project>
