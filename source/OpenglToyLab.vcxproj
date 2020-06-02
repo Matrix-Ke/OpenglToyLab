@@ -22,6 +22,7 @@
     <ClCompile Include="1.getting_started\hello_camera.cpp" />
     <ClCompile Include="1.getting_started\hello_texture.cpp" />
     <ClCompile Include="1.getting_started\hello_window.cpp" />
+    <ClCompile Include="2.lighting\lightingMaps.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="util\camera.cpp" />
@@ -47,6 +48,10 @@
     <None Include="shader\getting_started\shader.vs" />
     <None Include="shader\getting_started\textureShader.fs" />
     <None Include="shader\getting_started\textureShader.vs" />
+    <None Include="shader\lighting\lightCube.fs" />
+    <None Include="shader\lighting\lightCube.vs" />
+    <None Include="shader\lighting\lightingMaps.fs" />
+    <None Include="shader\lighting\lightingMaps.vs" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

@@ -22,6 +22,15 @@
     <Filter Include="Source Files\shader">
       <UniqueIdentifier>{6cb5d84e-6dcb-4972-86e7-a1978e54565b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\shader\getting_started">
+      <UniqueIdentifier>{0d57cb9a-094e-4d3c-98e4-734718df9f6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\lighting">
+      <UniqueIdentifier>{6a043818-cd88-4ac4-8069-59e396eb511d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\shader\lighting">
+      <UniqueIdentifier>{00568137-1412-4462-8442-728a7ce18378}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="1.getting_started\hello_window.cpp">
@@ -47,6 +56,9 @@
     </ClCompile>
     <ClCompile Include="1.getting_started\hello_camera.cpp">
       <Filter>Source Files\1.getting_started</Filter>
+    </ClCompile>
+    <ClCompile Include="2.lighting\lightingMaps.cpp">
+      <Filter>Source Files\lighting</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -82,11 +94,35 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shader\getting_started\camera.fs" />
-    <None Include="shader\getting_started\camera.vs" />
-    <None Include="shader\getting_started\shader.fs" />
-    <None Include="shader\getting_started\shader.vs" />
-    <None Include="shader\getting_started\textureShader.fs" />
-    <None Include="shader\getting_started\textureShader.vs" />
+    <None Include="shader\getting_started\camera.fs">
+      <Filter>Source Files\shader\getting_started</Filter>
+    </None>
+    <None Include="shader\getting_started\camera.vs">
+      <Filter>Source Files\shader\getting_started</Filter>
+    </None>
+    <None Include="shader\getting_started\shader.fs">
+      <Filter>Source Files\shader\getting_started</Filter>
+    </None>
+    <None Include="shader\getting_started\shader.vs">
+      <Filter>Source Files\shader\getting_started</Filter>
+    </None>
+    <None Include="shader\getting_started\textureShader.fs">
+      <Filter>Source Files\shader\getting_started</Filter>
+    </None>
+    <None Include="shader\getting_started\textureShader.vs">
+      <Filter>Source Files\shader\getting_started</Filter>
+    </None>
+    <None Include="shader\lighting\lightingMaps.vs">
+      <Filter>Source Files\shader\lighting</Filter>
+    </None>
+    <None Include="shader\lighting\lightingMaps.fs">
+      <Filter>Source Files\shader\lighting</Filter>
+    </None>
+    <None Include="shader\lighting\lightCube.fs">
+      <Filter>Source Files\shader\lighting</Filter>
+    </None>
+    <None Include="shader\lighting\lightCube.vs">
+      <Filter>Source Files\shader\lighting</Filter>
+    </None>
   </ItemGroup>
 </Project>
