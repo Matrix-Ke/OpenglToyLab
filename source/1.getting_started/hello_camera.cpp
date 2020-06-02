@@ -55,7 +55,7 @@
 //	glfwMakeContextCurrent(window);
 //	glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 //	glfwSetCursorPosCallback(window, mouse_callback);
-//	glfwSetCursorPosCallback(window, scroll_callback);
+//	glfwSetScrollCallback(window, scroll_callback);
 //
 //	// tell GLFW to capture our mouse
 //	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -272,6 +272,14 @@
 //	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 //		glfwSetWindowShouldClose(window, true);
 //	}
+//	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+//		camera.ProcessKeyboard(FORWARD, deltaTime);
+//	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+//		camera.ProcessKeyboard(BACKWARD, deltaTime);
+//	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+//		camera.ProcessKeyboard(LEFT, deltaTime);
+//	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+//		camera.ProcessKeyboard(RIGHT, deltaTime);
 //}
 //
 //
