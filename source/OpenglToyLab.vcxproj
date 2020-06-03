@@ -25,6 +25,7 @@
     <ClCompile Include="2.lighting\lightingMaps.cpp" />
     <ClCompile Include="2.lighting\multipleLights.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="Main.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="util\camera.cpp" />
     <ClCompile Include="util\commonUtil.cpp" />

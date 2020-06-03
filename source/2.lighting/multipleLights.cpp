@@ -158,6 +158,7 @@ int main()
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
+	glBindVertexArray(0);
 
 	// second, configure the light's VAO (VBO stays the same; the vertices are the same for the light object which is also a 3D cube)
 	unsigned int lightCubeVAO;
@@ -168,6 +169,7 @@ int main()
 	// note that we update the lamp's position attribute's stride to reflect the updated buffer data
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+	glBindVertexArray(0);
 
 
 
@@ -179,17 +181,17 @@ int main()
 
 
 
-	// tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
-	// -------------------------------------------------------------------------------------------
-	lightingShader.use();
-	lightingShader.setInt("material.diffuse", 0);
-	lightingShader.setInt("material.specular", 1);
+	//// tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
+	//// -------------------------------------------------------------------------------------------
+	//lightingShader.use();
+	//lightingShader.setInt("material.diffuse", 0);
+	//lightingShader.setInt("material.specular", 1);
 
-	//set static value in lighting shader
-	lightingShader.setVec3("light.position", lightPos);
-	lightingShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
-	lightingShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
-	lightingShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+	////set static value in lighting shader
+	//lightingShader.setVec3("light.position", lightPos);
+	//lightingShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
+	//lightingShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
+	//lightingShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
 
 
@@ -208,15 +210,33 @@ int main()
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		//projection  matrix
+		lightCubeShader.use();
+		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.f);
+
+
+		//setting projection and view matrix
+		lightCubeShader.setMat4("projection", projection);
+		lightCubeShader.setMat4("view", camera.GetViewMatrix());
+
+
+		////draw light cube 
+		glBindVertexArray(lightCubeVAO);
+		for (unsigned int i = 0; i < 4; i++)
+		{
+			glm::mat4  model = glm::mat4(1.0f);
+			model = glm::translate(model, pointLightPositions[i]);
+			model = glm::scale(model, glm::vec3(0.2f));
+			lightCubeShader.setMat4("model", model);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
+
+		
+
+
 		//be sure active shader
 		lightingShader.use();
 
-		/*
-		   Here we set all the uniforms for the 5/6 types of lights we have. We have to set them manually and index
-		   the proper PointLight struct in the array to set each uniform variable. This can be done more code-friendly
-		   by defining light types as classes and set their values in there, or by using a more efficient uniform approach
-		   by using 'Uniform buffer objects', but that is something we'll discuss in the 'Advanced GLSL' tutorial.
-		*/
 		// directional light
 		lightingShader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
 		lightingShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
@@ -266,14 +286,15 @@ int main()
 		lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
 		lightingShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 
-		//set view and projection transformation
-		lightingShader.setVec3("viewPos", camera.Position);
+		//set material 
 		lightingShader.setFloat("material.shininess", 32.0f);
-		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-		glm::mat4 view = camera.GetViewMatrix();
-		lightingShader.setMat4("projection", projection);
-		lightingShader.setMat4("view", view);
 
+		//
+		lightingShader.setMat4("projection", projection);
+		lightingShader.setMat4("view", camera.GetViewMatrix());
+
+		//set view(camera) position
+		lightingShader.setVec3("viewPos", camera.Position);
 
 		// world transformation
 		glm::mat4 model = glm::mat4(1.0f);
@@ -287,7 +308,7 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, specularMap);
 
 		glBindVertexArray(cubeVAO);
-		for (unsigned int i =0; i <10; i++)
+		for (unsigned int i = 0; i < 10; i++)
 		{
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, cubePositions[i]);
@@ -299,7 +320,8 @@ int main()
 		}
 
 
-
+		glfwPollEvents();
+		glfwSwapBuffers(window);
 	}
 
 
