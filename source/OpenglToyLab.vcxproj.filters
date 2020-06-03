@@ -60,6 +60,9 @@
     <ClCompile Include="2.lighting\lightingMaps.cpp">
       <Filter>Source Files\lighting</Filter>
     </ClCompile>
+    <ClCompile Include="2.lighting\multipleLights.cpp">
+      <Filter>Source Files\lighting</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -122,6 +125,12 @@
       <Filter>Source Files\shader\lighting</Filter>
     </None>
     <None Include="shader\lighting\lightCube.vs">
+      <Filter>Source Files\shader\lighting</Filter>
+    </None>
+    <None Include="shader\lighting\multipleLights.fs">
+      <Filter>Source Files\shader\lighting</Filter>
+    </None>
+    <None Include="shader\lighting\multipleLights.vs">
       <Filter>Source Files\shader\lighting</Filter>
     </None>
   </ItemGroup>
