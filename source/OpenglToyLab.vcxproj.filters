@@ -31,6 +31,9 @@
     <Filter Include="Source Files\shader\lighting">
       <UniqueIdentifier>{00568137-1412-4462-8442-728a7ce18378}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\shader\modelLoading">
+      <UniqueIdentifier>{943ad75f-ba2f-4754-99b2-ee9d77efb11c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="1.getting_started\hello_window.cpp">
@@ -66,6 +69,12 @@
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="util\mesh.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="util\model.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -90,9 +99,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\util\shader_s.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="commonUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\util\commonUtil.h">

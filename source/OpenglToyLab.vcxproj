@@ -29,6 +29,8 @@
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="util\camera.cpp" />
     <ClCompile Include="util\commonUtil.cpp" />
+    <ClCompile Include="util\mesh.cpp" />
+    <ClCompile Include="util\model.cpp" />
     <ClCompile Include="util\shader.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -40,7 +42,6 @@
     <ClInclude Include="..\includes\util\shader.h" />
     <ClInclude Include="..\includes\util\shader_m.h" />
     <ClInclude Include="..\includes\util\shader_s.h" />
-    <ClInclude Include="commonUtil.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
