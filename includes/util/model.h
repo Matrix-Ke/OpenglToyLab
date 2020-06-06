@@ -19,7 +19,6 @@
 #include "util/shader.h"
 #include "util/mesh.h"
 
-unsigned int TextureFormFile(const char* path, const std::string & directory, bool gamma = false);
 
 class Model
 {
@@ -30,9 +29,19 @@ public:
 	std::string     directory;
 
 	bool    gammaCorrection;
-	Model();
+	Model(std::string const & path, bool gamma = false);
 	~Model();
 
+	void Draw(Shader &shader);
+
 private:
+
+	void loadModel(std::string const &path);
+
+	void processNode(aiNode* node, const aiScene*scene);
+
+	Mesh processMesh(aiMesh*  mesh, const aiScene* scene);
+
+	std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
 
 };

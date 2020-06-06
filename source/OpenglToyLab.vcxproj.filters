@@ -25,14 +25,17 @@
     <Filter Include="Source Files\shader\getting_started">
       <UniqueIdentifier>{0d57cb9a-094e-4d3c-98e4-734718df9f6c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\lighting">
-      <UniqueIdentifier>{6a043818-cd88-4ac4-8069-59e396eb511d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\shader\lighting">
       <UniqueIdentifier>{00568137-1412-4462-8442-728a7ce18378}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\shader\modelLoading">
       <UniqueIdentifier>{943ad75f-ba2f-4754-99b2-ee9d77efb11c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\2.lighting">
+      <UniqueIdentifier>{6a043818-cd88-4ac4-8069-59e396eb511d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\3.modelsLoading">
+      <UniqueIdentifier>{ec2b5ad3-6cf6-4db3-ac2d-c1ca52b4cd4d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -61,10 +64,10 @@
       <Filter>Source Files\1.getting_started</Filter>
     </ClCompile>
     <ClCompile Include="2.lighting\lightingMaps.cpp">
-      <Filter>Source Files\lighting</Filter>
+      <Filter>Source Files\2.lighting</Filter>
     </ClCompile>
     <ClCompile Include="2.lighting\multipleLights.cpp">
-      <Filter>Source Files\lighting</Filter>
+      <Filter>Source Files\2.lighting</Filter>
     </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
@@ -74,6 +77,9 @@
     </ClCompile>
     <ClCompile Include="util\model.cpp">
       <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="3.model_loading\modelLoading.cpp">
+      <Filter>Source Files\3.modelsLoading</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -141,6 +147,12 @@
     </None>
     <None Include="shader\lighting\multipleLights.vs">
       <Filter>Source Files\shader\lighting</Filter>
+    </None>
+    <None Include="shader\modelLoading\modelLoading.fs">
+      <Filter>Source Files\shader\modelLoading</Filter>
+    </None>
+    <None Include="shader\modelLoading\modelLoading.vs">
+      <Filter>Source Files\shader\modelLoading</Filter>
     </None>
   </ItemGroup>
 </Project>
