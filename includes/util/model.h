@@ -24,7 +24,7 @@ class Model
 {
 
 public:
-	std::vector<Texture>  texture_loaded;
+	std::vector<Texture>  textures_loaded;
 	std::vector<Mesh>     meshes;
 	std::string     directory;
 
@@ -32,7 +32,7 @@ public:
 	Model(std::string const & path, bool gamma = false);
 	~Model();
 
-	void Draw(Shader &shader);
+	void Draw(Shader shader);
 
 private:
 
