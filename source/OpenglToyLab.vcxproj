@@ -25,8 +25,10 @@
     <ClCompile Include="2.lighting\lightingMaps.cpp" />
     <ClCompile Include="2.lighting\multipleLights.cpp" />
     <ClCompile Include="3.model_loading\modelLoading.cpp" />
+    <ClCompile Include="4.advanced_opengl\depthTest.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="oper\operation.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="util\camera.cpp" />
     <ClCompile Include="util\commonUtil.cpp" />
@@ -40,6 +42,7 @@
     <ClInclude Include="..\includes\util\filesystem.h" />
     <ClInclude Include="..\includes\util\mesh.h" />
     <ClInclude Include="..\includes\util\model.h" />
+    <ClInclude Include="..\includes\util\operation.h" />
     <ClInclude Include="..\includes\util\shader.h" />
     <ClInclude Include="..\includes\util\shader_m.h" />
     <ClInclude Include="..\includes\util\shader_s.h" />

@@ -37,6 +37,12 @@
     <Filter Include="Source Files\3.modelsLoading">
       <UniqueIdentifier>{ec2b5ad3-6cf6-4db3-ac2d-c1ca52b4cd4d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\4.advanced_opengl">
+      <UniqueIdentifier>{f8044dc1-f364-4d4c-8ea7-c9cf65a80040}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="oper">
+      <UniqueIdentifier>{81a969cf-5a29-4308-9924-fec34b1a888d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="1.getting_started\hello_window.cpp">
@@ -81,6 +87,12 @@
     <ClCompile Include="3.model_loading\modelLoading.cpp">
       <Filter>Source Files\3.modelsLoading</Filter>
     </ClCompile>
+    <ClCompile Include="4.advanced_opengl\depthTest.cpp">
+      <Filter>Source Files\4.advanced_opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="oper\operation.cpp">
+      <Filter>oper</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -108,6 +120,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\util\commonUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\util\operation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
