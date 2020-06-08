@@ -93,6 +93,15 @@
     <ClCompile Include="oper\operation.cpp">
       <Filter>oper</Filter>
     </ClCompile>
+    <ClCompile Include="oper\lambdaOp.cpp">
+      <Filter>oper</Filter>
+    </ClCompile>
+    <ClCompile Include="oper\opQueue.cpp">
+      <Filter>oper</Filter>
+    </ClCompile>
+    <ClCompile Include="oper\opNode.cpp">
+      <Filter>oper</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -123,6 +132,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\util\operation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\util\lambdaOp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\util\opNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\util\opQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

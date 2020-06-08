@@ -20,7 +20,7 @@ void Oper::Operation::SetIsHold(bool ishold)
 
 void Oper::Operation::operator()()
 {
-	this->run();
+	this->Run();
 }
 
 void Oper::Operation::ProtectDelete(Operation* op)
