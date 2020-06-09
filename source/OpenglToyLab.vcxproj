@@ -28,10 +28,13 @@
     <ClCompile Include="4.advanced_opengl\depthTest.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="oper\eventManager.cpp" />
+    <ClCompile Include="oper\glfwWrapper.cpp" />
     <ClCompile Include="oper\lambdaOp.cpp" />
     <ClCompile Include="oper\operation.cpp" />
     <ClCompile Include="oper\opNode.cpp" />
     <ClCompile Include="oper\opQueue.cpp" />
+    <ClCompile Include="oper\registerInput.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="util\camera.cpp" />
     <ClCompile Include="util\commonUtil.cpp" />
@@ -40,18 +43,25 @@
     <ClCompile Include="util\shader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\includes\Defines.h" />
+    <ClInclude Include="..\includes\GLFW\glfwWrapper.h" />
     <ClInclude Include="..\includes\util\camera.h" />
     <ClInclude Include="..\includes\util\commonUtil.h" />
+    <ClInclude Include="..\includes\util\eventManager.h" />
     <ClInclude Include="..\includes\util\filesystem.h" />
+    <ClInclude Include="..\includes\util\GStorage.H" />
     <ClInclude Include="..\includes\util\lambdaOp.h" />
+    <ClInclude Include="..\includes\util\LStorage.h" />
     <ClInclude Include="..\includes\util\mesh.h" />
     <ClInclude Include="..\includes\util\model.h" />
     <ClInclude Include="..\includes\util\operation.h" />
     <ClInclude Include="..\includes\util\opNode.h" />
     <ClInclude Include="..\includes\util\opQueue.h" />
+    <ClInclude Include="..\includes\util\registerInput.h" />
     <ClInclude Include="..\includes\util\shader.h" />
     <ClInclude Include="..\includes\util\shader_m.h" />
     <ClInclude Include="..\includes\util\shader_s.h" />
+    <ClInclude Include="..\includes\util\singleton.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
