@@ -28,7 +28,9 @@
     <ClCompile Include="4.advanced_opengl\depthTest.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="oper\config.cpp" />
     <ClCompile Include="oper\eventManager.cpp" />
+    <ClCompile Include="oper\filesystem.cpp" />
     <ClCompile Include="oper\glfwWrapper.cpp" />
     <ClCompile Include="oper\lambdaOp.cpp" />
     <ClCompile Include="oper\operation.cpp" />
@@ -43,6 +45,7 @@
     <ClCompile Include="util\shader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\includes\config.h" />
     <ClInclude Include="..\includes\Defines.h" />
     <ClInclude Include="..\includes\GLFW\glfwWrapper.h" />
     <ClInclude Include="..\includes\util\camera.h" />

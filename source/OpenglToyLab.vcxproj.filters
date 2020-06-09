@@ -111,6 +111,12 @@
     <ClCompile Include="oper\registerInput.cpp">
       <Filter>oper</Filter>
     </ClCompile>
+    <ClCompile Include="oper\filesystem.cpp">
+      <Filter>oper</Filter>
+    </ClCompile>
+    <ClCompile Include="oper\config.cpp">
+      <Filter>oper</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -171,6 +177,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\Defines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

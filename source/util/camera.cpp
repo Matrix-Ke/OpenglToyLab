@@ -14,7 +14,8 @@ const Camera::ENUM_Projection Camera::PROJECTION_MODE = Camera::PROJECTION_PERSE
 
 
 Camera::Camera(float rationWH, float moveSpeed, float rotateSpeed, glm::vec3 position, float nearPlane, float farPlane, glm::vec3 up, float yaw, float pitch, ENUM_Projection projectionMode)
-	: rationWH(rationWH), nearPlane(nearPlane), farPlane(farPlane), Front(glm::vec3(0.0f, 0.0f, -1.0f)), Zoom(ZOOM), projectionMode(projectionMode) {
+	: rationWH(rationWH), nearPlane(nearPlane), farPlane(farPlane), Front(glm::vec3(0.0f, 0.0f, -1.0f)), Zoom(ZOOM), projectionMode(projectionMode)
+{
 	//------------
 	Position = position;
 	WorldUp = up;

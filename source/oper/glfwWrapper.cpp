@@ -118,3 +118,13 @@ void Glfw::LoadGL() {
 		exit(1);
 	}
 }
+
+void LOGL::Glfw::CloseWindow()
+{
+	glfwSetWindowShouldClose(window, true);
+}
+
+int LOGL::Glfw::GetKey(int key)
+{
+	return glfwGetKey(window, key);
+}

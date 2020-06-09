@@ -7,4 +7,5 @@ namespace Define {
 
 	const std::string  str_DeltaTime = "DeltaTime";
 
+	const std::string  windowTitle = "windowTitle";
 }

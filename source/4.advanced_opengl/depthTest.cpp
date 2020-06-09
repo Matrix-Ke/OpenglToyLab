@@ -3,18 +3,24 @@
 #include <string>
 
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include <GLFW/glfwWrapper.h>
 #include <stb_image.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-
+#include "Defines.h"
+#include "config.h"
+#include "util/GStorage.H"
+#include "util/lambdaOp.h"
 #include "util/shader.h"
 #include "util/commonUtil.h"
 #include "util/filesystem.h"
 #include "util/camera.h"
 #include "util/model.h"
 
+using namespace LOGL;
+using namespace Oper;
+using namespace Define;
 
 
 
@@ -28,7 +34,7 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 // camera
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera;
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -40,11 +46,8 @@ float lastFrame = 0.0f;
 int main()
 {
 	// glfw: initialize and configure
-	// ------------------------------
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	Glfw::GetInstance()->Init(SCR_WIDTH,SCR_HEIGHT, windowTitle.c_str());
+	Glfw::GetInstance()->LockCursor();
 
 
 	// glfw window creation
