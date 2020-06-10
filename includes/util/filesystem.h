@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 #include <cstdio>
 #include <cstdlib>
@@ -38,14 +39,16 @@ private:
 	std::string fileName;
 
 
-private:
-  typedef std::string (*Builder) (const std::string& path);
 
 public:
 	static std::string getPath(const std::string& path);
 
 
 private:
+
+	typedef std::string(*Builder) (const std::string& path);
+
+
 	static std::string const getRoot();
 
 

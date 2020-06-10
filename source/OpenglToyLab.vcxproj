@@ -40,9 +40,11 @@
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="util\camera.cpp" />
     <ClCompile Include="util\commonUtil.cpp" />
+    <ClCompile Include="util\Image.cpp" />
     <ClCompile Include="util\mesh.cpp" />
     <ClCompile Include="util\model.cpp" />
     <ClCompile Include="util\shader.cpp" />
+    <ClCompile Include="util\VAO.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\includes\config.h" />
@@ -53,6 +55,7 @@
     <ClInclude Include="..\includes\util\eventManager.h" />
     <ClInclude Include="..\includes\util\filesystem.h" />
     <ClInclude Include="..\includes\util\GStorage.H" />
+    <ClInclude Include="..\includes\util\Image.h" />
     <ClInclude Include="..\includes\util\lambdaOp.h" />
     <ClInclude Include="..\includes\util\LStorage.h" />
     <ClInclude Include="..\includes\util\mesh.h" />
@@ -65,7 +68,7 @@
     <ClInclude Include="..\includes\util\shader_m.h" />
     <ClInclude Include="..\includes\util\shader_s.h" />
     <ClInclude Include="..\includes\util\singleton.h" />
-    <ClInclude Include="resource.h" />
+    <ClInclude Include="..\includes\util\VAO.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\getting_started\camera.fs" />
