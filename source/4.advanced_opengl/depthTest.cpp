@@ -18,8 +18,10 @@
 #include "util/commonUtil.h"
 #include "util/filesystem.h"
 
-#include "util/camera.h"
+#include "util/VAO.h"
 #include "util/model.h"
+#include "util/camera.h"
+
 
 using namespace LOGL;
 using namespace Oper;
@@ -48,9 +50,15 @@ int main()
 	//Glfw::GetInstance()->LockCursor();
 
 
-	////------------ 注册相机
-	//Camera mainCamera(ratioWH, moveSpeed, rotateSpeed, glm::vec3(0.0f, 0.0f, 4.0f));
-	//GStorage<Camera *>::GetInstance()->Register(str_MainCamera.c_str(), &mainCamera);
+	//注册相机
+	Camera mainCamera(ratioWH, moveSpeed, rotateSpeed, glm::vec3(0.0f, 0.0f, 4.0f));
+	GStorage<Camera *>::GetInstance()->Register(str_MainCamera.c_str(), &mainCamera);
+
+	VAO  cubeVAO(CubeVertices, sizeof(CubeVertices), { 3, 3, 2 });
+
+	Shader cubeShader("./shader/lighting/lightCube.vs", "./shader/lighting/lightCube.fs");
+
+
 
 	//build and compiler our shader program 
 	//Shader ourShader("./shader/modelLoading/modelLoading.vs", "./shader/modelLoading/modelLoading.fs");
@@ -64,10 +72,12 @@ int main()
 		glDepthFunc(GL_LESS);
 	}, false);
 
-	//------------ 输入
+	//注册时间处理函数（需要和windows相应绑定处理各种输入）
 	auto registerInputOp = new RegisterInput(false);
+	registerInputOp->Run();
 
-	//------------- 时间
+
+	//时间
 	float deltaTime = 0.0f; // 当前帧与上一帧的时间差
 	GStorage<float *>::GetInstance()->Register(str_DeltaTime.c_str(), &deltaTime);
 	float lastFrame = 0.0f; // 上一帧的时间
@@ -78,36 +88,54 @@ int main()
 		std::cout << currentFrame << std::endl;
 	});
 
-	//------------ 清除
-	auto clearOp = new LambdaOp([]() {
-		glClearColor(0.2f, 0.2f, 0.4f, 1.0f);
+
+	//清除颜色缓存
+	auto  clearScreenOP = new LambdaOp([]() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClearColor(0.2, 0.4, 0.4, 1.0);
 	});
 
-	 
-	////------------ 渲染
-	//auto renderOp = new OpQueue;
-	//(*renderOp) << clearOp;
 
 
-	//------------- 末尾
+	//物体渲染
+	glm::mat4 model = glm::mat4(1.0f);// world position
+	cubeShader.setMat4("model", model);
+	auto geomtryOp = new  LambdaOp([&]() {
+		cubeShader.use();
+		cubeVAO.Use();
+
+		//// bind diffuse map
+		//glActiveTexture(GL_TEXTURE0);
+		//glBindTexture(GL_TEXTURE_2D, diffuseMap);
+		//// bind specular map
+		//glActiveTexture(GL_TEXTURE1);
+		//glBindTexture(GL_TEXTURE_2D, specularMap);
+
+		cubeShader.setMat4("projection", mainCamera.GetProjectionMatrix());
+		cubeShader.setVec3("viewPos", mainCamera.GetPos());
+		cubeShader.setMat4("view", mainCamera.GetViewMatrix());
+
+		cubeVAO.Draw();
+
+	});
+
+	//渲染队列
+	auto renderQueue = new  OpQueue();
+	*renderQueue << clearScreenOP << geomtryOp;
+
+
+	//swap buffer 
 	auto endOp = new LambdaOp([]() {
-		glfwSwapBuffers(Glfw::GetInstance()->GetWindow());
 		glfwPollEvents();
+		glfwSwapBuffers(Glfw::GetInstance()->GetWindow());
 	});
 
+	auto opLoop = new OpQueue();
+	*opLoop << timeOp << renderQueue << endOp;
 
-	//------------- 整合
-	auto opQueue = new OpQueue;
-	(*opQueue) << initOp << registerInputOp << timeOp  << endOp;
+	Glfw::GetInstance()->RenderLoop(opLoop);
 
-
-	// render loop
-	Glfw::GetInstance()->RenderLoop(opQueue);
-
-	//------------
 	Glfw::GetInstance()->Terminate();
-
 	return 0;
 }
 

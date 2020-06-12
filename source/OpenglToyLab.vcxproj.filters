@@ -108,9 +108,6 @@
     <ClCompile Include="oper\glfwWrapper.cpp">
       <Filter>oper</Filter>
     </ClCompile>
-    <ClCompile Include="oper\registerInput.cpp">
-      <Filter>oper</Filter>
-    </ClCompile>
     <ClCompile Include="oper\filesystem.cpp">
       <Filter>oper</Filter>
     </ClCompile>
@@ -122,6 +119,9 @@
     </ClCompile>
     <ClCompile Include="util\VAO.cpp">
       <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="oper\registerInput.cpp">
+      <Filter>Source Files\4.advanced_opengl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

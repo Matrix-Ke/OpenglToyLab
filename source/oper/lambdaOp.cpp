@@ -1,3 +1,5 @@
+#pragma once
+
 #include "util/lambdaOp.h"
 
 #include <iostream>

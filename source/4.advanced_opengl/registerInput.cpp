@@ -1,20 +1,18 @@
 #pragma once
 #include "util/RegisterInput.h"
 
-#include "Defines.h"
-
-#include <GLFW/glfwWrapper.h>
-
-#include <util/GStorage.h>
-#include <util/LambdaOp.h>
-
-#include <util/Camera.h>
-
+#include <iostream>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <GLFW/glfwWrapper.h>
+#include <util/GStorage.h>
+#include <util/LambdaOp.h>
+#include <util/Camera.h>
+#include "Defines.h"
 
-#include <iostream>
+
+
 
 using namespace Oper;
 using namespace LOGL;
@@ -87,6 +85,11 @@ void RegisterInput::RegisterKey() {
 		LambdaOp * op = new LambdaOp([=]() {
 			auto mainCamera = *GStorage<Camera *>::GetInstance()->GetPtr(str_MainCamera);
 			auto deltaTime = **GStorage<float *>::GetInstance()->GetPtr(str_DeltaTime);
+			if (mainCamera == nullptr)
+			{
+				std::cout << "main camera is init failed" << std::endl;
+				return;
+			}
 			mainCamera->ProcessKeyboard(Camera::ENUM_Movement(Camera::MOVE_FORWARD + i), deltaTime);
 		});
 

@@ -1,3 +1,4 @@
+#pragma once
 #include "util/operation.h"
 
 using namespace Oper;

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "GLFW/glfwWrapper.h"
 
 #include <iostream>

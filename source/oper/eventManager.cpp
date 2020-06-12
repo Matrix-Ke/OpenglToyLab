@@ -1,3 +1,4 @@
+#pragma once
 #include "util/eventManager.h"
 #include "util/lambdaOp.h"
 

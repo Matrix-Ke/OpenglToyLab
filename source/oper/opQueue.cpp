@@ -1,3 +1,6 @@
+#pragma once
+
+
 #include "util/opQueue.h"
 
 #include <vector>

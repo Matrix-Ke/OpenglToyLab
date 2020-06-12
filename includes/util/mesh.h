@@ -16,7 +16,7 @@
 
 
 
-struct Vertex
+struct VertexInfo
 {
 	glm::vec3	Position;
 	glm::vec3	Normal;
@@ -38,14 +38,14 @@ class Mesh
 	
 public:
 
-	std::vector<Vertex>	vertices;
+	std::vector<VertexInfo>	vertices;
 
 	std::vector<unsigned int>	indices;
 	std::vector<Texture>	   textures;
 	unsigned int		VAO;
 
 
-	Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture>& textures);
+	Mesh(std::vector<VertexInfo>& vertices, std::vector<unsigned int>& indices, std::vector<Texture>& textures);
 
 	//draw mesh
 	void Draw(Shader shader);
