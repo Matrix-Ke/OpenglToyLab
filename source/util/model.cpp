@@ -1,3 +1,4 @@
+#pragma once
 #include "util/model.h"
 #include <exception>
 

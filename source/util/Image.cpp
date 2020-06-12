@@ -1,3 +1,4 @@
+#pragma once
 #include "util/Image.h"
 
 #define STB_IMAGE_IMPLEMENTATION

@@ -17,6 +17,7 @@
 #include "util/shader.h"
 #include "util/commonUtil.h"
 #include "util/filesystem.h"
+
 #include "util/camera.h"
 #include "util/model.h"
 
@@ -44,10 +45,12 @@ int main()
 {
 	// glfw: initialize and configure
 	Glfw::GetInstance()->Init(SCR_WIDTH,SCR_HEIGHT, windowTitle.c_str());
-	Glfw::GetInstance()->LockCursor();
+	//Glfw::GetInstance()->LockCursor();
 
 
-
+	////------------ 注册相机
+	//Camera mainCamera(ratioWH, moveSpeed, rotateSpeed, glm::vec3(0.0f, 0.0f, 4.0f));
+	//GStorage<Camera *>::GetInstance()->Register(str_MainCamera.c_str(), &mainCamera);
 
 	//build and compiler our shader program 
 	//Shader ourShader("./shader/modelLoading/modelLoading.vs", "./shader/modelLoading/modelLoading.fs");
@@ -72,18 +75,19 @@ int main()
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
+		std::cout << currentFrame << std::endl;
 	});
 
 	//------------ 清除
 	auto clearOp = new LambdaOp([]() {
-		glClearColor(0.01f, 0.01f, 0.01f, 1.0f);
+		glClearColor(0.2f, 0.2f, 0.4f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	});
 
-
-	//------------ 渲染
-	auto renderOp = new OpQueue;
-	(*renderOp) << clearOp;
+	 
+	////------------ 渲染
+	//auto renderOp = new OpQueue;
+	//(*renderOp) << clearOp;
 
 
 	//------------- 末尾
@@ -95,7 +99,7 @@ int main()
 
 	//------------- 整合
 	auto opQueue = new OpQueue;
-	(*opQueue) << initOp << registerInputOp << timeOp << renderOp << endOp;
+	(*opQueue) << initOp << registerInputOp << timeOp  << endOp;
 
 
 	// render loop
@@ -104,11 +108,6 @@ int main()
 	//------------
 	Glfw::GetInstance()->Terminate();
 
-	return 0;
-
-	// glfw: terminate, clearing all previously allocated GLFW resources.
-	// ------------------------------------------------------------------
-	glfwTerminate();
 	return 0;
 }
 
