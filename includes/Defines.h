@@ -5,25 +5,31 @@
 namespace Define {
 	const std::string str_MainCamera = "MainCamera";
 
-	const std::string  str_DeltaTime = "DeltaTime";
+	// settings
+	const unsigned int SCR_WIDTH = 800;
+	const unsigned int SCR_HEIGHT = 600;
 
+	const std::string  str_DeltaTime = "DeltaTime";
 	const std::string  windowTitle = "windowTitle";
 
-	const float moveSpeed = 0.1;
+	const float moveSpeed = 20;
+	const float rotateSpeed = 0.02;
 
-	const float rotateSpeed = 0.1;
+	//# 相机移动速度, 参考值 10
+	//	float CameraMoveSpeed = 20;
 
-	const float  ratioWH = 0.6;
+	//# 相机旋转速度, 参考值 0.02
+	//	float CameraRotateSensitivity = 0.02;
 
 
 	//	// ------------------------------------------------------------------
 	const float CubeVertices[] = {
 		// positions          // normals           // texture coords
-		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
-		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
+		-0.1f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+		 0.1f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
 		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
 		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
+		-0.1f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
 		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
 
 		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
@@ -62,6 +68,35 @@ namespace Define {
 		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
 	};
 
+	const float pyramidVertices[] = {
+		//position
+		1.0, 0.0, 1.0,	
+		0.0, 0.0, -1.0, 
+		-1.0, 0.0, 1.0, 
+		0.0, 1.0, 0.0
+	};
+
+	const unsigned int pyramidIndices[] = {
+		0, 1, 2, // first triangle
+		0, 1, 3,
+		1, 2, 3,
+		2, 0, 3
+	};
+
+
+	// world space positions of our cubes
+	const glm::vec3 cubePositions[] = {
+		glm::vec3(0.0f,  0.0f,  0.0f),
+		glm::vec3(2.0f,  5.0f, -15.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f,  3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f,  2.0f, -2.5f),
+		glm::vec3(1.5f,  0.2f, -1.5f),
+		glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
 
 	//四边形数据设定
 	const float quadVertices[] = {

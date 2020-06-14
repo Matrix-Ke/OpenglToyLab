@@ -39,6 +39,7 @@ void  Glfw::Init(size_t width /* = 800 */, size_t height /* = 600 */, const std:
 						: 0)));
 		if (kbState != 0)
 			EventManager::GetInstance()->Response(key | kbState);
+		std::cout << "Oper::EventManager::KEYBOARD has been called " << std::endl;
 		EventManager::GetInstance()->Response(key | Oper::EventManager::KEYBOARD);
 	});
 

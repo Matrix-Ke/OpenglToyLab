@@ -1,7 +1,10 @@
 #pragma once
 #include "util/camera.h";
 
+#include <iostream>
+
 using namespace LOGL;
+using namespace std;
 
 const float Camera::RATIO_WH = 1.0f;
 const float Camera::NEAR_PLANE = 0.01f;
@@ -27,23 +30,29 @@ Camera::Camera(float rationWH, float moveSpeed, float rotateSpeed, glm::vec3 pos
 }
 
 
-void Camera::SetPerspective() {
+void Camera::SetPerspective()
+{
 	projectionMode = ENUM_Projection::PROJECTION_PERSEPCTIVE;
 }
 
-void Camera::SetOrtho() {
+void Camera::SetOrtho()
+{
 	projectionMode = ENUM_Projection::PROJECTION_ORTHO;
 }
 
-glm::vec3 & Camera::GetPos() {
+glm::vec3 & Camera::GetPos() 
+{
+	//cout << "mainCamera.GetPos: " << Position[0] << Position[1] << Position[2] << endl;
 	return Position;
 }
 
-glm::vec3 & Camera::GetFront() {
+glm::vec3 & Camera::GetFront() 
+{
 	return Front;
 }
 
-void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch) {
+void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch) 
+{
 	xoffset *= MouseSensitivity;
 	yoffset *= MouseSensitivity;
 
@@ -64,7 +73,8 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPi
 }
 
 // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-void Camera::ProcessKeyboard(ENUM_Movement direction, float deltaTime) {
+void Camera::ProcessKeyboard(ENUM_Movement direction, float deltaTime) 
+{
 	float velocity = MovementSpeed * deltaTime;
 	if (direction == MOVE_FORWARD)
 		Position += Front * velocity;
@@ -78,9 +88,14 @@ void Camera::ProcessKeyboard(ENUM_Movement direction, float deltaTime) {
 		Position += Up * velocity;
 	if (direction == MOVE_DOWN)
 		Position -= Up * velocity;
+
+	cout <<"Position = "<< Position[0]<<" " << Position[1] <<" "<< Position[2] << endl;
 }
 
-glm::mat4 Camera::GetViewMatrix() {
+glm::mat4 Camera::GetViewMatrix() 
+{
+	glm::vec3 temp = Position + Front;
+	//cout << "LOGL::Camera::GetViewMatrix = " << temp[0] << " " << temp[1] << "  " << temp[2] << endl;
 	return glm::lookAt(Position, Position + Front, Up);
 }
 
@@ -112,12 +127,14 @@ glm::mat4 Camera::GetProjectionMatrix() {
 	switch (projectionMode)
 	{
 	case LOGL::Camera::PROJECTION_PERSEPCTIVE:
+		//cout << "LOGL::Camera::PROJECTION_PERSEPCTIVE = " << Zoom << endl;
 		return glm::perspective(glm::radians(Zoom), rationWH, nearPlane, farPlane);
 		break;
 	case LOGL::Camera::PROJECTION_ORTHO:
 		return glm::ortho(-Zoom / 4.0f, Zoom / 4.0f, -Zoom / 4.0f / rationWH, Zoom / 4.0f / rationWH, nearPlane, farPlane);
 		break;
 	default:
+		cout << "Camera::GetProjectionMatrix() has return  default  value \n";
 		return glm::mat4(1.0f);
 		break;
 	}

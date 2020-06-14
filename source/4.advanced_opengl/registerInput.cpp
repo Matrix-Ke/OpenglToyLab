@@ -90,6 +90,7 @@ void RegisterInput::RegisterKey() {
 				std::cout << "main camera is init failed" << std::endl;
 				return;
 			}
+			cout << "mainCamera->ProcessKeyboard" << endl;
 			mainCamera->ProcessKeyboard(Camera::ENUM_Movement(Camera::MOVE_FORWARD + i), deltaTime);
 		});
 

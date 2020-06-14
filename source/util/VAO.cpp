@@ -119,8 +119,7 @@ bool VAO::Draw() const {
 	if (hasIndex)
 		glDrawElements(GL_TRIANGLES, pointNum, GL_UNSIGNED_INT, NULL);
 	else
-	{
 		glDrawArrays(GL_TRIANGLES, 0, pointNum);
-		cout << pointNum << endl;
-	}
+
+	return true;
 }
