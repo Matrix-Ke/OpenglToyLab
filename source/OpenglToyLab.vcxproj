@@ -26,6 +26,7 @@
     <ClCompile Include="2.lighting\multipleLights.cpp" />
     <ClCompile Include="3.model_loading\modelLoading.cpp" />
     <ClCompile Include="4.advanced_opengl\depthTest.cpp" />
+    <ClCompile Include="4.advanced_opengl\registerInput.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="oper\config.cpp" />
@@ -36,7 +37,6 @@
     <ClCompile Include="oper\operation.cpp" />
     <ClCompile Include="oper\opNode.cpp" />
     <ClCompile Include="oper\opQueue.cpp" />
-    <ClCompile Include="oper\registerInput.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="util\camera.cpp" />
     <ClCompile Include="util\commonUtil.cpp" />
@@ -44,6 +44,7 @@
     <ClCompile Include="util\mesh.cpp" />
     <ClCompile Include="util\model.cpp" />
     <ClCompile Include="util\shader.cpp" />
+    <ClCompile Include="util\texture.cpp" />
     <ClCompile Include="util\VAO.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -65,12 +66,13 @@
     <ClInclude Include="..\includes\util\opQueue.h" />
     <ClInclude Include="..\includes\util\registerInput.h" />
     <ClInclude Include="..\includes\util\shader.h" />
-    <ClInclude Include="..\includes\util\shader_m.h" />
-    <ClInclude Include="..\includes\util\shader_s.h" />
     <ClInclude Include="..\includes\util\singleton.h" />
+    <ClInclude Include="..\includes\util\texture.h" />
     <ClInclude Include="..\includes\util\VAO.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shader\advancedOpengl\depthTest.vs" />
+    <None Include="shader\advancedOpengl\depthTest.fs" />
     <None Include="shader\getting_started\camera.fs" />
     <None Include="shader\getting_started\camera.vs" />
     <None Include="shader\getting_started\shader.fs" />

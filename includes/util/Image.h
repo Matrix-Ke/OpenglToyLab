@@ -1,4 +1,7 @@
 #pragma once
+#include <exception>
+
+
 namespace Oper {
 	typedef unsigned char uByte;
 	class Image {
@@ -13,8 +16,38 @@ namespace Oper {
 			Pixel(T r, T g, T b, T a)
 				: r(r), g(g), b(b), a(a), channel(4) { };
 
-			T & operator[](size_t idx);
-			const T & operator[](size_t idx) const;
+			T & operator[](size_t idx)
+			{
+				switch (idx)
+				{
+				case 0:
+					return r;
+				case 1:
+					return g;
+				case 2:
+					return b;
+				case 3:
+					return a;
+				default:
+					throw std::exception("pixel index is overflow");
+				}
+			}
+			const T & operator[](size_t idx) const
+			{
+				switch (idx)
+				{
+				case 0:
+					return r;
+				case 1:
+					return g;
+				case 2:
+					return b;
+				case 3:
+					return a;
+				default:
+					throw std::exception("pixel index is overflow");
+				}
+			}
 
 			T r;
 			T g;
@@ -22,6 +55,7 @@ namespace Oper {
 			T a;
 			const size_t channel;
 		};
+
 
 		Image();
 		Image(int width, int height, int channel);
@@ -65,38 +99,5 @@ namespace Oper {
 		int channel;
 		ENUM_SRC_TYPE type;
 	};
-
-
-	//------------
-
-	template<typename T>
-	T & Image::Pixel<T>::operator[](size_t idx) {
-		switch (idx)
-		{
-		case 0:
-			return r;
-		case 1:
-			return g;
-		case 2:
-			return b;
-		case 3:
-			return a;
-		}
-	}
-
-	template<typename T>
-	const T & Image::Pixel<T>::operator[](size_t idx) const{
-		switch (idx)
-		{
-		case 0:
-			return r;
-		case 1:
-			return g;
-		case 2:
-			return b;
-		case 3:
-			return a;
-		}
-	}
 }
 

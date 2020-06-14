@@ -6,7 +6,7 @@
 
 #include "util/shader.h"
 
-
+using namespace std;
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath)
 {

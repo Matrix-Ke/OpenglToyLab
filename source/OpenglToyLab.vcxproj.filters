@@ -43,6 +43,9 @@
     <Filter Include="oper">
       <UniqueIdentifier>{81a969cf-5a29-4308-9924-fec34b1a888d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\shader\advancedOpengl">
+      <UniqueIdentifier>{3fc18dd8-7378-4b96-bd61-b5fa6812be17}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="1.getting_started\hello_window.cpp">
@@ -120,7 +123,10 @@
     <ClCompile Include="util\VAO.cpp">
       <Filter>util</Filter>
     </ClCompile>
-    <ClCompile Include="oper\registerInput.cpp">
+    <ClCompile Include="util\texture.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="4.advanced_opengl\registerInput.cpp">
       <Filter>Source Files\4.advanced_opengl</Filter>
     </ClCompile>
   </ItemGroup>
@@ -138,12 +144,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\util\shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\includes\util\shader_m.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\includes\util\shader_s.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\util\commonUtil.h">
@@ -191,6 +191,9 @@
     <ClInclude Include="..\includes\util\VAO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\includes\util\texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\getting_started\camera.fs">
@@ -234,6 +237,12 @@
     </None>
     <None Include="shader\modelLoading\modelLoading.vs">
       <Filter>Source Files\shader\modelLoading</Filter>
+    </None>
+    <None Include="shader\advancedOpengl\depthTest.vs">
+      <Filter>Source Files\shader\advancedOpengl</Filter>
+    </None>
+    <None Include="shader\advancedOpengl\depthTest.fs">
+      <Filter>Source Files\shader\advancedOpengl</Filter>
     </None>
   </ItemGroup>
 </Project>

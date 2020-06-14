@@ -24,7 +24,7 @@ class Model
 {
 
 public:
-	std::vector<Texture>  textures_loaded;
+	std::vector<TextureInfo>  textures_loaded;
 	std::vector<Mesh>     meshes;
 	std::string     directory;
 
@@ -42,6 +42,6 @@ private:
 
 	Mesh processMesh(aiMesh*  mesh, const aiScene* scene);
 
-	std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
+	std::vector<TextureInfo> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
 
 };

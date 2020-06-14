@@ -3,11 +3,14 @@
 
 
 #include <glad/glad.h>
+#include <iostream>
 
 using namespace std;
 using namespace LOGL;
 
-VAO::VAO(float const * data, unsigned int dataSize, const std::vector<unsigned int> & attrLen){
+
+
+VAO::VAO(float const * data, unsigned int dataSize, const std::vector<unsigned int> & attrLen) {
 	if (data == NULL || dataSize == 0 || attrLen.size() == 0) {
 		isValid = false;
 		ID = 0;
@@ -37,7 +40,7 @@ VAO::VAO(float const * data, unsigned int dataSize, const std::vector<unsigned i
 }
 
 VAO::VAO(float const * data, unsigned int dataSize, const std::vector<unsigned int> & attrLen, unsigned int const * index, unsigned int indexSize)
-	: VAO(data, dataSize, attrLen){
+	: VAO(data, dataSize, attrLen) {
 	if (IsValid()) {
 		pointNum = indexSize / sizeof(unsigned int);
 		hasIndex = true;
@@ -63,7 +66,7 @@ VAO::VAO(const std::vector<VBO_DataPatch> & vec_VBO_DataPatch, const std::vector
 		glBufferData(GL_ARRAY_BUFFER, dataPatch.dataSize, dataPatch.data, GL_STATIC_DRAW);
 		glVertexAttribPointer(i, dataPatch.attrLen, GL_FLOAT, GL_FALSE, dataPatch.attrLen * sizeof(float), (void*)(0 * sizeof(float)));
 		glEnableVertexAttribArray(i);
-		if(divisors.size()!=0 && divisors[i] > 0)
+		if (divisors.size() != 0 && divisors[i] > 0)
 			glVertexAttribDivisor(i, divisors[i]);
 	}
 	//按照没有索引的情况设置 pointNum
@@ -73,7 +76,7 @@ VAO::VAO(const std::vector<VBO_DataPatch> & vec_VBO_DataPatch, const std::vector
 }
 
 VAO::VAO(const std::vector<VBO_DataPatch> & vec_VBO_DataPatch, unsigned int const * index, unsigned int indexSize, const std::vector<unsigned int> & divisors)
-	: VAO(vec_VBO_DataPatch, divisors){
+	: VAO(vec_VBO_DataPatch, divisors) {
 	if (IsValid()) {
 		pointNum = indexSize / sizeof(unsigned int);
 		hasIndex = true;
@@ -116,5 +119,8 @@ bool VAO::Draw() const {
 	if (hasIndex)
 		glDrawElements(GL_TRIANGLES, pointNum, GL_UNSIGNED_INT, NULL);
 	else
+	{
 		glDrawArrays(GL_TRIANGLES, 0, pointNum);
+		cout << pointNum << endl;
+	}
 }

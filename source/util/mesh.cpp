@@ -3,7 +3,7 @@
 
 using namespace std;
 
-Mesh::Mesh(vector<VertexInfo>& vertices, vector<unsigned int>& indices, vector<Texture>& textures)
+Mesh::Mesh(vector<VertexInfo>& vertices, vector<unsigned int>& indices, vector<TextureInfo>& textures)
 {
 	this->vertices = vertices;
 	this->indices = indices;
