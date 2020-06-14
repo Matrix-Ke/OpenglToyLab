@@ -1,3 +1,4 @@
+#pragma once
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -5,7 +6,7 @@
 
 #include "util/shader.h"
 
-
+using namespace std;
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath)
 {
@@ -47,20 +48,10 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 
 	unsigned int vertex, fragment;
 
-
-	int success = 0;
-	char infoLog[512];
 	vertex = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertex, 1, &vShaderCode, nullptr);
 	glCompileShader(vertex);
 	checkCompileErrors(vertex, "SHADER");
-
-	//glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
-	//if (!success)
-	//{
-	//	glGetShaderInfoLog(vertex, 512, nullptr, infoLog);
-	//	std::cout << "vertex shader compoler failure: " << infoLog << std::endl;
-	//}
 
 
 	fragment = glCreateShader(GL_FRAGMENT_SHADER);
@@ -68,25 +59,12 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 	glCompileShader(fragment);
 	checkCompileErrors(fragment,"SHADER");
 
-	//glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
-	//if (!success)
-	//{
-	//	glGetShaderInfoLog(vertex, 512, nullptr, infoLog);
-	//	std::cout << "fragment shader compoler failure: " << infoLog << std::endl;
-	//}
 
 	ID = glCreateProgram();
 	glAttachShader(ID, vertex);
 	glAttachShader(ID, fragment);
 	glLinkProgram(ID);
 	checkCompileErrors(ID, "PROGRAM");
-
-	//glGetProgramiv(ID, GL_LINK_STATUS, &success);
-	//if (!success)
-	//{
-	//	glGetProgramInfoLog(ID, 512, nullptr, infoLog);
-	//	std::cout << "shader link failure : " << infoLog << std::endl;
-	//}
 
 	//delete no use shader
 	glDeleteShader(vertex);

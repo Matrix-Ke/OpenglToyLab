@@ -1,10 +1,9 @@
 //#include <iostream>;
+//using namespace std;
 //
 //
 //
 //int main()
 //{
-//	using namespace std;
-//
 //	return 0;
 //}
