@@ -27,7 +27,11 @@ VAO::VAO(float const * data, unsigned int dataSize, const std::vector<unsigned i
 	unsigned int patchLen = 0;
 	for (auto & len : attrLen)
 		patchLen += len;
-	for (unsigned int i = 0, accu = 0; i < attrLen.size(); i++) {
+	for (unsigned int i = 0, accu = 0; i < attrLen.size(); i++) 
+	{
+		if (attrLen[i] == 0)
+			continue;
+
 		glVertexAttribPointer(i, attrLen[i], GL_FLOAT, GL_FALSE, patchLen * sizeof(float), (void*)(accu * sizeof(float)));
 		glEnableVertexAttribArray(i);
 		accu += attrLen[i];

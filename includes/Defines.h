@@ -18,6 +18,11 @@ namespace Define {
 	const float rotateSpeed = 0.02;
 
 
+	//灯光相关
+	const glm::vec3 light_ambient = glm::vec3(0.2f, 0.2f, 0.2f);
+	const glm::vec3 light_diffuse = glm::vec3(0.5f, 0.5f, 0.5f);
+	const glm::vec3 light_specular = glm::vec3(1.0f, 1.0f, 1.0f);
+
 	//	// ------------------------------------------------------------------
 	const float CubeVertices[] = {
 		// positions          // normals           // texture coords
@@ -103,10 +108,20 @@ namespace Define {
 		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
 	};
 
-
 	const unsigned int quadIndices[] = {
 		0, 1, 3, // first triangle
 		1, 2, 3  // second triangle
+	};
+
+	const float planeVertices[] = {
+		// positions          // texture Coords (note we set these higher than 1 (together with GL_REPEAT as texture wrapping mode). this will cause the floor texture to repeat)
+		 5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
+		-5.0f, -0.5f,  5.0f,  0.0f, 0.0f,
+		-5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
+
+		 5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
+		-5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
+		 5.0f, -0.5f, -5.0f,  2.0f, 2.0f
 	};
 
 }

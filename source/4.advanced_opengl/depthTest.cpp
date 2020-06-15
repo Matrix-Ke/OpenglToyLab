@@ -36,7 +36,7 @@ int main()
 {
 	// glfw: initialize and configure
 	Glfw::GetInstance()->Init(SCR_WIDTH,SCR_HEIGHT, windowTitle.c_str());
-	Glfw::GetInstance()->LockCursor();
+	//Glfw::GetInstance()->LockCursor();
 
 
 	//注册相机
@@ -47,12 +47,15 @@ int main()
 
 	////设置几何物体
 	VAO  cubeVAO(CubeVertices, sizeof(CubeVertices), { 3, 3, 2 });
-	//VAO  cubeVAO(pyramidVertices, sizeof(pyramidVertices), { 3 }, pyramidIndices, sizeof(pyramidIndices));
+	VAO  planeVAO(planeVertices, sizeof(planeVertices), { 3, 0, 2 });
 	Shader cubeShader("./shader/advancedOpengl/depthTest.vs", "./shader/advancedOpengl/depthTest.fs");
 
 	Texture  tex1(FileSystem::getPath("resources/textures/container2.png").c_str(), true, false);
 	Texture  tex2(FileSystem::getPath("resources/textures/container2_specular.png").c_str(), true, false);
 
+	Texture  planeTex(FileSystem::getPath("resources/textures/marble.jpg").c_str(), true, false);
+
+	
 	auto initOp = new LambdaOp([]() {
 		glDepthFunc(GL_LESS);
 	}, false);
@@ -77,16 +80,18 @@ int main()
 	//清除颜色缓存
 	auto  clearScreenOP = new LambdaOp([]() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glClearColor(0.2, 0.4, 0.4, 1.0);
+		glClearColor(0.1, 0.1, 0.1, 1.0);
 	});
 
-	//设置物体材质， 环境灯光等
-	auto  settingEnvir = new LambdaOp([&] {
-		cubeShader.use();
-		cubeShader.setBool("blinn", true);
-		
-
-	});
+	////设置物体材质， 环境灯光等
+	//auto  settingEnvir = new LambdaOp([&] {
+	//	cubeShader.use();
+	//	cubeShader.setBool("blinn", true);
+	//	cubeShader.setInt("material.diffuse", 0);
+	//	cubeShader.setInt("material.specular", 1);
+	//	tex1.Use(0);
+	//	tex2.Use(1);
+	//});
 
 
 	auto geomtryOp = new  LambdaOp([&]() {
@@ -96,12 +101,27 @@ int main()
 		glm::mat4 model = glm::mat4(1.0f);// world position
 		cubeShader.setMat4("model", model);
 		cubeShader.setMat4("projection", mainCamera.GetProjectionMatrix());
-		cubeShader.setVec3("viewPos", mainCamera.GetPos());
 		cubeShader.setMat4("view", mainCamera.GetViewMatrix());
+		cubeShader.setVec3("viewPos", mainCamera.GetPos());
 
-		glm::vec3  tempRes = mainCamera.GetPos();
+
+		cubeShader.setBool("blinn", true);
+		cubeShader.setInt("material.diffuse", 0);
+		cubeShader.setInt("material.specular", 1);
+		tex1.Use(0);
+		tex2.Use(1);
+
+
+		cubeShader.setVec3("light.ambient", light_ambient);
+		cubeShader.setVec3("light.diffuse", light_diffuse);
+		cubeShader.setVec3("light.specular", light_specular);
+
+
 		cubeVAO.Use();
 		cubeVAO.Draw();
+
+		//planeVAO.Use();
+		//planeVAO.Draw();
 	});
 
 
