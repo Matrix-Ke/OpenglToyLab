@@ -111,7 +111,9 @@ int main()
 		tex1.Use(0);
 		tex2.Use(1);
 
-
+		// material properties
+		cubeShader.setFloat("material.shininess", 64.0f);
+		cubeShader.setVec3("light.position", lightPos);
 		cubeShader.setVec3("light.ambient", light_ambient);
 		cubeShader.setVec3("light.diffuse", light_diffuse);
 		cubeShader.setVec3("light.specular", light_specular);
