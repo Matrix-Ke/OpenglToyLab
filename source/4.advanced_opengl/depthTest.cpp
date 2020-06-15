@@ -50,8 +50,8 @@ int main()
 	//VAO  cubeVAO(pyramidVertices, sizeof(pyramidVertices), { 3 }, pyramidIndices, sizeof(pyramidIndices));
 	Shader cubeShader("./shader/advancedOpengl/depthTest.vs", "./shader/advancedOpengl/depthTest.fs");
 
-	//Texture  tex1(FileSystem::getPath("resources/textures/container.jpg").c_str(), true, false);
-	//Texture  tex2(FileSystem::getPath("resources/textures/awesomeface.png").c_str(), true, false);
+	Texture  tex1(FileSystem::getPath("resources/textures/container2.png").c_str(), true, false);
+	Texture  tex2(FileSystem::getPath("resources/textures/container2_specular.png").c_str(), true, false);
 
 	auto initOp = new LambdaOp([]() {
 		glDepthFunc(GL_LESS);
@@ -80,13 +80,20 @@ int main()
 		glClearColor(0.2, 0.4, 0.4, 1.0);
 	});
 
+	//设置物体材质， 环境灯光等
+	auto  settingEnvir = new LambdaOp([&] {
+		cubeShader.use();
+		cubeShader.setBool("blinn", true);
+		
+
+	});
 
 
 	auto geomtryOp = new  LambdaOp([&]() {
 		cubeShader.use();
 
 		//每次绘制之前都必须设置渲染状态, 设置位置, 物体渲染
-		glm::mat4 model = glm::mat4(0.5f);// world position
+		glm::mat4 model = glm::mat4(1.0f);// world position
 		cubeShader.setMat4("model", model);
 		cubeShader.setMat4("projection", mainCamera.GetProjectionMatrix());
 		cubeShader.setVec3("viewPos", mainCamera.GetPos());

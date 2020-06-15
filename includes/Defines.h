@@ -12,14 +12,10 @@ namespace Define {
 	const std::string  str_DeltaTime = "DeltaTime";
 	const std::string  windowTitle = "windowTitle";
 
-	const float moveSpeed = 20;
-	const float rotateSpeed = 0.02;
-
 	//# 相机移动速度, 参考值 10
-	//	float CameraMoveSpeed = 20;
-
+	const float moveSpeed = 20;
 	//# 相机旋转速度, 参考值 0.02
-	//	float CameraRotateSensitivity = 0.02;
+	const float rotateSpeed = 0.02;
 
 
 	//	// ------------------------------------------------------------------
