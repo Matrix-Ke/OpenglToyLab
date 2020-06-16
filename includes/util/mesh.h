@@ -12,48 +12,49 @@
 #include "util/shader.h"
 
 
-
-
-
-
-struct VertexInfo
+namespace Oper
 {
-	glm::vec3	Position;
-	glm::vec3	Normal;
-	glm::vec2	TexCoords;
-	glm::vec3	Tangent;
-	glm::vec3	Bitangent;
-};
+	struct VertexInfo
+	{
+		glm::vec3	Position;
+		glm::vec3	Normal;
+		glm::vec2	TexCoords;
+		glm::vec3	Tangent;
+		glm::vec3	Bitangent;
+	};
 
 
-struct TextureInfo
-{
-	unsigned int id;
-	std::string	type;
-	std::string	path;
-};
+	struct TextureInfo
+	{
+		unsigned int id;
+		std::string	type;
+		std::string	path;
+	};
 
-class Mesh 
-{
-	
-public:
+	class Mesh
+	{
 
-	std::vector<VertexInfo>	vertices;
+	public:
 
-	std::vector<unsigned int>	indices;
-	std::vector<TextureInfo>	   textures;
-	unsigned int		VAO;
+		std::vector<VertexInfo>	vertices;
 
+		std::vector<unsigned int>	indices;
+		std::vector<TextureInfo>	   textures;
+		unsigned int		VAO;
 
-	Mesh(std::vector<VertexInfo>& vertices, std::vector<unsigned int>& indices, std::vector<TextureInfo>& textures);
+		Mesh(std::vector<VertexInfo>& vertices, std::vector<unsigned int>& indices, std::vector<TextureInfo>& textures);
 
-	//draw mesh
-	void Draw(Shader shader);
-
+		//draw mesh
+		void Draw(Shader shader);
 
 
-private:
-	unsigned int VBO, EBO;
 
-	void setupMesh();
-};
+	private:
+		unsigned int VBO, EBO;
+
+		void setupMesh();
+	};
+}
+
+
+

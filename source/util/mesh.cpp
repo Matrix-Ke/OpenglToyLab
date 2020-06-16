@@ -2,6 +2,7 @@
 #include "util/mesh.h"
 
 using namespace std;
+using namespace Oper;
 
 Mesh::Mesh(vector<VertexInfo>& vertices, vector<unsigned int>& indices, vector<TextureInfo>& textures)
 {

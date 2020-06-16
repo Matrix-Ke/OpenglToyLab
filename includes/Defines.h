@@ -20,9 +20,13 @@ namespace Define {
 
 	//灯光相关
 	const glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
-	const glm::vec3 light_ambient = glm::vec3(0.2f, 0.2f, 0.2f);
+	const glm::vec3 light_ambient = glm::vec3(0.6f, 0.6f, 0.6f);
 	const glm::vec3 light_diffuse = glm::vec3(0.5f, 0.5f, 0.5f);
 	const glm::vec3 light_specular = glm::vec3(1.0f, 1.0f, 1.0f);
+
+	//材质相关
+	const float material_shininess = 64.0f;
+
 
 	//	// ------------------------------------------------------------------
 	const float CubeVertices[] = {
