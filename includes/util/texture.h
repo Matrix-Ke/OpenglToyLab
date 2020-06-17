@@ -35,7 +35,12 @@ namespace LOGL
 
 		bool  GetID() const;
 
+		unsigned int  getGLType() const;
+
 		bool IsValid()  const;
+
+		void TexNameInShader(unsigned int program, const std::string&  texname);
+
 
 		static const Texture  InValid;
 
@@ -45,8 +50,13 @@ namespace LOGL
 		static std::string Type2Str(ENUM_TYPE type);
 
 
+	private:
+		std::string  nameInShader;
+		unsigned int shaderID;
 		unsigned int ID;
 		int channel;
 		ENUM_TYPE type;
+
+		unsigned int  GL_Type;
 	};
 }

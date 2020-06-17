@@ -72,6 +72,11 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 }
 
 
+unsigned int Shader::getID() const
+{
+	return this->ID;
+}
+
 void Shader::use()
 {
 	glUseProgram(ID);

@@ -18,6 +18,7 @@ LOGL::Texture::Texture(unsigned int ID /*= 0*/, ENUM_TYPE type /*= ENUM_TYPE_2D*
 LOGL::Texture::Texture(const std::vector<std::string> & skybox)
 {
 	type = ENUM_TYPE_NOT_VALID;
+	GL_Type = 0;
 	Load(skybox);
 }
 
@@ -26,6 +27,7 @@ LOGL::Texture::Texture(ENUM_TYPE type) : Texture(0, type) { }
 LOGL::Texture::Texture(const std::string & path, bool flip /*= false*/, bool gammaCorrection /*= false*/)
 {
 	type = ENUM_TYPE_NOT_VALID;
+	GL_Type = 0;
 	Load(path, flip, gammaCorrection);
 }
 
@@ -39,6 +41,9 @@ LOGL::Texture::Texture(unsigned int width, unsigned int height, float const* dat
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	type = ENUM_TYPE_2D;
+
+
+	GL_Type = GL_TEXTURE_2D;
 }
 
 bool LOGL::Texture::Load(const std::string & path, bool flip /*= false*/, bool gammaCorrection /*= false*/, unsigned int desiredChannel /*= 0*/)
@@ -59,6 +64,7 @@ bool LOGL::Texture::Load(const std::string & path, bool flip /*= false*/, bool g
 	{
 		printf("texture load failed, filepath = %s", path.c_str());
 		type = ENUM_TYPE_NOT_VALID;
+		GL_Type = 0;
 		return false;
 	}
 	GLenum internalFormat;
@@ -87,6 +93,7 @@ bool LOGL::Texture::Load(const std::string & path, bool flip /*= false*/, bool g
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 	type = ENUM_TYPE_2D;
+	GL_Type = GL_TEXTURE_2D;
 	//Opengl时时刻刻记住要解绑， 不然会被坑死， 很难Debug
 	this->UnBind();
 	return true;
@@ -126,6 +133,7 @@ bool LOGL::Texture::Use(unsigned int id /* = 0 */) const
 		return false;
 
 	glActiveTexture(GL_TEXTURE0 + id);
+	glUniform1i(glGetUniformLocation(shaderID, nameInShader.c_str()), id);
 	glBindTexture(Type2GL(type), ID);
 	return true;
 }
@@ -142,9 +150,24 @@ bool LOGL::Texture::GetID() const
 	return ID;
 }
 
+unsigned int LOGL::Texture::getGLType() const
+{
+	return this->GL_Type;
+}
+
 bool LOGL::Texture::IsValid() const
 {
 	return ID != 0 && type != ENUM_TYPE_NOT_VALID;
+}
+
+
+void LOGL::Texture::TexNameInShader(unsigned int program, const std::string& texname)
+{
+	if (IsValid())
+	{
+		this->nameInShader = texname;
+		this->shaderID = program;
+	}
 }
 
 unsigned int LOGL::Texture::Type2GL(ENUM_TYPE type)
@@ -203,6 +226,7 @@ bool LOGL::Texture::Load(const std::vector<std::string> & skybox)
 		{
 			printf("Cubemap texture failed to load at path: %s\n", skybox[i].c_str());
 			type = ENUM_TYPE_NOT_VALID;
+			GL_Type = 0;
 			return false;
 		}
 		
@@ -215,7 +239,8 @@ bool LOGL::Texture::Load(const std::vector<std::string> & skybox)
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-	type = ENUM_TYPE_2D;
+	type = ENUM_TYPE_CUBE_MAP;
+	GL_Type = GL_TEXTURE_CUBE_MAP;
 	UnBind();
 	return true;
 }

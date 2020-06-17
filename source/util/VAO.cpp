@@ -88,6 +88,31 @@ VAO::VAO(const std::vector<VBO_DataPatch> & vec_VBO_DataPatch, unsigned int cons
 	}
 }
 
+//------------
+//unsigned int attrNum;
+//unsigned int ID;
+//unsigned int pointNum;
+//bool hasIndex;
+//bool isValid;
+LOGL::VAO::VAO(const VAO& rhs)
+{
+	this->attrNum = rhs.attrNum;
+	this->ID = rhs.ID;
+	this->pointNum = rhs.pointNum;
+	this->hasIndex = rhs.hasIndex;
+	this->isValid = rhs.isValid;
+}
+
+unsigned int LOGL::VAO::Size() const
+{
+	return this->pointNum;
+}
+
+bool LOGL::VAO::indexValid() const
+{
+	return this->hasIndex;
+}
+
 bool VAO::GenBindEBO(unsigned int const * index, unsigned int indexSize) {
 	unsigned int EBO;
 	glGenBuffers(1, &EBO);

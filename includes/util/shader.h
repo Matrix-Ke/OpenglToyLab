@@ -8,11 +8,11 @@
 class Shader
 {
 public:
-	//progrom ID
-	unsigned int ID;
+
 
 	Shader(const char* vertexPath, const char* fragmentPath);
 
+	unsigned int getID() const;
 	void use();
 
 	void setBool(const std::string &name, bool value) const; 
@@ -46,6 +46,9 @@ public:
 
 
 protected:
+	//progrom ID
+	unsigned int ID;
+
 private:
 
 	// utility function for checking shader compilation/linking errors.

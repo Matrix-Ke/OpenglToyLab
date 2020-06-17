@@ -38,8 +38,6 @@ int main()
 	Glfw::GetInstance()->Init(SCR_WIDTH,SCR_HEIGHT, windowTitle.c_str());
 	//Glfw::GetInstance()->LockCursor();
 
-	//-------------------
-	glEnable(GL_DEPTH_TEST);
 
 
 	//注册相机
@@ -53,13 +51,25 @@ int main()
 	VAO  planeVAO(planeVertices, sizeof(planeVertices), { 3, 0, 2 });
 	Shader cubeShader("./shader/advancedOpengl/depthTest.vs", "./shader/advancedOpengl/depthTest.fs");
 
-	Texture  texAwesome(FileSystem::getPath("resources/textures/awesomeface.png").c_str(), true, false);
+	//Texture  texAwesome(FileSystem::getPath("resources/textures/awesomeface.png").c_str(), true, false);
+	//Texture  texMatrix(FileSystem::getPath("resources/textures/matrix.jpg").c_str(), true, false);
+
 	Texture  texContainer(FileSystem::getPath("resources/textures/container2.png").c_str(), true, false);
 	Texture  texContainerSpec(FileSystem::getPath("resources/textures/container2_specular.png").c_str(), true, false);
-	Texture  texMatrix(FileSystem::getPath("resources/textures/matrix.jpg").c_str(), true, false);
 	Texture  planeTex(FileSystem::getPath("resources/textures/marble.jpg").c_str(), true, false);
 
+	//cubeShader.setInt("material.diffuse", 0);
+	//cubeShader.setInt("material.specular", 0);
+
+	texContainer.TexNameInShader(cubeShader.getID(), "material.diffuse");
+	planeTex.TexNameInShader(cubeShader.getID(), "material.diffuse");
+	texContainerSpec.TexNameInShader(cubeShader.getID(), "material.specular");
 	
+	std::vector<Texture>  textures{ texContainer, texContainerSpec };
+	Mesh  cubeMesh(cubeVAO, textures);
+	
+	std::vector<Texture>   pTexs{ planeTex };
+	Mesh  planeMesh(planeVAO, pTexs);
 
 	auto initOp = new LambdaOp([]() {
 		glDepthFunc(GL_LESS);
@@ -94,20 +104,19 @@ int main()
 		cubeShader.use();
 
 		//绘制之前都必须设置渲染状态, 设置位置, 物体渲染(如果状态不复位可以放置在渲染循环之前)
+
+		//全局属性面板
+		cubeShader.setBool("blinn", true);
+
+		//材质属性
 		cubeShader.setFloat("material.shininess", material_shininess);
 
-		// lighting properties
+		// 灯光属性
 		cubeShader.setVec3("light.position", lightPos);
 		cubeShader.setVec3("light.ambient", light_ambient);
 		cubeShader.setVec3("light.diffuse", light_diffuse);
 		cubeShader.setVec3("light.specular", light_specular);
 
-		cubeShader.setBool("blinn", true);
-		cubeShader.setInt("material.diffuse", 0);
-		cubeShader.setInt("material.specular", 1);
-
-
-		texMatrix.Use(1);
 	});
 
 	settingEnvir->Run();
@@ -116,20 +125,17 @@ int main()
 		cubeShader.use();
 
 
-		glm::mat4 model = glm::mat4(1.0f);// world position
+		// world position  and  matrix transform
+		glm::mat4 model = glm::mat4(1.0f);
 		cubeShader.setMat4("model", model);
 		cubeShader.setMat4("projection", mainCamera.GetProjectionMatrix());
 		cubeShader.setMat4("view", mainCamera.GetViewMatrix());
 		cubeShader.setVec3("viewPos", mainCamera.GetPos());
 
-		
-		texContainer.Use(0);
-		cubeVAO.Use();
-		cubeVAO.Draw();
 
-		planeTex.Use(0);
-		planeVAO.Use();
-		planeVAO.Draw();
+		cubeMesh.Draw(cubeShader);
+
+		planeMesh.Draw(cubeShader);
 	});
 
 

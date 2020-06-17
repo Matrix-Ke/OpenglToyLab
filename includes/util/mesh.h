@@ -10,6 +10,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "util/shader.h"
+#include "util/texture.h"
+#include "util/VAO.h"
 
 
 namespace Oper
@@ -33,26 +35,39 @@ namespace Oper
 
 	class Mesh
 	{
-
 	public:
+		Mesh(bool mIsVaild = false);
+		Mesh(std::vector<VertexInfo>& vertices, std::vector<unsigned int>& indices, std::vector<TextureInfo>& mTexs);
 
-		std::vector<VertexInfo>	vertices;
-
-		std::vector<unsigned int>	indices;
-		std::vector<TextureInfo>	   textures;
-		unsigned int		VAO;
-
-		Mesh(std::vector<VertexInfo>& vertices, std::vector<unsigned int>& indices, std::vector<TextureInfo>& textures);
+		Mesh(LOGL::VAO & mVao, std::vector< LOGL::Texture>  &  mTextures);
 
 		//draw mesh
 		void Draw(Shader shader);
 
+		bool indexValid() const;
 
 
 	private:
-		unsigned int VBO, EBO;
-
 		void setupMesh();
+
+
+	public:
+		std::vector<VertexInfo>		vertices;
+		std::vector<unsigned int>	indices;
+		std::vector<TextureInfo>	textures;
+
+
+	private:
+		std::vector<LOGL::Texture>	mTextures;
+
+		unsigned int	VAO;
+		unsigned int	EBO;
+		unsigned int	pointNum;
+
+		bool			hasIndex;
+		bool			isValid;
+		bool			isCommonTextureName;
+
 	};
 }
 
