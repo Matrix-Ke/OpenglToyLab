@@ -73,6 +73,8 @@
   <ItemGroup>
     <None Include="shader\advancedOpengl\depthTest.vs" />
     <None Include="shader\advancedOpengl\depthTest.fs" />
+    <None Include="shader\advancedOpengl\stencilTest.fs" />
+    <None Include="shader\advancedOpengl\stencilTest.vs" />
     <None Include="shader\getting_started\camera.fs" />
     <None Include="shader\getting_started\camera.vs" />
     <None Include="shader\getting_started\shader.fs" />

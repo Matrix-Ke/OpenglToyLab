@@ -161,7 +161,7 @@ bool LOGL::Texture::IsValid() const
 }
 
 
-void LOGL::Texture::TexNameInShader(unsigned int program, const std::string& texname)
+void LOGL::Texture::SetTexNameInShader(unsigned int program, const std::string& texname)
 {
 	if (IsValid())
 	{

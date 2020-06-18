@@ -50,6 +50,7 @@ int main()
 	VAO  cubeVAO(CubeVertices, sizeof(CubeVertices), { 3, 3, 2 });
 	VAO  planeVAO(planeVertices, sizeof(planeVertices), { 3, 0, 2 });
 	Shader cubeShader("./shader/advancedOpengl/depthTest.vs", "./shader/advancedOpengl/depthTest.fs");
+	Shader cubeOutlineShader("./shader/advancedOpengl/stencilTest.vs", "./shader/advancedOpengl/stencilTest.fs");
 
 	//Texture  texAwesome(FileSystem::getPath("resources/textures/awesomeface.png").c_str(), true, false);
 	//Texture  texMatrix(FileSystem::getPath("resources/textures/matrix.jpg").c_str(), true, false);
@@ -58,22 +59,29 @@ int main()
 	Texture  texContainerSpec(FileSystem::getPath("resources/textures/container2_specular.png").c_str(), true, false);
 	Texture  planeTex(FileSystem::getPath("resources/textures/marble.jpg").c_str(), true, false);
 
-	//cubeShader.setInt("material.diffuse", 0);
-	//cubeShader.setInt("material.specular", 0);
 
-	texContainer.TexNameInShader(cubeShader.getID(), "material.diffuse");
-	planeTex.TexNameInShader(cubeShader.getID(), "material.diffuse");
-	texContainerSpec.TexNameInShader(cubeShader.getID(), "material.specular");
+	texContainer.SetTexNameInShader(cubeShader.getID(), "material.diffuse");
+	planeTex.SetTexNameInShader(cubeShader.getID(), "material.diffuse");
+	texContainerSpec.SetTexNameInShader(cubeShader.getID(), "material.specular");
 	
 	std::vector<Texture>  textures{ texContainer, texContainerSpec };
 	Mesh  cubeMesh(cubeVAO, textures);
-	
+
+
 	std::vector<Texture>   pTexs{ planeTex };
 	Mesh  planeMesh(planeVAO, pTexs);
 
 	auto initOp = new LambdaOp([]() {
+		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LESS);
+
+		glEnable(GL_STENCIL_TEST);
+		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
 	}, false);
+
+	initOp->Run();
 
 	//注册时间处理函数（需要和windows相应绑定处理各种输入）
 	auto registerInputOp = new RegisterInput(false);
@@ -91,12 +99,6 @@ int main()
 		//std::cout << currentFrame << std::endl;
 	});
 
-
-	//清除颜色缓存
-	auto  clearScreenOP = new LambdaOp([]() {
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glClearColor(0.7, 0.8, 0.9, 1.0);
-	});
 
 
 	//设置物体材质， 环境灯光等
@@ -122,9 +124,12 @@ int main()
 	settingEnvir->Run();
 
 	auto geomtryOp = new  LambdaOp([&]() {
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		//glClearStencil(0xFF);
+		glClearColor(0.7, 0.8, 0.9, 1.0);
+
+
 		cubeShader.use();
-
-
 		// world position  and  matrix transform
 		glm::mat4 model = glm::mat4(1.0f);
 		cubeShader.setMat4("model", model);
@@ -132,16 +137,41 @@ int main()
 		cubeShader.setMat4("view", mainCamera.GetViewMatrix());
 		cubeShader.setVec3("viewPos", mainCamera.GetPos());
 
+		glStencilMask(0x00);
+		planeMesh.Draw(cubeShader);
 
+		////第一遍用来初始化 模板缓冲
+		glStencilFunc(GL_ALWAYS, 1, 0xFF);
+		//glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+		glStencilMask(0xFF);
 		cubeMesh.Draw(cubeShader);
 
-		planeMesh.Draw(cubeShader);
+		////第二遍开始缩放后开始绘制边框
+		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+		glStencilMask(0x00);
+		glDisable(GL_DEPTH_TEST);
+		float scale = 1.1f;
+		model = glm::scale(model, glm::vec3(scale, scale, scale));
+		cubeOutlineShader.use();
+		cubeOutlineShader.setMat4("model", model);
+		cubeOutlineShader.setMat4("projection", mainCamera.GetProjectionMatrix());
+		cubeOutlineShader.setMat4("view", mainCamera.GetViewMatrix());
+		cubeOutlineShader.setVec3("viewPos", mainCamera.GetPos());
+		cubeVAO.Use();
+		cubeVAO.Draw();
+
+
+
+		//恢复现场
+		//glStencilMask(0xFF);
+		glStencilFunc(GL_ALWAYS, 0, 0xFF);
+		glEnable(GL_DEPTH_TEST);
 	});
 
 
 	//渲染队列
 	auto renderQueue = new  OpQueue();
-	*renderQueue << clearScreenOP << geomtryOp;
+	*renderQueue << geomtryOp;
 
 
 	//swap buffer 

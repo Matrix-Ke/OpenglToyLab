@@ -39,7 +39,7 @@ namespace LOGL
 
 		bool IsValid()  const;
 
-		void TexNameInShader(unsigned int program, const std::string&  texname);
+		void SetTexNameInShader(unsigned int program, const std::string& texname);
 
 
 		static const Texture  InValid;

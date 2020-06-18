@@ -244,5 +244,11 @@
     <None Include="shader\advancedOpengl\depthTest.fs">
       <Filter>Source Files\shader\advancedOpengl</Filter>
     </None>
+    <None Include="shader\advancedOpengl\stencilTest.fs">
+      <Filter>Source Files\shader\advancedOpengl</Filter>
+    </None>
+    <None Include="shader\advancedOpengl\stencilTest.vs">
+      <Filter>Source Files\shader\advancedOpengl</Filter>
+    </None>
   </ItemGroup>
 </Project>

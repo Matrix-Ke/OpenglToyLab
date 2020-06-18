@@ -24,6 +24,8 @@ VAO::VAO(float const * data, unsigned int dataSize, const std::vector<unsigned i
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, dataSize, data, GL_STATIC_DRAW);
+	VBOs.push_back(VBO);
+
 	unsigned int patchLen = 0;
 	for (auto & len : attrLen)
 		patchLen += len;
@@ -72,6 +74,8 @@ VAO::VAO(const std::vector<VBO_DataPatch> & vec_VBO_DataPatch, const std::vector
 		glEnableVertexAttribArray(i);
 		if (divisors.size() != 0 && divisors[i] > 0)
 			glVertexAttribDivisor(i, divisors[i]);
+
+		VBOs.push_back(VBO);
 	}
 	//按照没有索引的情况设置 pointNum
 	this->pointNum = vec_VBO_DataPatch[0].dataSize / (sizeof(float) * vec_VBO_DataPatch[0].attrLen);
@@ -101,6 +105,19 @@ LOGL::VAO::VAO(const VAO& rhs)
 	this->pointNum = rhs.pointNum;
 	this->hasIndex = rhs.hasIndex;
 	this->isValid = rhs.isValid;
+}
+
+LOGL::VAO::~VAO()
+{
+	if (isValid && ID)
+	{
+		glDeleteVertexArrays(1, &ID);
+		for (int i = 0; i < VBOs.size(); i++ )
+		{
+			unsigned int bIndex = VBOs[i];
+			glDeleteBuffers(1, &bIndex);
+		}
+	}
 }
 
 unsigned int LOGL::VAO::Size() const
