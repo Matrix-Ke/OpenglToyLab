@@ -124,9 +124,11 @@ int main()
 	settingEnvir->Run();
 
 	auto geomtryOp = new  LambdaOp([&]() {
+		glStencilMask(0xFF); // 清除模板缓冲必须配合mask， 启用模板缓冲写入
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		//glClearStencil(0xFF);
 		glClearColor(0.7, 0.8, 0.9, 1.0);
+		//glClearStencil(0);
+		glEnable(GL_DEPTH_TEST);
 
 
 		cubeShader.use();
@@ -137,6 +139,8 @@ int main()
 		cubeShader.setMat4("view", mainCamera.GetViewMatrix());
 		cubeShader.setVec3("viewPos", mainCamera.GetPos());
 
+
+		//glStencilFunc(GL_ALWAYS, 1, 0xFF);
 		glStencilMask(0x00);
 		planeMesh.Draw(cubeShader);
 
@@ -163,9 +167,8 @@ int main()
 
 
 		//恢复现场
-		//glStencilMask(0xFF);
-		glStencilFunc(GL_ALWAYS, 0, 0xFF);
-		glEnable(GL_DEPTH_TEST);
+		glStencilMask(0xFF); // 启用模板缓冲写入
+
 	});
 
 
