@@ -129,6 +129,9 @@
     <ClCompile Include="4.advanced_opengl\registerInput.cpp">
       <Filter>Source Files\4.advanced_opengl</Filter>
     </ClCompile>
+    <ClCompile Include="4.advanced_opengl\blending_discard.cpp">
+      <Filter>Source Files\4.advanced_opengl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\includes\util\camera.h">
@@ -248,6 +251,12 @@
       <Filter>Source Files\shader\advancedOpengl</Filter>
     </None>
     <None Include="shader\advancedOpengl\stencilTest.vs">
+      <Filter>Source Files\shader\advancedOpengl</Filter>
+    </None>
+    <None Include="shader\advancedOpengl\blending_discard.fs">
+      <Filter>Source Files\shader\advancedOpengl</Filter>
+    </None>
+    <None Include="shader\advancedOpengl\blending_discard.vs">
       <Filter>Source Files\shader\advancedOpengl</Filter>
     </None>
   </ItemGroup>

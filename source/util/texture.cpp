@@ -13,13 +13,20 @@ using namespace std;
 
 const Texture Texture::InValid(0, ENUM_TYPE_NOT_VALID);
 
-LOGL::Texture::Texture(unsigned int ID /*= 0*/, ENUM_TYPE type /*= ENUM_TYPE_2D*/) : ID(ID), type(type) { };
+LOGL::Texture::Texture(unsigned int ID /*= 0*/, ENUM_TYPE type /*= ENUM_TYPE_2D*/) : ID(ID), type(type) 
+{
+	this->SetWrapping();
+	this->SetFiltering();
+};
 
 LOGL::Texture::Texture(const std::vector<std::string> & skybox)
 {
 	type = ENUM_TYPE_NOT_VALID;
 	GL_Type = 0;
 	Load(skybox);
+
+	this->SetWrapping();
+	this->SetFiltering();
 }
 
 LOGL::Texture::Texture(ENUM_TYPE type) : Texture(0, type) { }
@@ -29,6 +36,9 @@ LOGL::Texture::Texture(const std::string & path, bool flip /*= false*/, bool gam
 	type = ENUM_TYPE_NOT_VALID;
 	GL_Type = 0;
 	Load(path, flip, gammaCorrection);
+
+	this->SetWrapping();
+	this->SetFiltering();
 }
 
 LOGL::Texture::Texture(unsigned int width, unsigned int height, float const* data, unsigned int dataType, unsigned int srcFormat, unsigned int internalFormat)
@@ -37,13 +47,14 @@ LOGL::Texture::Texture(unsigned int width, unsigned int height, float const* dat
 	glBindTexture(GL_TEXTURE_2D, ID);
 	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, srcFormat, dataType, data);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	type = ENUM_TYPE_2D;
-
-
 	GL_Type = GL_TEXTURE_2D;
+
+	this->SetWrapping();
+	this->SetFiltering();
 }
 
 bool LOGL::Texture::Load(const std::string & path, bool flip /*= false*/, bool gammaCorrection /*= false*/, unsigned int desiredChannel /*= 0*/)
@@ -86,16 +97,17 @@ bool LOGL::Texture::Load(const std::string & path, bool flip /*= false*/, bool g
 	glBindTexture(GL_TEXTURE_2D, ID);
 	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, glWrapS);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, glWrapT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, glMinfilter);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, glMaxFilter);
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 	type = ENUM_TYPE_2D;
 	GL_Type = GL_TEXTURE_2D;
 	//Opengl时时刻刻记住要解绑， 不然会被坑死， 很难Debug
 	this->UnBind();
+
 	return true;
 }
 
@@ -120,11 +132,23 @@ bool LOGL::Texture::SetImage(const Oper::Image & image)
 
 	glBindTexture(GL_TEXTURE_2D, ID);
 	glTexImage2D(GL_TEXTURE_2D, 0, format, image.GetWidth(), image.GetHeight(), 0, format, GL_UNSIGNED_BYTE, image.GetConstData());
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, glMinfilter);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, glMaxFilter);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, glWrapS);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, glWrapT);
 	UnBind();
+}
+
+void LOGL::Texture::SetWrapping(unsigned int wrap_s /*= GL_REPEAT*/, unsigned int wrap_t /*= GL_REPEAT*/)
+{
+	glWrapS = wrap_s;
+	wrap_t = wrap_t;
+}
+
+void LOGL::Texture::SetFiltering(unsigned int minFilter /*= GL_NEAREST*/, unsigned int maxFilter /*= GL_LINEAR*/)
+{
+	glMinfilter = minFilter;
+	glMaxFilter = maxFilter;
 }
 
 bool LOGL::Texture::Use(unsigned int id /* = 0 */) const
@@ -235,6 +259,7 @@ bool LOGL::Texture::Load(const std::vector<std::string> & skybox)
 
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//包围盒设置
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);

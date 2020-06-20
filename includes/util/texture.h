@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
-
+#include "glad/glad.h"
 #include "util/Image.h"
 
 namespace LOGL
@@ -28,6 +28,10 @@ namespace LOGL
 		bool Load(const std::string & path, bool flip = false, bool  gammaCorrection = false, unsigned int desiredChannel = 0);
 
 		bool SetImage(const Oper::Image & image);
+
+		void SetWrapping(unsigned int wrap_s = GL_REPEAT, unsigned int wrap_t = GL_REPEAT);
+
+		void SetFiltering(unsigned int minFilter = GL_NEAREST, unsigned int maxFilter = GL_LINEAR);
 
 		bool Use(unsigned int id /* = 0 */)  const;
 
@@ -56,6 +60,11 @@ namespace LOGL
 		unsigned int ID;
 		int channel;
 		ENUM_TYPE type;
+
+		unsigned int glWrapS;
+		unsigned int glWrapT;
+		unsigned int glMinfilter;
+		unsigned int glMaxFilter;
 
 		unsigned int  GL_Type;
 	};
