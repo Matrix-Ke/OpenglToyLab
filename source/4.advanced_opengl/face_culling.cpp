@@ -36,7 +36,7 @@
 //int main()
 //{
 //	// glfw: initialize and configure
-//	Glfw::GetInstance()->Init(SCR_WIDTH,SCR_HEIGHT, windowTitle.c_str());
+//	Glfw::GetInstance()->Init(SCR_WIDTH, SCR_HEIGHT, windowTitle.c_str());
 //	//Glfw::GetInstance()->LockCursor();
 //
 //
@@ -50,7 +50,7 @@
 //	////设置几何物体
 //	VAO  cubeVAO(CubeVertices, sizeof(CubeVertices), { 3, 3, 2 });
 //	VAO  planeVAO(planeVertices, sizeof(planeVertices), { 3, 0, 2 });
-//	VAO  planeGrassVAO(transparentVertices, sizeof(transparentVertices), {3, 0, 2});
+//	VAO  planeGrassVAO(transparentVertices, sizeof(transparentVertices), { 3, 0, 2 });
 //
 //	Shader cubeShader("./shader/advancedOpengl/depthTest.vs", "./shader/advancedOpengl/depthTest.fs");
 //	Shader blendlingTestShader("./shader/advancedOpengl/blending_discard.vs", "./shader/advancedOpengl/blending_discard.fs");
@@ -95,6 +95,10 @@
 //		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 //		glBlendEquation(GL_FUNC_ADD);
 //
+//		//开启背面剔除
+//		glEnable(GL_CULL_FACE);
+//		glCullFace(GL_BACK);
+//		glFrontFace(GL_CCW); // gl_ccw 代表的是逆时针的环绕方式
 //
 //	}, false);
 //

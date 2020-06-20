@@ -29,7 +29,7 @@
 //
 //
 //
-
+//
 //
 //int main()
 //{
@@ -39,6 +39,7 @@
 //
 //
 //	//注册相机
+//	float ratioWH = (float)SCR_WIDTH / (float)SCR_HEIGHT;
 //	Camera mainCamera(ratioWH, moveSpeed, rotateSpeed, glm::vec3(0.0f, 0.0f, 4.0f));
 //	GStorage<Camera *>::GetInstance()->Register(str_MainCamera.c_str(), &mainCamera);
 //
