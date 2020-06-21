@@ -108,16 +108,21 @@ namespace Define {
 
 	//awesome face quadvertices
 	const float quadVertices[] = {
+		// 3  ----->  0
+		// |		  |
+		// V		  V
+		// 2  ----->  1
+		//---------------
 		// positions          // colors           // texture coords
-		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
-		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
-		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+		 1.0f,   1.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+		 1.0f,   0.0f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+		 0.0f,   0.0f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+		 0.0f,   1.0f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
 	};
 	//awesome face quad index
 	const unsigned int quadIndices[] = {
-		0, 1, 3, // first triangle
-		1, 2, 3  // second triangle
+		1, 0, 3,// first triangle
+		1, 3, 2  // second triangle
 	};
 
 

@@ -271,5 +271,11 @@
     <None Include="shader\advancedOpengl\blending_discard.vs">
       <Filter>Source Files\shader\advancedOpengl</Filter>
     </None>
+    <None Include="shader\advancedOpengl\framebuffer.fs">
+      <Filter>Source Files\shader\advancedOpengl</Filter>
+    </None>
+    <None Include="shader\advancedOpengl\framebuffer.vs">
+      <Filter>Source Files\shader\advancedOpengl</Filter>
+    </None>
   </ItemGroup>
 </Project>

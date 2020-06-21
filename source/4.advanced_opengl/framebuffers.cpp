@@ -51,10 +51,10 @@ int main()
 	////设置几何物体
 	VAO  cubeVAO(CubeVertices, sizeof(CubeVertices), { 3, 3, 2 });
 	VAO  planeVAO(planeVertices, sizeof(planeVertices), { 3, 0, 2 });
-	VAO  framebufferVAO(transparentVertices, sizeof(transparentVertices), { 3, 0, 2 });
+	VAO  framebufferVAO(quadVertices, sizeof(quadVertices), { 3, 3, 2 }, quadIndices, sizeof(quadIndices));
 
 	Shader cubeShader("./shader/advancedOpengl/depthTest.vs", "./shader/advancedOpengl/depthTest.fs");
-	Shader framebufferShader("./shader/advancedOpengl/blending_discard.vs", "./shader/advancedOpengl/blending_discard.fs");
+	Shader framebufferShader("./shader/advancedOpengl/framebuffer.vs", "./shader/advancedOpengl/framebuffer.fs");
 
 	Texture  texContainer(FileSystem::getPath("resources/textures/container2.png").c_str(), true, false);
 	Texture  texContainerSpec(FileSystem::getPath("resources/textures/container2_specular.png").c_str(), true, false);
@@ -62,8 +62,8 @@ int main()
 
 
 	texContainer.SetName("material.diffuse");
-	planeTex.SetName("material.diffuse");
 	texContainerSpec.SetName("material.specular");
+	planeTex.SetName("material.diffuse");
 
 
 	std::vector<Texture>  textures{ texContainer, texContainerSpec };
@@ -73,7 +73,7 @@ int main()
 
 	FBO   frameBuffer(SCR_WIDTH, SCR_HEIGHT);
 	Texture   fboColorTexture = frameBuffer.GetColorTexture(0);
-	fboColorTexture.SetName("texture1");
+	fboColorTexture.SetName("screenTexture");
 	Mesh    meshFbo(framebufferVAO, fboColorTexture);
 
 
@@ -87,10 +87,10 @@ int main()
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glBlendEquation(GL_FUNC_ADD);
 
-		//开启背面剔除
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
-		glFrontFace(GL_CCW); // gl_ccw 代表的是逆时针的环绕方式
+		////开启背面剔除
+		//glEnable(GL_CULL_FACE);
+		//glCullFace(GL_BACK);
+		//glFrontFace(GL_CCW); // gl_ccw 代表的是逆时针的环绕方式
 
 	}, false);
 
@@ -155,17 +155,17 @@ int main()
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glClearColor(0.7, 0.8, 0.9, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		framebufferShader.use();
-		framebufferShader.setMat4("projection", mainCamera.GetProjectionMatrix());
-		framebufferShader.setMat4("view", mainCamera.GetViewMatrix());
-		framebufferShader.setVec3("viewPos", mainCamera.GetPos());
-		framebufferShader.setMat4("model", model);
-
 		planeMesh.Draw(cubeShader);
 		cubeMesh.Draw(cubeShader);
 
+		framebufferShader.use();
+		//framebufferShader.setMat4("projection", mainCamera.GetProjectionMatrix());
+		//framebufferShader.setMat4("view", mainCamera.GetViewMatrix());
+		//framebufferShader.setVec3("viewPos", mainCamera.GetPos());
+		//framebufferShader.setMat4("model", model);
 		meshFbo.Draw(framebufferShader);
+
+
 	});
 
 
