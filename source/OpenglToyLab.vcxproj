@@ -25,7 +25,10 @@
     <ClCompile Include="2.lighting\lightingMaps.cpp" />
     <ClCompile Include="2.lighting\multipleLights.cpp" />
     <ClCompile Include="3.model_loading\modelLoading.cpp" />
+    <ClCompile Include="4.advanced_opengl\blending_discard.cpp" />
     <ClCompile Include="4.advanced_opengl\depthTest.cpp" />
+    <ClCompile Include="4.advanced_opengl\face_culling.cpp" />
+    <ClCompile Include="4.advanced_opengl\framebuffers.cpp" />
     <ClCompile Include="4.advanced_opengl\registerInput.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Main.cpp" />
@@ -40,6 +43,7 @@
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="util\camera.cpp" />
     <ClCompile Include="util\commonUtil.cpp" />
+    <ClCompile Include="util\fbo.cpp" />
     <ClCompile Include="util\Image.cpp" />
     <ClCompile Include="util\mesh.cpp" />
     <ClCompile Include="util\model.cpp" />
@@ -54,6 +58,7 @@
     <ClInclude Include="..\includes\util\camera.h" />
     <ClInclude Include="..\includes\util\commonUtil.h" />
     <ClInclude Include="..\includes\util\eventManager.h" />
+    <ClInclude Include="..\includes\util\fbo.h" />
     <ClInclude Include="..\includes\util\filesystem.h" />
     <ClInclude Include="..\includes\util\GStorage.H" />
     <ClInclude Include="..\includes\util\Image.h" />
@@ -71,8 +76,14 @@
     <ClInclude Include="..\includes\util\VAO.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shader\advancedOpengl\blending_discard.fs" />
+    <None Include="shader\advancedOpengl\blending_discard.vs" />
     <None Include="shader\advancedOpengl\depthTest.vs" />
     <None Include="shader\advancedOpengl\depthTest.fs" />
+    <None Include="shader\advancedOpengl\framebuffer.fs" />
+    <None Include="shader\advancedOpengl\framebuffer.vs" />
+    <None Include="shader\advancedOpengl\stencilTest.fs" />
+    <None Include="shader\advancedOpengl\stencilTest.vs" />
     <None Include="shader\getting_started\camera.fs" />
     <None Include="shader\getting_started\camera.vs" />
     <None Include="shader\getting_started\shader.fs" />

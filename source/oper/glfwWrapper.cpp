@@ -5,7 +5,7 @@
 #include <iostream>
 #include "util/GStorage.H"
 
-using namespace LOGL;
+using namespace OpenGL;
 using namespace Oper;
 using namespace std;
 
@@ -39,6 +39,7 @@ void  Glfw::Init(size_t width /* = 800 */, size_t height /* = 600 */, const std:
 						: 0)));
 		if (kbState != 0)
 			EventManager::GetInstance()->Response(key | kbState);
+		std::cout << "Oper::EventManager::KEYBOARD has been called " << std::endl;
 		EventManager::GetInstance()->Response(key | Oper::EventManager::KEYBOARD);
 	});
 
@@ -121,12 +122,12 @@ void Glfw::LoadGL() {
 	}
 }
 
-void LOGL::Glfw::CloseWindow()
+void OpenGL::Glfw::CloseWindow()
 {
 	glfwSetWindowShouldClose(window, true);
 }
 
-int LOGL::Glfw::GetKey(int key)
+int OpenGL::Glfw::GetKey(int key)
 {
 	return glfwGetKey(window, key);
 }

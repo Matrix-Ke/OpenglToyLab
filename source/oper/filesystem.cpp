@@ -16,12 +16,12 @@ std::string FileSystem::getPath(const std::string& path)
 
 std::string const FileSystem::getRoot()
 {
-	std::string logl_root(getCurrentDir());
-	logl_root += "/../";
-	//static char const * envRoot = _dupenv_s("LOGL_ROOT_PATH");
-	//static char const * givenRoot = (envRoot != nullptr ? envRoot : logl_root.c_str());
+	std::string OpenGL_root(getCurrentDir());
+	OpenGL_root += "/../";
+	//static char const * envRoot = _dupenv_s("OpenGL_ROOT_PATH");
+	//static char const * givenRoot = (envRoot != nullptr ? envRoot : OpenGL_root.c_str());
 	//static std::string root = (givenRoot != nullptr ? givenRoot : "");
-	return logl_root;
+	return OpenGL_root;
 }
 
 FileSystem::Builder FileSystem::getPathBuilder()

@@ -20,28 +20,32 @@
 #include "util/mesh.h"
 
 
-class Model
+namespace Oper
 {
+	class Model
+	{
 
-public:
-	std::vector<TextureInfo>  textures_loaded;
-	std::vector<Mesh>     meshes;
-	std::string     directory;
+	public:
+		std::vector<Oper::TextureInfo>  textures_loaded;
+		std::vector<Oper::Mesh>     meshes;
+		std::string     directory;
 
-	bool    gammaCorrection;
-	Model(std::string const & path, bool gamma = false);
-	~Model();
+		bool    gammaCorrection;
+		Model(std::string const & path, bool gamma = false);
+		~Model();
 
-	void Draw(Shader shader);
+		void Draw(Shader shader);
 
-private:
+	private:
 
-	void loadModel(std::string const &path);
+		void loadModel(std::string const &path);
 
-	void processNode(aiNode* node, const aiScene*scene);
+		void processNode(aiNode* node, const aiScene*scene);
 
-	Mesh processMesh(aiMesh*  mesh, const aiScene* scene);
+		Mesh processMesh(aiMesh*  mesh, const aiScene* scene);
 
-	std::vector<TextureInfo> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
+		std::vector<Oper::TextureInfo> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
 
-};
+	};
+}
+

@@ -7,7 +7,7 @@
 #include "util/eventManager.h"
 
 
-namespace LOGL
+namespace OpenGL
 {
 	class Glfw
 	{

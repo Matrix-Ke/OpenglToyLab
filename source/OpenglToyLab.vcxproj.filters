@@ -129,6 +129,18 @@
     <ClCompile Include="4.advanced_opengl\registerInput.cpp">
       <Filter>Source Files\4.advanced_opengl</Filter>
     </ClCompile>
+    <ClCompile Include="4.advanced_opengl\blending_discard.cpp">
+      <Filter>Source Files\4.advanced_opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="4.advanced_opengl\face_culling.cpp">
+      <Filter>Source Files\4.advanced_opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="4.advanced_opengl\framebuffers.cpp">
+      <Filter>Source Files\4.advanced_opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="util\fbo.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\includes\util\camera.h">
@@ -194,6 +206,9 @@
     <ClInclude Include="..\includes\util\texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\includes\util\fbo.h">
+      <Filter>oper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\getting_started\camera.fs">
@@ -242,6 +257,24 @@
       <Filter>Source Files\shader\advancedOpengl</Filter>
     </None>
     <None Include="shader\advancedOpengl\depthTest.fs">
+      <Filter>Source Files\shader\advancedOpengl</Filter>
+    </None>
+    <None Include="shader\advancedOpengl\stencilTest.fs">
+      <Filter>Source Files\shader\advancedOpengl</Filter>
+    </None>
+    <None Include="shader\advancedOpengl\stencilTest.vs">
+      <Filter>Source Files\shader\advancedOpengl</Filter>
+    </None>
+    <None Include="shader\advancedOpengl\blending_discard.fs">
+      <Filter>Source Files\shader\advancedOpengl</Filter>
+    </None>
+    <None Include="shader\advancedOpengl\blending_discard.vs">
+      <Filter>Source Files\shader\advancedOpengl</Filter>
+    </None>
+    <None Include="shader\advancedOpengl\framebuffer.fs">
+      <Filter>Source Files\shader\advancedOpengl</Filter>
+    </None>
+    <None Include="shader\advancedOpengl\framebuffer.vs">
       <Filter>Source Files\shader\advancedOpengl</Filter>
     </None>
   </ItemGroup>

@@ -1,6 +1,7 @@
 //#pragma once
 //#include <iostream>
 //#include <string>
+//#include <functional>
 //
 //#include <glad/glad.h>
 //#include <GLFW/glfwWrapper.h>
@@ -35,7 +36,7 @@
 //int main()
 //{
 //	// glfw: initialize and configure
-//	Glfw::GetInstance()->Init(SCR_WIDTH,SCR_HEIGHT, windowTitle.c_str());
+//	Glfw::GetInstance()->Init(SCR_WIDTH, SCR_HEIGHT, windowTitle.c_str());
 //	//Glfw::GetInstance()->LockCursor();
 //
 //
@@ -49,38 +50,55 @@
 //	////设置几何物体
 //	VAO  cubeVAO(CubeVertices, sizeof(CubeVertices), { 3, 3, 2 });
 //	VAO  planeVAO(planeVertices, sizeof(planeVertices), { 3, 0, 2 });
-//	Shader cubeShader("./shader/advancedOpengl/depthTest.vs", "./shader/advancedOpengl/depthTest.fs");
-//	Shader cubeOutlineShader("./shader/advancedOpengl/stencilTest.vs", "./shader/advancedOpengl/stencilTest.fs");
+//	VAO  planeGrassVAO(transparentVertices, sizeof(transparentVertices), { 3, 0, 2 });
 //
-//	//Texture  texAwesome(FileSystem::getPath("resources/textures/awesomeface.png").c_str(), true, false);
-//	//Texture  texMatrix(FileSystem::getPath("resources/textures/matrix.jpg").c_str(), true, false);
+//	Shader cubeShader("./shader/advancedOpengl/depthTest.vs", "./shader/advancedOpengl/depthTest.fs");
+//	Shader blendlingTestShader("./shader/advancedOpengl/blending_discard.vs", "./shader/advancedOpengl/blending_discard.fs");
+//
 //
 //	Texture  texContainer(FileSystem::getPath("resources/textures/container2.png").c_str(), true, false);
 //	Texture  texContainerSpec(FileSystem::getPath("resources/textures/container2_specular.png").c_str(), true, false);
 //	Texture  planeTex(FileSystem::getPath("resources/textures/marble.jpg").c_str(), true, false);
+//	//Texture  texGrass(FileSystem::getPath("resources/textures/grass.png").c_str(), false, false);
+//	Texture  texWindows(FileSystem::getPath("resources/textures/window.png").c_str(), false, false);
 //
 //
 //	texContainer.SetTexNameInShader(cubeShader.getID(), "material.diffuse");
 //	planeTex.SetTexNameInShader(cubeShader.getID(), "material.diffuse");
 //	texContainerSpec.SetTexNameInShader(cubeShader.getID(), "material.specular");
-//	
+//	texWindows.SetTexNameInShader(blendlingTestShader.getID(), "texture1");
+//
 //	std::vector<Texture>  textures{ texContainer, texContainerSpec };
 //	Mesh  cubeMesh(cubeVAO, textures);
 //
-//	std::vector<Texture>   temp;
-//	Mesh  cubeOutline(cubeVAO, temp);
-//
-//
 //	std::vector<Texture>   pTexs{ planeTex };
 //	Mesh  planeMesh(planeVAO, pTexs);
+//
+//	//std::vector<Texture>   grassT{ texGrass };
+//	//Mesh  quadGrass(planeGrassVAO, grassT);
+//
+//	std::vector<Texture>   grassT{ texWindows };
+//	Mesh  quadGrass(planeGrassVAO, grassT);
+//
 //
 //	auto initOp = new LambdaOp([]() {
 //		glEnable(GL_DEPTH_TEST);
 //		glDepthFunc(GL_LESS);
 //
-//		glEnable(GL_STENCIL_TEST);
-//		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-//		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+//
+//		//glEnable(GL_STENCIL_TEST);
+//		//glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+//		//glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+//
+//		//开启混合模式
+//		glEnable(GL_BLEND);
+//		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//		glBlendEquation(GL_FUNC_ADD);
+//
+//		//开启背面剔除
+//		glEnable(GL_CULL_FACE);
+//		glCullFace(GL_BACK);
+//		glFrontFace(GL_CCW); // gl_ccw 代表的是逆时针的环绕方式
 //
 //	}, false);
 //
@@ -126,51 +144,52 @@
 //
 //	settingEnvir->Run();
 //
+//	//开始绘制透明物体, 需要对物体到相机的距离做一个排序		//强制改变排序方式
+//	std::function<bool(const float &, const float &)>   com_greater([](const float & f1, const float &f2)->bool {
+//		if (f1 < f2)
+//			return false;
+//		else
+//			return true;
+//	});
 //	auto geomtryOp = new  LambdaOp([&]() {
 //		glStencilMask(0xFF); // 清除模板缓冲必须配合mask， 启用模板缓冲写入
 //		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 //		glClearColor(0.7, 0.8, 0.9, 1.0);
-//		//glClearStencil(0);
 //		glEnable(GL_DEPTH_TEST);
 //
 //
 //		cubeShader.use();
-//		// world position  and  matrix transform
+//		// 首先绘制不透明物体
 //		glm::mat4 model = glm::mat4(1.0f);
 //		cubeShader.setMat4("model", model);
 //		cubeShader.setMat4("projection", mainCamera.GetProjectionMatrix());
 //		cubeShader.setMat4("view", mainCamera.GetViewMatrix());
 //		cubeShader.setVec3("viewPos", mainCamera.GetPos());
-//
-//
-//		//glStencilFunc(GL_ALWAYS, 1, 0xFF);
-//		glStencilMask(0x00);
 //		planeMesh.Draw(cubeShader);
-//
-//		////第一遍用来初始化 模板缓冲
-//		glStencilFunc(GL_ALWAYS, 1, 0xFF);
-//		//glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-//		glStencilMask(0xFF);
 //		cubeMesh.Draw(cubeShader);
 //
-//		////第二遍开始缩放后开始绘制边框
-//		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-//		glStencilMask(0x00);
-//		glDisable(GL_DEPTH_TEST);
-//		float scale = 1.1f;
-//		model = glm::scale(model, glm::vec3(scale, scale, scale));
-//		cubeOutlineShader.use();
-//		cubeOutlineShader.setMat4("model", model);
-//		cubeOutlineShader.setMat4("projection", mainCamera.GetProjectionMatrix());
-//		cubeOutlineShader.setMat4("view", mainCamera.GetViewMatrix());
-//		cubeOutlineShader.setVec3("viewPos", mainCamera.GetPos());
-//		//cubeVAO.Use();
-//		cubeOutline.Draw(cubeOutlineShader);
 //
+//		std::map<float, glm::vec3, std::function<bool(const float &, const float &)> > stored(com_greater);
+//		for (auto & vecIter : Translation)
+//		{
+//			float distanceC2G = glm::distance(mainCamera.GetPos(), vecIter);
+//			stored.insert(std::pair<float, glm::vec3>(distanceC2G, vecIter));
+//		}
 //
-//		//恢复现场
-//		glEnable(GL_DEPTH_TEST);// 启用模板缓冲写入
+//		blendlingTestShader.use();
+//		blendlingTestShader.setMat4("projection", mainCamera.GetProjectionMatrix());
+//		blendlingTestShader.setMat4("view", mainCamera.GetViewMatrix());
+//		blendlingTestShader.setVec3("viewPos", mainCamera.GetPos());
 //
+//		glm::mat4  tmpModel(1.0f);
+//		for (auto vecIter : stored)
+//		{
+//			tmpModel = glm::mat4(1.0f);
+//			glm::vec3  tmp(vecIter.second);
+//			tmpModel = glm::translate(tmpModel, tmp);
+//			blendlingTestShader.setMat4("model", tmpModel);
+//			quadGrass.Draw(blendlingTestShader);
+//		}
 //	});
 //
 //

@@ -3,6 +3,7 @@
 #include <exception>
 
 using namespace std;
+using namespace Oper;
 
 unsigned int TextureFromFile(const char* path, const std::string & directory, bool gamma = false);
 

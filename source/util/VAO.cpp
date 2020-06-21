@@ -6,7 +6,7 @@
 #include <iostream>
 
 using namespace std;
-using namespace LOGL;
+using namespace OpenGL;
 
 
 
@@ -24,10 +24,16 @@ VAO::VAO(float const * data, unsigned int dataSize, const std::vector<unsigned i
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, dataSize, data, GL_STATIC_DRAW);
+	VBOs.push_back(VBO);
+
 	unsigned int patchLen = 0;
 	for (auto & len : attrLen)
 		patchLen += len;
-	for (unsigned int i = 0, accu = 0; i < attrLen.size(); i++) {
+	for (unsigned int i = 0, accu = 0; i < attrLen.size(); i++) 
+	{
+		if (attrLen[i] == 0)
+			continue;
+
 		glVertexAttribPointer(i, attrLen[i], GL_FLOAT, GL_FALSE, patchLen * sizeof(float), (void*)(accu * sizeof(float)));
 		glEnableVertexAttribArray(i);
 		accu += attrLen[i];
@@ -68,6 +74,8 @@ VAO::VAO(const std::vector<VBO_DataPatch> & vec_VBO_DataPatch, const std::vector
 		glEnableVertexAttribArray(i);
 		if (divisors.size() != 0 && divisors[i] > 0)
 			glVertexAttribDivisor(i, divisors[i]);
+
+		VBOs.push_back(VBO);
 	}
 	//按照没有索引的情况设置 pointNum
 	this->pointNum = vec_VBO_DataPatch[0].dataSize / (sizeof(float) * vec_VBO_DataPatch[0].attrLen);
@@ -82,6 +90,44 @@ VAO::VAO(const std::vector<VBO_DataPatch> & vec_VBO_DataPatch, unsigned int cons
 		hasIndex = true;
 		isValid = GenBindEBO(index, indexSize);
 	}
+}
+
+//------------
+//unsigned int attrNum;
+//unsigned int ID;
+//unsigned int pointNum;
+//bool hasIndex;
+//bool isValid;
+OpenGL::VAO::VAO(const VAO& rhs)
+{
+	this->attrNum = rhs.attrNum;
+	this->ID = rhs.ID;
+	this->pointNum = rhs.pointNum;
+	this->hasIndex = rhs.hasIndex;
+	this->isValid = rhs.isValid;
+}
+
+OpenGL::VAO::~VAO()
+{
+	if (isValid && ID)
+	{
+		glDeleteVertexArrays(1, &ID);
+		for (int i = 0; i < VBOs.size(); i++ )
+		{
+			unsigned int bIndex = VBOs[i];
+			glDeleteBuffers(1, &bIndex);
+		}
+	}
+}
+
+unsigned int OpenGL::VAO::Size() const
+{
+	return this->pointNum;
+}
+
+bool OpenGL::VAO::indexValid() const
+{
+	return this->hasIndex;
 }
 
 bool VAO::GenBindEBO(unsigned int const * index, unsigned int indexSize) {
@@ -119,8 +165,7 @@ bool VAO::Draw() const {
 	if (hasIndex)
 		glDrawElements(GL_TRIANGLES, pointNum, GL_UNSIGNED_INT, NULL);
 	else
-	{
 		glDrawArrays(GL_TRIANGLES, 0, pointNum);
-		cout << pointNum << endl;
-	}
+
+	return true;
 }

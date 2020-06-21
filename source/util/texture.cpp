@@ -6,42 +6,58 @@
 #include "stb_image.h"
 
 
-using namespace LOGL;
+using namespace OpenGL;
 using namespace Oper;
 using namespace std;
  
 
 const Texture Texture::InValid(0, ENUM_TYPE_NOT_VALID);
 
-LOGL::Texture::Texture(unsigned int ID /*= 0*/, ENUM_TYPE type /*= ENUM_TYPE_2D*/) : ID(ID), type(type) { };
+OpenGL::Texture::Texture(unsigned int ID /*= 0*/, ENUM_TYPE type /*= ENUM_TYPE_2D*/) : textureID(ID), type(type)
+{
+	this->SetWrapping();
+	this->SetFiltering();
+};
 
-LOGL::Texture::Texture(const std::vector<std::string> & skybox)
+OpenGL::Texture::Texture(const std::vector<std::string> & skybox)
 {
 	type = ENUM_TYPE_NOT_VALID;
+	GL_Type = 0;
 	Load(skybox);
+
+	this->SetWrapping();
+	this->SetFiltering();
 }
 
-LOGL::Texture::Texture(ENUM_TYPE type) : Texture(0, type) { }
+OpenGL::Texture::Texture(ENUM_TYPE type) : Texture(0, type) { }
 
-LOGL::Texture::Texture(const std::string & path, bool flip /*= false*/, bool gammaCorrection /*= false*/)
+OpenGL::Texture::Texture(const std::string & path, bool flip /*= false*/, bool gammaCorrection /*= false*/)
 {
 	type = ENUM_TYPE_NOT_VALID;
+	GL_Type = 0;
 	Load(path, flip, gammaCorrection);
+
+	this->SetWrapping();
+	this->SetFiltering();
 }
 
-LOGL::Texture::Texture(unsigned int width, unsigned int height, float const* data, unsigned int dataType, unsigned int srcFormat, unsigned int internalFormat)
+OpenGL::Texture::Texture(unsigned int width, unsigned int height, float const* data, unsigned int dataType, unsigned int srcFormat, unsigned int internalFormat)
 {
-	glGenTextures(1, &ID);
-	glBindTexture(GL_TEXTURE_2D, ID);
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, srcFormat, dataType, data);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	type = ENUM_TYPE_2D;
+	GL_Type = GL_TEXTURE_2D;
+
+	this->SetWrapping();
+	this->SetFiltering();
 }
 
-bool LOGL::Texture::Load(const std::string & path, bool flip /*= false*/, bool gammaCorrection /*= false*/, unsigned int desiredChannel /*= 0*/)
+bool OpenGL::Texture::Load(const std::string & path, bool flip /*= false*/, bool gammaCorrection /*= false*/, unsigned int desiredChannel /*= 0*/)
 {
 	if (IsValid())
 	{
@@ -59,6 +75,7 @@ bool LOGL::Texture::Load(const std::string & path, bool flip /*= false*/, bool g
 	{
 		printf("texture load failed, filepath = %s", path.c_str());
 		type = ENUM_TYPE_NOT_VALID;
+		GL_Type = 0;
 		return false;
 	}
 	GLenum internalFormat;
@@ -76,31 +93,33 @@ bool LOGL::Texture::Load(const std::string & path, bool flip /*= false*/, bool g
 		dataFormat = GL_RGBA;
 	}
 
-	glGenTextures(1, &ID);
-	glBindTexture(GL_TEXTURE_2D, ID);
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, glWrapS);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, glWrapT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, glMinfilter);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, glMaxFilter);
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 	type = ENUM_TYPE_2D;
+	GL_Type = GL_TEXTURE_2D;
 	//Opengl时时刻刻记住要解绑， 不然会被坑死， 很难Debug
 	this->UnBind();
+
 	return true;
 }
 
-bool LOGL::Texture::SetImage(const Oper::Image & image)
+bool OpenGL::Texture::SetImage(const Oper::Image & image)
 {
 	if (type != ENUM_TYPE_2D_DYNAMIC) {
 		printf("ERROR: type[%s] can't set image\n", Type2Str(type).c_str());
 		return false;
 	}
 
-	if (ID == 0)
-		glGenTextures(1, &ID);
+	if (textureID == 0)
+		glGenTextures(1, &textureID);
 
 	GLenum format;
 	int nrComponents = image.GetChannel();
@@ -111,43 +130,74 @@ bool LOGL::Texture::SetImage(const Oper::Image & image)
 	else if (nrComponents == 4)
 		format = GL_RGBA;
 
-	glBindTexture(GL_TEXTURE_2D, ID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexImage2D(GL_TEXTURE_2D, 0, format, image.GetWidth(), image.GetHeight(), 0, format, GL_UNSIGNED_BYTE, image.GetConstData());
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, glMinfilter);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, glMaxFilter);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, glWrapS);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, glWrapT);
 	UnBind();
 }
 
-bool LOGL::Texture::Use(unsigned int id /* = 0 */) const
+void OpenGL::Texture::SetWrapping(unsigned int wrap_s /*= GL_REPEAT*/, unsigned int wrap_t /*= GL_REPEAT*/)
+{
+	glWrapS = wrap_s;
+	wrap_t = wrap_t;
+}
+
+void OpenGL::Texture::SetFiltering(unsigned int minFilter /*= GL_NEAREST*/, unsigned int maxFilter /*= GL_LINEAR*/)
+{
+	glMinfilter = minFilter;
+	glMaxFilter = maxFilter;
+}
+
+bool OpenGL::Texture::Use(unsigned int id /* = 0 */) const
 {
 	if (!IsValid())
 		return false;
 
 	glActiveTexture(GL_TEXTURE0 + id);
-	glBindTexture(Type2GL(type), ID);
+	glBindTexture(Type2GL(type), textureID);
 	return true;
 }
 
-void LOGL::Texture::UnBind()
+void OpenGL::Texture::UnBind()
 {
 	if (!IsValid())
 		return;
 	glBindTexture(Type2GL(type), 0);
 }
 
-bool LOGL::Texture::GetID() const
+bool OpenGL::Texture::GetID() const
 {
-	return ID;
+	return textureID;
 }
 
-bool LOGL::Texture::IsValid() const
+unsigned int OpenGL::Texture::getGLType() const
 {
-	return ID != 0 && type != ENUM_TYPE_NOT_VALID;
+	return this->GL_Type;
 }
 
-unsigned int LOGL::Texture::Type2GL(ENUM_TYPE type)
+bool OpenGL::Texture::IsValid() const
+{
+	return textureID != 0 && type != ENUM_TYPE_NOT_VALID;
+}
+
+
+void OpenGL::Texture::SetName(const std::string& texname)
+{
+	if (IsValid())
+	{
+		this->m_TexName = texname;
+	}
+}
+
+std::string OpenGL::Texture::getName() const
+{
+	return m_TexName;
+}
+
+unsigned int OpenGL::Texture::Type2GL(ENUM_TYPE type)
 {
 	switch (type)
 	{
@@ -163,7 +213,7 @@ unsigned int LOGL::Texture::Type2GL(ENUM_TYPE type)
 	}
 }
 
-std::string LOGL::Texture::Type2Str(ENUM_TYPE type)
+std::string OpenGL::Texture::Type2Str(ENUM_TYPE type)
 {
 	switch (type)
 	{
@@ -180,7 +230,7 @@ std::string LOGL::Texture::Type2Str(ENUM_TYPE type)
 	}
 }
 
-bool LOGL::Texture::Load(const std::vector<std::string> & skybox)
+bool OpenGL::Texture::Load(const std::vector<std::string> & skybox)
 {
 	if (IsValid()) {
 		printf("ERROR: The texture is valid already.\n");
@@ -188,8 +238,8 @@ bool LOGL::Texture::Load(const std::vector<std::string> & skybox)
 		return false;
 	}
 
-	glGenTextures(1, &ID);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, ID);
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 	
 	int width;
 	int height;
@@ -203,6 +253,7 @@ bool LOGL::Texture::Load(const std::vector<std::string> & skybox)
 		{
 			printf("Cubemap texture failed to load at path: %s\n", skybox[i].c_str());
 			type = ENUM_TYPE_NOT_VALID;
+			GL_Type = 0;
 			return false;
 		}
 		
@@ -211,11 +262,13 @@ bool LOGL::Texture::Load(const std::vector<std::string> & skybox)
 
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//包围盒设置
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-	type = ENUM_TYPE_2D;
+	type = ENUM_TYPE_CUBE_MAP;
+	GL_Type = GL_TEXTURE_CUBE_MAP;
 	UnBind();
 	return true;
 }

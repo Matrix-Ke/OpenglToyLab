@@ -10,50 +10,68 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "util/shader.h"
+#include "util/texture.h"
+#include "util/VAO.h"
 
 
-
-
-
-
-struct VertexInfo
+namespace Oper
 {
-	glm::vec3	Position;
-	glm::vec3	Normal;
-	glm::vec2	TexCoords;
-	glm::vec3	Tangent;
-	glm::vec3	Bitangent;
-};
+	struct VertexInfo
+	{
+		glm::vec3	Position;
+		glm::vec3	Normal;
+		glm::vec2	TexCoords;
+		glm::vec3	Tangent;
+		glm::vec3	Bitangent;
+	};
 
 
-struct TextureInfo
-{
-	unsigned int id;
-	std::string	type;
-	std::string	path;
-};
+	struct TextureInfo
+	{
+		unsigned int id;
+		std::string	type;
+		std::string	path;
+	};
 
-class Mesh 
-{
-	
-public:
+	class Mesh
+	{
+	public:
+		Mesh(bool mIsVaild = false);
+		Mesh(std::vector<VertexInfo>& vertices, std::vector<unsigned int>& indices, std::vector<TextureInfo>& mTexs);
 
-	std::vector<VertexInfo>	vertices;
+		Mesh(OpenGL::VAO & mVao, const std::vector< OpenGL::Texture>  &  mTexs);
 
-	std::vector<unsigned int>	indices;
-	std::vector<TextureInfo>	   textures;
-	unsigned int		VAO;
+		Mesh(OpenGL::VAO & mVao, const OpenGL::Texture  &  mTexs);
 
+		//draw mesh
+		void Draw(Shader shader);
 
-	Mesh(std::vector<VertexInfo>& vertices, std::vector<unsigned int>& indices, std::vector<TextureInfo>& textures);
-
-	//draw mesh
-	void Draw(Shader shader);
+		bool indexValid() const;
 
 
+	private:
+		void setupMesh();
 
-private:
-	unsigned int VBO, EBO;
 
-	void setupMesh();
-};
+	public:
+		std::vector<VertexInfo>		vertices;
+		std::vector<unsigned int>	indices;
+		std::vector<TextureInfo>	textures;
+
+
+	private:
+		std::vector<OpenGL::Texture>	mTextures;
+
+		unsigned int	VAO;
+		unsigned int	EBO;
+		unsigned int	pointNum;
+
+		bool			hasIndex;
+		bool			isValid;
+		bool			isCommonTextureName;
+
+	};
+}
+
+
+
