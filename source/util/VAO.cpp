@@ -6,7 +6,7 @@
 #include <iostream>
 
 using namespace std;
-using namespace LOGL;
+using namespace OpenGL;
 
 
 
@@ -98,7 +98,7 @@ VAO::VAO(const std::vector<VBO_DataPatch> & vec_VBO_DataPatch, unsigned int cons
 //unsigned int pointNum;
 //bool hasIndex;
 //bool isValid;
-LOGL::VAO::VAO(const VAO& rhs)
+OpenGL::VAO::VAO(const VAO& rhs)
 {
 	this->attrNum = rhs.attrNum;
 	this->ID = rhs.ID;
@@ -107,7 +107,7 @@ LOGL::VAO::VAO(const VAO& rhs)
 	this->isValid = rhs.isValid;
 }
 
-LOGL::VAO::~VAO()
+OpenGL::VAO::~VAO()
 {
 	if (isValid && ID)
 	{
@@ -120,12 +120,12 @@ LOGL::VAO::~VAO()
 	}
 }
 
-unsigned int LOGL::VAO::Size() const
+unsigned int OpenGL::VAO::Size() const
 {
 	return this->pointNum;
 }
 
-bool LOGL::VAO::indexValid() const
+bool OpenGL::VAO::indexValid() const
 {
 	return this->hasIndex;
 }

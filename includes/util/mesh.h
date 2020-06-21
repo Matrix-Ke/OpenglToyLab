@@ -39,7 +39,9 @@ namespace Oper
 		Mesh(bool mIsVaild = false);
 		Mesh(std::vector<VertexInfo>& vertices, std::vector<unsigned int>& indices, std::vector<TextureInfo>& mTexs);
 
-		Mesh(LOGL::VAO & mVao, std::vector< LOGL::Texture>  &  mTextures);
+		Mesh(OpenGL::VAO & mVao, const std::vector< OpenGL::Texture>  &  mTexs);
+
+		Mesh(OpenGL::VAO & mVao, const OpenGL::Texture  &  mTexs);
 
 		//draw mesh
 		void Draw(Shader shader);
@@ -58,7 +60,7 @@ namespace Oper
 
 
 	private:
-		std::vector<LOGL::Texture>	mTextures;
+		std::vector<OpenGL::Texture>	mTextures;
 
 		unsigned int	VAO;
 		unsigned int	EBO;

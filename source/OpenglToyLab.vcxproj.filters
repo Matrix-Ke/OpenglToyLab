@@ -138,6 +138,9 @@
     <ClCompile Include="4.advanced_opengl\framebuffers.cpp">
       <Filter>Source Files\4.advanced_opengl</Filter>
     </ClCompile>
+    <ClCompile Include="util\fbo.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\includes\util\camera.h">
@@ -202,6 +205,9 @@
     </ClInclude>
     <ClInclude Include="..\includes\util\texture.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\util\fbo.h">
+      <Filter>oper</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

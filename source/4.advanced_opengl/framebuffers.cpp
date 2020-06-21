@@ -22,9 +22,10 @@
 #include "util/VAO.h"
 #include "util/model.h"
 #include "util/camera.h"
+#include "util/fbo.h"
 
 
-using namespace LOGL;
+using namespace OpenGL;
 using namespace Oper;
 using namespace Define;
 using namespace std;
@@ -60,63 +61,26 @@ int main()
 	Texture  planeTex(FileSystem::getPath("resources/textures/marble.jpg").c_str(), true, false);
 
 
-
-	texContainer.SetTexNameInShader(cubeShader.getID(), "material.diffuse");
-	planeTex.SetTexNameInShader(cubeShader.getID(), "material.diffuse");
-	texContainerSpec.SetTexNameInShader(cubeShader.getID(), "material.specular");
+	texContainer.SetName("material.diffuse");
+	planeTex.SetName("material.diffuse");
+	texContainerSpec.SetName("material.specular");
 
 
 	std::vector<Texture>  textures{ texContainer, texContainerSpec };
 	Mesh  cubeMesh(cubeVAO, textures);
-
-	std::vector<Texture>   pTexs{ planeTex };
-	Mesh  planeMesh(planeVAO, pTexs);
+	Mesh  planeMesh(planeVAO, planeTex);
 
 
-
-
-	//创建帧缓冲， 
-	unsigned int framebufferID;
-	glGenFramebuffers(1, &framebufferID);
-	glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
-	//创建纹理附件
-	unsigned int texColorBufferID;
-	glGenTextures(1, &texColorBufferID);
-	glBindTexture(GL_TEXTURE_2D, texColorBufferID);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	//将纹理附加到帧缓冲上
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE0, texColorBufferID);
-
-	//创建渲染缓冲对象
-	unsigned int rbo;
-	glGenRenderbuffers(1, &rbo);
-	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
-
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-	{
-		cout << "error: framebuffer is not complete \n";
-	}
-	//记得及时解除缓冲绑定
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-
-	//Texture  texFramebuffer(texColorBufferID, Texture::ENUM_TYPE::ENUM_TYPE_2D);
-	//texFramebuffer.SetTexNameInShader(framebufferShader.getID(), "texture1");
-	//std::vector<Texture>   Tframe{ texFramebuffer };
-	//Mesh  meshFrame(framebufferVAO, Tframe);
+	FBO   frameBuffer(SCR_WIDTH, SCR_HEIGHT);
+	Texture   fboColorTexture = frameBuffer.GetColorTexture(0);
+	fboColorTexture.SetName("texture1");
+	Mesh    meshFbo(framebufferVAO, fboColorTexture);
 
 
 	auto initOp = new LambdaOp([]() {
+		//开启深度测试
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LESS);
-
-		//glEnable(GL_STENCIL_TEST);
-		//glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-		//glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
 		//开启混合模式
 		glEnable(GL_BLEND);
@@ -172,12 +136,10 @@ int main()
 
 	auto geomtryOp = new  LambdaOp([&]() {
 
-		glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
+		frameBuffer.Use();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 		glClearColor(0.7, 0.8, 0.9, 1.0);
 		glEnable(GL_DEPTH_TEST);
-
-
 
 		cubeShader.use();
 		// 首先绘制不透明物体
@@ -202,11 +164,8 @@ int main()
 
 		planeMesh.Draw(cubeShader);
 		cubeMesh.Draw(cubeShader);
-		framebufferShader.setInt("texture1", 0);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texColorBufferID);
-		framebufferVAO.Draw();
 
+		meshFbo.Draw(framebufferShader);
 	});
 
 

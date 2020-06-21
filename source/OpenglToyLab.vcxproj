@@ -43,6 +43,7 @@
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="util\camera.cpp" />
     <ClCompile Include="util\commonUtil.cpp" />
+    <ClCompile Include="util\fbo.cpp" />
     <ClCompile Include="util\Image.cpp" />
     <ClCompile Include="util\mesh.cpp" />
     <ClCompile Include="util\model.cpp" />
@@ -57,6 +58,7 @@
     <ClInclude Include="..\includes\util\camera.h" />
     <ClInclude Include="..\includes\util\commonUtil.h" />
     <ClInclude Include="..\includes\util\eventManager.h" />
+    <ClInclude Include="..\includes\util\fbo.h" />
     <ClInclude Include="..\includes\util\filesystem.h" />
     <ClInclude Include="..\includes\util\GStorage.H" />
     <ClInclude Include="..\includes\util\Image.h" />

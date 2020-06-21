@@ -15,7 +15,7 @@
 
 
 using namespace Oper;
-using namespace LOGL;
+using namespace OpenGL;
 using namespace Define;
 using namespace std;
 

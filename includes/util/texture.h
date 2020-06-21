@@ -4,7 +4,7 @@
 #include "glad/glad.h"
 #include "util/Image.h"
 
-namespace LOGL
+namespace OpenGL
 {
 	class Texture
 	{
@@ -33,7 +33,7 @@ namespace LOGL
 
 		void SetFiltering(unsigned int minFilter = GL_NEAREST, unsigned int maxFilter = GL_LINEAR);
 
-		bool Use(unsigned int id /* = 0 */)  const;
+		bool Use(unsigned int id /* = 0 */) const;
 
 		void UnBind();
 
@@ -43,11 +43,13 @@ namespace LOGL
 
 		bool IsValid()  const;
 
-		void SetTexNameInShader(unsigned int program, const std::string& texname);
+		void SetName(const std::string& texname);
+
+		std::string  getName() const;
 
 
+	public:
 		static const Texture  InValid;
-
 
 	private:
 		static unsigned int Type2GL(ENUM_TYPE type);
@@ -55,9 +57,8 @@ namespace LOGL
 
 
 	private:
-		std::string  nameInShader;
-		unsigned int shaderID;
-		unsigned int ID;
+		std::string  m_TexName;
+		unsigned int textureID;
 		int channel;
 		ENUM_TYPE type;
 

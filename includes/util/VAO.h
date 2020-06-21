@@ -1,7 +1,7 @@
 #pragma once
 #include<vector>
 
-namespace LOGL {
+namespace OpenGL {
 	class VAO {
 	public:
 		struct VBO_DataPatch{

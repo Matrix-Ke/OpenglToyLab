@@ -5,7 +5,7 @@
 #include <iostream>
 #include "util/GStorage.H"
 
-using namespace LOGL;
+using namespace OpenGL;
 using namespace Oper;
 using namespace std;
 
@@ -122,12 +122,12 @@ void Glfw::LoadGL() {
 	}
 }
 
-void LOGL::Glfw::CloseWindow()
+void OpenGL::Glfw::CloseWindow()
 {
 	glfwSetWindowShouldClose(window, true);
 }
 
-int LOGL::Glfw::GetKey(int key)
+int OpenGL::Glfw::GetKey(int key)
 {
 	return glfwGetKey(window, key);
 }

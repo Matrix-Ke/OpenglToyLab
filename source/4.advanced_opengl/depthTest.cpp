@@ -23,7 +23,7 @@
 //#include "util/camera.h"
 //
 //
-//using namespace LOGL;
+//using namespace OpenGL;
 //using namespace Oper;
 //using namespace Define;
 //using namespace std;

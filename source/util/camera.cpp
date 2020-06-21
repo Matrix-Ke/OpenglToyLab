@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-using namespace LOGL;
+using namespace OpenGL;
 using namespace std;
 
 const float Camera::RATIO_WH = 1.0f;
@@ -95,7 +95,7 @@ void Camera::ProcessKeyboard(ENUM_Movement direction, float deltaTime)
 glm::mat4 Camera::GetViewMatrix() 
 {
 	glm::vec3 temp = Position + Front;
-	//cout << "LOGL::Camera::GetViewMatrix = " << temp[0] << " " << temp[1] << "  " << temp[2] << endl;
+	//cout << "OpenGL::Camera::GetViewMatrix = " << temp[0] << " " << temp[1] << "  " << temp[2] << endl;
 	return glm::lookAt(Position, Position + Front, Up);
 }
 
@@ -126,11 +126,11 @@ void Camera::updateCameraVectors()
 glm::mat4 Camera::GetProjectionMatrix() {
 	switch (projectionMode)
 	{
-	case LOGL::Camera::PROJECTION_PERSEPCTIVE:
-		//cout << "LOGL::Camera::PROJECTION_PERSEPCTIVE = " << Zoom << endl;
+	case OpenGL::Camera::PROJECTION_PERSEPCTIVE:
+		//cout << "OpenGL::Camera::PROJECTION_PERSEPCTIVE = " << Zoom << endl;
 		return glm::perspective(glm::radians(Zoom), rationWH, nearPlane, farPlane);
 		break;
-	case LOGL::Camera::PROJECTION_ORTHO:
+	case OpenGL::Camera::PROJECTION_ORTHO:
 		return glm::ortho(-Zoom / 4.0f, Zoom / 4.0f, -Zoom / 4.0f / rationWH, Zoom / 4.0f / rationWH, nearPlane, farPlane);
 		break;
 	default:

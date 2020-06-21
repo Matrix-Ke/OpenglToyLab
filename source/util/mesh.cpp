@@ -20,7 +20,7 @@ Mesh::Mesh(vector<VertexInfo>& vertices, vector<unsigned int>& indices, vector<T
 	setupMesh();
 }
 
-Oper::Mesh::Mesh(LOGL::VAO & mVao, std::vector< LOGL::Texture> & mTexs)
+Oper::Mesh::Mesh(OpenGL::VAO & mVao, const std::vector< OpenGL::Texture> & mTexs)
 {
 	if (!mVao.IsValid())
 	{
@@ -37,6 +37,25 @@ Oper::Mesh::Mesh(LOGL::VAO & mVao, std::vector< LOGL::Texture> & mTexs)
 	//setting texture
 	this->isCommonTextureName = false;
 	this->mTextures = mTexs;
+}
+
+Oper::Mesh::Mesh(OpenGL::VAO & mVao, const OpenGL::Texture & mTexs)
+{
+	if (!mVao.IsValid())
+	{
+		return;
+	}
+
+	this->VAO = mVao.GetID();
+	this->EBO = 0;
+	this->pointNum = mVao.Size();
+	this->hasIndex = mVao.indexValid();
+
+	this->isValid = true;
+
+	//setting texture
+	this->isCommonTextureName = false;
+	this->mTextures = std::vector< OpenGL::Texture>{ mTexs };
 }
 
 bool Oper::Mesh::indexValid() const
@@ -79,6 +98,7 @@ void Mesh::Draw(Shader shader)
 		for (unsigned int i = 0; i < mTextures.size(); i++)
 		{
 			auto&  tTex = mTextures[i];
+			shader.setInt(tTex.getName(), i);
 			tTex.Use(i);
 		}
 	}
