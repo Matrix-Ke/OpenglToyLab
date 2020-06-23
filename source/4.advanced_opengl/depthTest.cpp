@@ -60,9 +60,9 @@
 //	Texture  planeTex(FileSystem::getPath("resources/textures/marble.jpg").c_str(), true, false);
 //
 //
-//	texContainer.SetTexNameInShader(cubeShader.getID(), "material.diffuse");
-//	planeTex.SetTexNameInShader(cubeShader.getID(), "material.diffuse");
-//	texContainerSpec.SetTexNameInShader(cubeShader.getID(), "material.specular");
+//	texContainer.SetName( "material.diffuse");
+//	planeTex.SetName( "material.diffuse");
+//	texContainerSpec.SetName( "material.specular");
 //	
 //	std::vector<Texture>  textures{ texContainer, texContainerSpec };
 //	Mesh  cubeMesh(cubeVAO, textures);

@@ -26,6 +26,7 @@
     <ClCompile Include="2.lighting\multipleLights.cpp" />
     <ClCompile Include="3.model_loading\modelLoading.cpp" />
     <ClCompile Include="4.advanced_opengl\blending_discard.cpp" />
+    <ClCompile Include="4.advanced_opengl\cubeMaps.cpp" />
     <ClCompile Include="4.advanced_opengl\depthTest.cpp" />
     <ClCompile Include="4.advanced_opengl\face_culling.cpp" />
     <ClCompile Include="4.advanced_opengl\framebuffers.cpp" />
@@ -82,6 +83,8 @@
     <None Include="shader\advancedOpengl\depthTest.fs" />
     <None Include="shader\advancedOpengl\framebuffer.fs" />
     <None Include="shader\advancedOpengl\framebuffer.vs" />
+    <None Include="shader\advancedOpengl\skyBox.fs" />
+    <None Include="shader\advancedOpengl\skyBox.vs" />
     <None Include="shader\advancedOpengl\stencilTest.fs" />
     <None Include="shader\advancedOpengl\stencilTest.vs" />
     <None Include="shader\getting_started\camera.fs" />
