@@ -77,10 +77,13 @@
     <ClInclude Include="..\includes\util\VAO.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram.cd" />
     <None Include="shader\advancedOpengl\blending_discard.fs" />
     <None Include="shader\advancedOpengl\blending_discard.vs" />
     <None Include="shader\advancedOpengl\depthTest.vs" />
     <None Include="shader\advancedOpengl\depthTest.fs" />
+    <None Include="shader\advancedOpengl\environmentMapping.fs" />
+    <None Include="shader\advancedOpengl\environmentMapping.vs" />
     <None Include="shader\advancedOpengl\framebuffer.fs" />
     <None Include="shader\advancedOpengl\framebuffer.vs" />
     <None Include="shader\advancedOpengl\skyBox.fs" />

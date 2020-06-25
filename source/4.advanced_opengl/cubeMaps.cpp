@@ -23,6 +23,7 @@
 #include "util/model.h"
 #include "util/camera.h"
 #include "util/fbo.h"
+#include "util/model.h"
 
 
 using namespace OpenGL;
@@ -38,7 +39,7 @@ int main()
 {
 	// glfw: initialize and configure
 	Glfw::GetInstance()->Init(SCR_WIDTH, SCR_HEIGHT, windowTitle.c_str());
-	//Glfw::GetInstance()->LockCursor();
+	Glfw::GetInstance()->LockCursor();
 
 
 
@@ -55,11 +56,11 @@ int main()
 
 	Shader cubeShader("./shader/advancedOpengl/depthTest.vs", "./shader/advancedOpengl/depthTest.fs");
 	Shader skyBoxShader("./shader/advancedOpengl/skyBox.vs", "./shader/advancedOpengl/skyBox.fs");
+	Shader  envirMappingShader("./shader/advancedOpengl/environmentMapping.vs", "./shader/advancedOpengl/environmentMapping.fs");
 
 	Texture  texContainer(FileSystem::getPath("resources/textures/container2.png").c_str(), true, false);
 	Texture  texContainerSpec(FileSystem::getPath("resources/textures/container2_specular.png").c_str(), true, false);
 	Texture  planeTex(FileSystem::getPath("resources/textures/marble.jpg").c_str(), true, false);
-
 	vector<std::string> faces
 	{
 		FileSystem::getPath("resources/textures/skybox/right.jpg"),
@@ -72,16 +73,18 @@ int main()
 	Texture		skyBoxTexture(faces);
 
 
-
 	texContainer.SetName("material.diffuse");
 	texContainerSpec.SetName("material.specular");
 	planeTex.SetName("material.diffuse");
 	skyBoxTexture.SetName("skybox");
 
+
 	std::vector<Texture>  textures{ texContainer, texContainerSpec };
 	Mesh  cubeMesh(cubeVAO, textures);
 	Mesh  planeMesh(planeVAO, planeTex);
 	Mesh    meshSkybox(skyboxVAO, skyBoxTexture);
+
+	Model personModel(FileSystem::getPath("resources/objects/nanosuit/nanosuit.obj"));
 
 
 	auto initOp = new LambdaOp([]() {
@@ -152,8 +155,8 @@ int main()
 		cubeShader.setMat4("view", mainCamera.GetViewMatrix());
 		cubeShader.setVec3("viewPos", mainCamera.GetPos());
 		planeMesh.Draw(cubeShader);
-		cubeMesh.Draw(cubeShader);
-
+		//cubeMesh.Draw(cubeShader);
+//
 
 
 		skyBoxShader.use();
@@ -168,6 +171,14 @@ int main()
 		meshSkybox.Draw(skyBoxShader);
 		//恢复默认值
 		glDepthFunc(GL_LESS); 
+		envirMappingShader.use();
+		glm::mat4   tmpModel = glm::translate(model, glm::vec3(0.0, -0.3, 4.0));
+		tmpModel = glm::scale(tmpModel, glm::vec3(0.05, 0.05, 0.05));
+		envirMappingShader.setMat4("view",mainCamera.GetViewMatrix());
+		envirMappingShader.setMat4("projection", mainCamera.GetProjectionMatrix());
+		envirMappingShader.setVec3("viewPos", mainCamera.GetPos());
+		envirMappingShader.setMat4("model", tmpModel);
+		personModel.Draw(envirMappingShader);
 
 	});
 

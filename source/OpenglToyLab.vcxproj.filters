@@ -286,5 +286,12 @@
     <None Include="shader\advancedOpengl\skyBox.vs">
       <Filter>Source Files\shader\advancedOpengl</Filter>
     </None>
+    <None Include="ClassDiagram.cd" />
+    <None Include="shader\advancedOpengl\environmentMapping.fs">
+      <Filter>Source Files\shader\advancedOpengl</Filter>
+    </None>
+    <None Include="shader\advancedOpengl\environmentMapping.vs">
+      <Filter>Source Files\shader\advancedOpengl</Filter>
+    </None>
   </ItemGroup>
 </Project>
