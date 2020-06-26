@@ -39,7 +39,7 @@ int main()
 {
 	// glfw: initialize and configure
 	Glfw::GetInstance()->Init(SCR_WIDTH, SCR_HEIGHT, windowTitle.c_str());
-	Glfw::GetInstance()->LockCursor();
+	//Glfw::GetInstance()->LockCursor();
 
 
 
@@ -93,14 +93,14 @@ int main()
 		glDepthFunc(GL_LESS);
 
 		//开启混合模式
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glBlendEquation(GL_FUNC_ADD);
+		//glEnable(GL_BLEND);
+		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		//glBlendEquation(GL_FUNC_ADD);
 
-		////开启背面剔除
-		//glEnable(GL_CULL_FACE);
-		//glCullFace(GL_BACK);
-		//glFrontFace(GL_CCW); // gl_ccw 代表的是逆时针的环绕方式
+		//开启背面剔除
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+		glFrontFace(GL_CCW); // gl_ccw 代表的是逆时针的环绕方式
 
 	}, false);
 
@@ -155,8 +155,8 @@ int main()
 		cubeShader.setMat4("view", mainCamera.GetViewMatrix());
 		cubeShader.setVec3("viewPos", mainCamera.GetPos());
 		planeMesh.Draw(cubeShader);
-		//cubeMesh.Draw(cubeShader);
-//
+		cubeMesh.Draw(cubeShader);
+
 
 
 		skyBoxShader.use();
@@ -170,7 +170,10 @@ int main()
 		skyBoxShader.setMat4("model", model);
 		meshSkybox.Draw(skyBoxShader);
 		//恢复默认值
-		glDepthFunc(GL_LESS); 
+		glDepthFunc(GL_LESS);
+
+
+
 		envirMappingShader.use();
 		glm::mat4   tmpModel = glm::translate(model, glm::vec3(0.0, -0.3, 4.0));
 		tmpModel = glm::scale(tmpModel, glm::vec3(0.05, 0.05, 0.05));
@@ -178,6 +181,8 @@ int main()
 		envirMappingShader.setMat4("projection", mainCamera.GetProjectionMatrix());
 		envirMappingShader.setVec3("viewPos", mainCamera.GetPos());
 		envirMappingShader.setMat4("model", tmpModel);
+		skyBoxTexture.Use(0);
+		envirMappingShader.setInt("skyBox", 0);
 		personModel.Draw(envirMappingShader);
 
 	});
