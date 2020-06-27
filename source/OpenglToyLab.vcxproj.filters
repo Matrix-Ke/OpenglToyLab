@@ -144,6 +144,9 @@
     <ClCompile Include="4.advanced_opengl\cubeMaps.cpp">
       <Filter>Source Files\4.advanced_opengl</Filter>
     </ClCompile>
+    <ClCompile Include="4.advanced_opengl\uniformBufferObject.cpp">
+      <Filter>Source Files\4.advanced_opengl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\includes\util\camera.h">

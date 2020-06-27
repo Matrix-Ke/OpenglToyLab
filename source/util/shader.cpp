@@ -143,6 +143,12 @@ void Shader::setMat4(const std::string &name, const glm::mat4 &mat) const
 }
 
 
+void Shader::BindUniformBlockIndex(const std::string& name, unsigned int blockIndex) const
+{
+	unsigned int index = glGetUniformBlockIndex(ID, name.c_str());
+	glUniformBlockBinding(ID, index, blockIndex);
+}
+
 void Shader::checkCompileErrors(GLuint shader, std::string type)
 {
 	GLint success;
