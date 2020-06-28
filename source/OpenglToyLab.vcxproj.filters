@@ -46,6 +46,12 @@
     <Filter Include="Source Files\shader\advancedOpengl">
       <UniqueIdentifier>{3fc18dd8-7378-4b96-bd61-b5fa6812be17}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\5.advancedLighting">
+      <UniqueIdentifier>{28f8c807-8e7a-4221-9f05-219bf802275c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\shader\advancedLighting">
+      <UniqueIdentifier>{f5918236-b071-46f4-848e-3cf570862fa6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="1.getting_started\hello_window.cpp">
@@ -146,6 +152,9 @@
     </ClCompile>
     <ClCompile Include="4.advanced_opengl\uniformBufferObject.cpp">
       <Filter>Source Files\4.advanced_opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="5.advancedLighting\BlinnPhong.cpp">
+      <Filter>Source Files\5.advancedLighting</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -297,5 +306,11 @@
       <Filter>Source Files\shader\advancedOpengl</Filter>
     </None>
     <None Include="..\README.md" />
+    <None Include="shader\advancedLighting\BlinnPhong.fs">
+      <Filter>Source Files\shader\advancedLighting</Filter>
+    </None>
+    <None Include="shader\advancedLighting\BlinnPhong.vs">
+      <Filter>Source Files\shader\advancedLighting</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -13,6 +13,8 @@ namespace Define {
 
 	const std::string  str_DeltaTime = "DeltaTime";
 	const std::string  windowTitle = "windowTitle";
+	const std::string  str_BlinnPhong = "str_BlinnPhong";
+
 
 	//# 相机移动速度, 参考值 10
 	const float moveSpeed = 20;
@@ -24,7 +26,7 @@ namespace Define {
 	const glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 	const glm::vec3 light_ambient = glm::vec3(0.6f, 0.6f, 0.6f);
 	const glm::vec3 light_diffuse = glm::vec3(0.5f, 0.5f, 0.5f);
-	const glm::vec3 light_specular = glm::vec3(1.0f, 1.0f, 1.0f);
+	const glm::vec3 light_specular = glm::vec3(0.5f, 0.5f, 0.5f);
 
 	//材质相关
 	const float material_shininess = 64.0f;	
@@ -175,15 +177,15 @@ namespace Define {
 
 	//地面四边形数据设定
 	const float planeVertices[] = {
-		// positions          // texture Coords (note we set these higher than 1 (together with GL_REPEAT as texture wrapping mode). this will cause the floor texture to repeat)
+		// positions          // normals         // texture Coords (note we set these higher than 1 (together with GL_REPEAT as texture wrapping mode). this will cause the floor texture to repeat)
+								
+		 5.0f, -0.5f,  5.0f,  0.0f, 1.0f, 0.0f,  2.0f, 0.0f,
+		 5.0f, -0.5f, -5.0f,  0.0f, 1.0f, 0.0f,  2.0f, 2.0f,
+		 -5.0f, -0.5f, -5.0f, 0.0f, 1.0f, 0.0f,   0.0f, 2.0f,
 
-		 5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
-		 5.0f, -0.5f, -5.0f,  2.0f, 2.0f,
-		 -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
-
-		 5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
-		-5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
-		-5.0f, -0.5f,  5.0f,  0.0f, 0.0f
+		 5.0f, -0.5f,  5.0f,  0.0f, 1.0f, 0.0f,  2.0f, 0.0f,
+		-5.0f, -0.5f, -5.0f,  0.0f, 1.0f, 0.0f,  0.0f, 2.0f,
+		-5.0f, -0.5f,  5.0f,  0.0f, 1.0f, 0.0f,  0.0f, 0.0f
 
 	};
 

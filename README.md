@@ -51,3 +51,8 @@ This provides the best performance gain if the fragment shader is expensive, or 
 #### 2.7 实例化
 * **实例化** : 够将数据一次性发送给GPU，然后使用一个绘制函数让OpenGL利用这些数据绘制多个物体。实例化这项技术能够让我们使用一个渲染调用来绘制多个物体，来节省每次绘制物体时CPU -> GPU的通信，它只需要一次即可。如果想使用实例化渲染，我们只需要将glDrawArrays和glDrawElements的渲染调用分别改为glDrawArraysInstanced和glDrawElementsInstanced就可以了。这些渲染函数的实例化版本需要一个额外的参数，叫做实例数量(Instance Count)，它能够设置我们需要渲染的实例个数。这样我们只需要将必须的数据发送到GPU一次，然后使用一次函数调用告诉GPU它应该如何绘制这些实例。GPU将会直接渲染这些实例，而不用不断地与CPU进行通信
 
+
+### 3.  高级光照
+#### 3.1 phong模型
+* Blinn-Phong和Phong的镜面反射唯一不同之处在于，要测量法线和半程向量之间的角度，而不是视线方向和反射向量之间的夹角。
+

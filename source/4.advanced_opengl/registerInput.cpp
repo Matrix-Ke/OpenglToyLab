@@ -10,6 +10,7 @@
 #include <util/LambdaOp.h>
 #include <util/Camera.h>
 #include "Defines.h"
+#include "util/shader.h"
 
 
 
@@ -99,6 +100,15 @@ void RegisterInput::RegisterKey() {
 		EventManager::GetInstance()->Register(EventManager::KEYBOARD | arrowKey[i],
 			op);
 	}
+
+	//shader效果开关
+	EventManager::GetInstance()->Register(EventManager::KEYBOARD_PRESS | GLFW_KEY_B, [=]() {
+		static bool blinn = true;
+		blinn = !blinn;
+		auto BlinnPhongShader = *GStorage<Shader *>::GetInstance()->GetPtr(str_BlinnPhong);
+		BlinnPhongShader->setBool("blinn", blinn);
+		printf("INFO: Switch to %s\n", blinn ? "Blinn-Phong" : "Phong");
+	});
 }
 
 void RegisterInput::PrintInfo() {
