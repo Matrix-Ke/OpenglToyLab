@@ -133,7 +133,7 @@ int main()
 	registerInputOp->Run();
 
 
-	//时间
+	//更新存储的时间差。
 	float deltaTime = 0.0f; // 当前帧与上一帧的时间差
 	GStorage<float *>::GetInstance()->Register(str_DeltaTime.c_str(), &deltaTime);
 	float lastFrame = 0.0f; // 上一帧的时间
@@ -166,14 +166,19 @@ int main()
 
 	settingEnvir->Run();
 
+
+	glm::mat4   uboMat4Arrays[2];
 	auto geomtryOp = new  LambdaOp([&]() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.7, 0.8, 0.9, 1.0);
 
-		//更新ubo
+		//更新ubo, 可以采取批量更新也可以逐次更新uniform 
 		glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(mainCamera.GetProjectionMatrix()));
-		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(mainCamera.GetViewMatrix()));
+		uboMat4Arrays[0] = mainCamera.GetProjectionMatrix();
+		uboMat4Arrays[1] = mainCamera.GetViewMatrix();
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, 2 * sizeof(glm::mat4), uboMat4Arrays);
+		//glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(mainCamera.GetProjectionMatrix()));
+		//glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(mainCamera.GetViewMatrix()));
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 		cubeShader.use();

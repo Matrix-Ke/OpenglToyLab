@@ -78,6 +78,7 @@
     <ClInclude Include="..\includes\util\VAO.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\README.md" />
     <None Include="ClassDiagram.cd" />
     <None Include="shader\advancedOpengl\blending_discard.fs" />
     <None Include="shader\advancedOpengl\blending_discard.vs" />
