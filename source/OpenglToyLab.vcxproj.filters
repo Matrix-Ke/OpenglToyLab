@@ -156,6 +156,9 @@
     <ClCompile Include="5.advancedLighting\BlinnPhong.cpp">
       <Filter>Source Files\5.advancedLighting</Filter>
     </ClCompile>
+    <ClCompile Include="5.advancedLighting\shadowMap.cpp">
+      <Filter>Source Files\5.advancedLighting</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\includes\util\camera.h">
@@ -310,6 +313,18 @@
       <Filter>Source Files\shader\advancedLighting</Filter>
     </None>
     <None Include="shader\advancedLighting\BlinnPhong.vs">
+      <Filter>Source Files\shader\advancedLighting</Filter>
+    </None>
+    <None Include="shader\advancedLighting\depthMap.fs">
+      <Filter>Source Files\shader\advancedLighting</Filter>
+    </None>
+    <None Include="shader\advancedLighting\depthMap.vs">
+      <Filter>Source Files\shader\advancedLighting</Filter>
+    </None>
+    <None Include="shader\advancedLighting\sceneShadow.vs">
+      <Filter>Source Files\shader\advancedLighting</Filter>
+    </None>
+    <None Include="shader\advancedLighting\sceneShadow.fs">
       <Filter>Source Files\shader\advancedLighting</Filter>
     </None>
   </ItemGroup>

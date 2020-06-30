@@ -18,6 +18,7 @@ struct Light {
 uniform Light light;
 
 uniform bool blinn;
+uniform bool gamma;
 uniform vec3 lightPos;
 uniform vec3 viewPos;
 uniform sampler2D texture_diffuse1;
@@ -53,6 +54,10 @@ void main()
 	}
 
 	vec3 specular = light.specular * spec ; // assuming bright white light color
-	FragColor = vec4(ambient + diffuse + specular, 1.0);
+	vec3 color = ambient + diffuse + specular;
+	if(gamma)
+		color = pow(color, vec3(1.0/2.2));
+
+	FragColor = vec4(color, 1.0);
 
 }

@@ -33,6 +33,7 @@
     <ClCompile Include="4.advanced_opengl\registerInput.cpp" />
     <ClCompile Include="4.advanced_opengl\uniformBufferObject.cpp" />
     <ClCompile Include="5.advancedLighting\BlinnPhong.cpp" />
+    <ClCompile Include="5.advancedLighting\shadowMap.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="oper\config.cpp" />
@@ -83,6 +84,10 @@
     <None Include="ClassDiagram.cd" />
     <None Include="shader\advancedLighting\BlinnPhong.fs" />
     <None Include="shader\advancedLighting\BlinnPhong.vs" />
+    <None Include="shader\advancedLighting\depthMap.fs" />
+    <None Include="shader\advancedLighting\depthMap.vs" />
+    <None Include="shader\advancedLighting\sceneShadow.fs" />
+    <None Include="shader\advancedLighting\sceneShadow.vs" />
     <None Include="shader\advancedOpengl\blending_discard.fs" />
     <None Include="shader\advancedOpengl\blending_discard.vs" />
     <None Include="shader\advancedOpengl\depthTest.vs" />

@@ -20,13 +20,15 @@ using namespace OpenGL;
 using namespace Define;
 using namespace std;
 
-void RegisterInput::Run() {
+void RegisterInput::Run()
+{
 	RegisterMouse();
 	RegisterKey();
 	PrintInfo();
 }
 
-void RegisterInput::RegisterMouse() {
+void RegisterInput::RegisterMouse()
+{
 	EventManager::GetInstance()->Register(EventManager::MOUSE_MOUVE, []() {
 		auto mainCamera = *GStorage<Camera *>::GetInstance()->GetPtr(str_MainCamera);
 		if (mainCamera == nullptr)
@@ -50,7 +52,8 @@ void RegisterInput::RegisterMouse() {
 	});
 }
 
-void RegisterInput::RegisterKey() {
+void RegisterInput::RegisterKey() 
+{
 	// Close Window
 	auto closeWindowOp = new LambdaOp();
 	EventManager::GetInstance()->Register(EventManager::KEYBOARD_PRESS | GLFW_KEY_ESCAPE,
@@ -102,16 +105,34 @@ void RegisterInput::RegisterKey() {
 	}
 
 	//shader效果开关
-	EventManager::GetInstance()->Register(EventManager::KEYBOARD_PRESS | GLFW_KEY_B, [=]() {
+	EventManager::GetInstance()->Register(EventManager::KEYBOARD_PRESS | GLFW_KEY_B, [=]() 
+	{
 		static bool blinn = true;
 		blinn = !blinn;
 		auto BlinnPhongShader = *GStorage<Shader *>::GetInstance()->GetPtr(str_BlinnPhong);
-		BlinnPhongShader->setBool("blinn", blinn);
-		printf("INFO: Switch to %s\n", blinn ? "Blinn-Phong" : "Phong");
+		if (BlinnPhongShader)
+		{
+			BlinnPhongShader->setBool("blinn", blinn);
+			printf("INFO: Switch to %s\n", blinn ? "Blinn-Phong" : "Phong");
+		}
+	});
+
+	//开启全局gamma校正
+	EventManager::GetInstance()->Register(EventManager::KEYBOARD_PRESS | GLFW_KEY_G, [=]() 
+	{
+		static bool gamma = true;
+		gamma = !gamma;
+		auto BlinnPhongShader = *GStorage<Shader *>::GetInstance()->GetPtr(str_BlinnPhong);
+		if (BlinnPhongShader)
+		{
+			BlinnPhongShader->setBool("gamma", gamma);
+			printf("INFO: Switch to %s\n", gamma ? "gamma  Enable!" : "gamma Disable");
+		}
 	});
 }
 
-void RegisterInput::PrintInfo() {
+void RegisterInput::PrintInfo() 
+{
 	cout << endl
 		<< "* 1. Press '1' to set PolygonMode[FILL]" << endl
 		<< "* 2. Press '2' to set PolygonMode[LINE]" << endl
