@@ -70,7 +70,8 @@ void  Glfw::Init(size_t width /* = 800 */, size_t height /* = 600 */, const std:
 }
 
 
-void Glfw::LockCursor() {
+void Glfw::LockCursor() 
+{
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
@@ -79,13 +80,16 @@ void Glfw::Terminate() { glfwTerminate(); }
 GLFWwindow * Glfw::GetWindow() { return window; }
 
 
-void Glfw::RenderLoop(Ptr<Operation>  op) {
+void Glfw::RenderLoop(Ptr<Operation>  op) 
+{
 	if (window == nullptr)
 		Init();
 	//------------
 	bool loop = op != nullptr;
-	while (!glfwWindowShouldClose(window)) {
-		if (loop) {
+	while (!glfwWindowShouldClose(window))
+	{
+		if (loop)
+		{
 			op->Run();
 			if (!op->IsHold())
 				loop = false;
@@ -94,18 +98,22 @@ void Glfw::RenderLoop(Ptr<Operation>  op) {
 }
 
 
-void Glfw::RenderLoop(Operation * op) {
+void Glfw::RenderLoop(Operation * op) 
+{
 	RenderLoop(Operation::ToPtr(op));
 }
 
-void Glfw::CB_FrameBuffSize(GLFWwindow* window, int width, int height) {
+void Glfw::CB_FrameBuffSize(GLFWwindow* window, int width, int height) 
+{
 	glViewport(0, 0, width, height);
 }
 
 
-void Glfw::GenWindow(size_t width, size_t height, const string & title) {
+void Glfw::GenWindow(size_t width, size_t height, const string & title)
+{
 	window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
-	if (window == nullptr) {
+	if (window == nullptr) 
+	{
 		std::cout << "Failed to create GLFW window" << std::endl;
 		Terminate();
 		exit(1);
@@ -116,7 +124,8 @@ void Glfw::GenWindow(size_t width, size_t height, const string & title) {
 }
 
 void Glfw::LoadGL() {
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		exit(1);
 	}

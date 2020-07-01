@@ -9,8 +9,7 @@ namespace Define
 	//阴影贴图
 	const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 	const glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-	const float RATIO_WH = 1.0f;
-	const float NEAR_PLANE = 0.01f;
+	const float NEAR_PLANE = -10.0f;
 	const float FAR_PLANE = 100.0f;
 	const float YAW = -90.0f;
 	const float PITCH = 0.0f;
@@ -35,7 +34,7 @@ namespace Define
 
 
 	//灯光相关
-	const glm::vec3 lightPos(0.0f, 0.0f, 2.0f);
+	const glm::vec3 lightPos(-2.0f, 4.0f, -1.0f);
 	const glm::vec3 light_ambient = glm::vec3(0.3f, 0.3f, 0.3f);
 	const glm::vec3 light_diffuse = glm::vec3(0.4f, 0.4f, 0.4f);
 	const glm::vec3 light_specular = glm::vec3(0.5f, 0.5f, 0.5f);

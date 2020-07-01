@@ -56,6 +56,7 @@ int main()
 
 	float ratioWH_2 = (float)SHADOW_WIDTH / (float)SHADOW_HEIGHT;
 	Camera   lightSpaceCamera(ratioWH_2, moveSpeed, rotateSpeed, lightPos, NEAR_PLANE, FAR_PLANE, up, YAW, PITCH, Camera::ENUM_Projection::PROJECTION_ORTHO);
+	lightSpaceCamera.SetFront(glm::normalize(glm::vec3(0.0f) - lightPos));
 
 	////设置几何物体
 	VAO  planeVAO(planeVertices, sizeof(planeVertices), { 3, 3, 2 });
@@ -71,7 +72,7 @@ int main()
 	Texture  planeTex(FileSystem::getPath("resources/textures/wood.png").c_str(), true, false);
 	planeTex.SetName("texture_diffuse1");
 
-	FBO		deothFbo(SHADOW_WIDTH, SHADOW_HEIGHT, FBO::Enum_Type::ENUM_TYPE_DEPTH);
+	FBO		depthFbo(SHADOW_WIDTH, SHADOW_HEIGHT, FBO::Enum_Type::ENUM_TYPE_DEPTH);
 
 	//网格物体
 	Mesh	planeMesh(planeVAO, planeTex);
@@ -169,8 +170,6 @@ int main()
 		uboMat4Arrays[0] = mainCamera.GetProjectionMatrix();
 		uboMat4Arrays[1] = mainCamera.GetViewMatrix();
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, 2 * sizeof(glm::mat4), uboMat4Arrays);
-		//glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(mainCamera.GetProjectionMatrix()));
-		//glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(mainCamera.GetViewMatrix()));
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	});
 
@@ -182,6 +181,7 @@ int main()
 
 		//设置深度得调用glViewport。因为阴影贴图经常和我们原来渲染的场景（通常是窗口分辨率）有着不同的分辨率，
 		//我们需要改变视口（viewport）的参数以适应阴影贴图的尺寸
+		glBindFramebuffer(GL_FRAMEBUFFER, depthFbo.GetID());
 		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 		simplerDepthShader.use();
 		glm::mat4 model = glm::mat4(1.0f);
@@ -199,7 +199,9 @@ int main()
 		simplerDepthShader.setMat4("model", model);
 		simplerDepthShader.setVec3("viewPos", mainCamera.GetPos());
 		planeMesh.Draw(simplerDepthShader);
-		
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
 
 	});
 

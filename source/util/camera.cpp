@@ -139,3 +139,8 @@ glm::mat4 Camera::GetProjectionMatrix() {
 		break;
 	}
 }
+
+void OpenGL::Camera::SetFront(const glm::vec3& camerafront)
+{
+	this->Front = camerafront;
+}
