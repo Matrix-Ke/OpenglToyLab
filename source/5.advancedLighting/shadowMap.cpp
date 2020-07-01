@@ -54,7 +54,8 @@ int main()
 	GStorage<Camera *>::GetInstance()->Register(str_MainCamera.c_str(), &mainCamera);
 	//创建世界空间到光线空间的变换矩阵（用于生成阴影贴图)
 
-	Camera   lightCamera();
+	float ratioWH_2 = (float)SHADOW_WIDTH / (float)SHADOW_HEIGHT;
+	Camera   lightSpaceCamera(ratioWH_2, moveSpeed, rotateSpeed, lightPos, NEAR_PLANE, FAR_PLANE, up, YAW, PITCH, Camera::ENUM_Projection::PROJECTION_ORTHO);
 
 	////设置几何物体
 	VAO  planeVAO(planeVertices, sizeof(planeVertices), { 3, 3, 2 });
@@ -89,8 +90,12 @@ int main()
 	glm::mat4 lightProjection, lightView;
 	glm::mat4 lightSpaceMatrix;
 	float near_plane = -10.0f, far_plane = 27.5f;
-	lightProjection = glm::ortho(-10.0f, 20.0f, -10.0f, 10.0f, near_plane, far_plane);
-	lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+	//lightProjection = glm::ortho(-8.0f, 8.0f, -6.0f, 6.0f, near_plane, far_plane);
+	//lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+
+	lightProjection = lightSpaceCamera.GetProjectionMatrix();
+	lightView = lightSpaceCamera.GetViewMatrix();
+
 	lightSpaceMatrix = lightProjection * lightView;
 	unsigned int	lightMatrixUBO;
 	glGenBuffers(1, &lightMatrixUBO);
@@ -175,7 +180,9 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-
+		//设置深度得调用glViewport。因为阴影贴图经常和我们原来渲染的场景（通常是窗口分辨率）有着不同的分辨率，
+		//我们需要改变视口（viewport）的参数以适应阴影贴图的尺寸
+		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 		simplerDepthShader.use();
 		glm::mat4 model = glm::mat4(1.0f);
 		simplerDepthShader.setVec3("viewPos", mainCamera.GetPos());

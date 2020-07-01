@@ -23,8 +23,8 @@ Camera::Camera(float rationWH, float moveSpeed, float rotateSpeed, glm::vec3 pos
 	Position = position;
 	WorldUp = up;
 	Yaw = yaw;
-	Pitch = pitch;
 	MovementSpeed = moveSpeed;
+	Pitch = pitch;
 	MouseSensitivity = rotateSpeed;
 	updateCameraVectors();
 }
