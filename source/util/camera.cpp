@@ -140,6 +140,11 @@ glm::mat4 Camera::GetProjectionMatrix() {
 	}
 }
 
+void OpenGL::Camera::SetZoom(float zoom)
+{
+	this->Zoom = zoom;
+}
+
 void OpenGL::Camera::SetFront(const glm::vec3& camerafront)
 {
 	this->Front = camerafront;

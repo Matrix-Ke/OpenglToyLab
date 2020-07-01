@@ -45,7 +45,7 @@ int main()
 {
 	// glfw: initialize and configure
 	Glfw::GetInstance()->Init(SCR_WIDTH, SCR_HEIGHT, windowTitle.c_str());
-	Glfw::GetInstance()->LockCursor();
+	//Glfw::GetInstance()->LockCursor();
 
 
 	//注册相机, 窗口
@@ -57,10 +57,12 @@ int main()
 	float ratioWH_2 = (float)SHADOW_WIDTH / (float)SHADOW_HEIGHT;
 	Camera   lightSpaceCamera(ratioWH_2, moveSpeed, rotateSpeed, lightPos, NEAR_PLANE, FAR_PLANE, up, YAW, PITCH, Camera::ENUM_Projection::PROJECTION_ORTHO);
 	lightSpaceCamera.SetFront(glm::normalize(glm::vec3(0.0f) - lightPos));
+	lightSpaceCamera.SetZoom(40.0);
 
 	////设置几何物体
 	VAO  planeVAO(planeVertices, sizeof(planeVertices), { 3, 3, 2 });
 	VAO  cubeVAO(CubeVertices, sizeof(CubeVertices), { 3, 3, 2 });
+	VAO  quadVAO(quadVertices, sizeof(quadVertices), { 3, 3, 2 }, quadIndices, sizeof(quadIndices));
 
 	Shader sceneShadowShader("./shader/advancedLighting/sceneShadow.vs", "./shader/advancedLighting/sceneShadow.fs");
 	GStorage<Shader*>::GetInstance()->Register(str_BlinnPhong, &sceneShadowShader);
@@ -73,10 +75,12 @@ int main()
 	planeTex.SetName("texture_diffuse1");
 
 	FBO		depthFbo(SHADOW_WIDTH, SHADOW_HEIGHT, FBO::Enum_Type::ENUM_TYPE_DEPTH);
+	Texture depthMap(depthFbo.GetDepthTexture());
 
 	//网格物体
 	Mesh	planeMesh(planeVAO, planeTex);
 	Mesh    cubeMesh(cubeVAO, texContainer);
+	Mesh    quadMesh(quadVAO, depthFbo.GetDepthTexture());
 
 
 	//创建uniform buffer object 
@@ -88,22 +92,16 @@ int main()
 	//绑定到绑定点
 	glBindBufferBase(GL_UNIFORM_BUFFER, 0, uboMatrices);
 	//------------ Light Matrix UBO
-	glm::mat4 lightProjection, lightView;
 	glm::mat4 lightSpaceMatrix;
-	float near_plane = -10.0f, far_plane = 27.5f;
-	//lightProjection = glm::ortho(-8.0f, 8.0f, -6.0f, 6.0f, near_plane, far_plane);
-	//lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
-
-	lightProjection = lightSpaceCamera.GetProjectionMatrix();
-	lightView = lightSpaceCamera.GetViewMatrix();
-
-	lightSpaceMatrix = lightProjection * lightView;
+	lightSpaceMatrix = lightSpaceCamera.GetProjectionMatrix() * lightSpaceCamera.GetViewMatrix();
 	unsigned int	lightMatrixUBO;
 	glGenBuffers(1, &lightMatrixUBO);
 	glBindBuffer(GL_UNIFORM_BUFFER, lightMatrixUBO);
 	glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), glm::value_ptr(lightSpaceMatrix), GL_STATIC_DRAW);
 	glBindBufferBase(GL_UNIFORM_BUFFER, 1, lightMatrixUBO);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+
 
 
 
@@ -130,7 +128,7 @@ int main()
 	}, false);
 	initOp->Run();
 
-	//设置物体材质， 环境灯光等
+	//设置shader材质， 环境灯光, 等其他 uniform 变量
 	auto  settingEnvir = new LambdaOp([&] {
 		sceneShadowShader.use();
 		//绘制之前都必须设置渲染状态, 设置位置, 物体渲染(如果状态不复位可以放置在渲染循环之前)
@@ -146,6 +144,9 @@ int main()
 		sceneShadowShader.setVec3("light.diffuse", light_diffuse);
 		sceneShadowShader.setVec3("light.specular", light_specular);
 
+		sceneShadowShader.setFloat("near_plane", NEAR_PLANE);
+		sceneShadowShader.setFloat("far_plane", FAR_PLANE);
+		sceneShadowShader.unBind();	
 	});
 	settingEnvir->Run();
 
@@ -176,32 +177,57 @@ int main()
 
 
 	auto geomtryOp = new  LambdaOp([&]() {
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
+		depthFbo.Use();
 		//设置深度得调用glViewport。因为阴影贴图经常和我们原来渲染的场景（通常是窗口分辨率）有着不同的分辨率，
 		//我们需要改变视口（viewport）的参数以适应阴影贴图的尺寸
-		glBindFramebuffer(GL_FRAMEBUFFER, depthFbo.GetID());
 		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-		simplerDepthShader.use();
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glm::mat4 model = glm::mat4(1.0f);
-		simplerDepthShader.setVec3("viewPos", mainCamera.GetPos());
-		for (auto iter = cubePositions.begin(); iter != cubePositions.end(); ++iter)
+
+
 		{
+			simplerDepthShader.use();
+			simplerDepthShader.setVec3("viewPos", lightSpaceCamera.GetPos());
+			//1 
 			model = glm::mat4(1.0f);
-			model = glm::translate(model, *iter);
-			//model = glm::scale(model, glm::vec3(0.5f));
+			model = glm::translate(model, glm::vec3(0.0f, 1.5f, 0.0));
+			model = glm::scale(model, glm::vec3(0.5f));
 			simplerDepthShader.setMat4("model", model);
 			cubeMesh.Draw(simplerDepthShader);
+			//2
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(2.0f, 0.0f, 1.0));
+			model = glm::scale(model, glm::vec3(0.5f));
+			simplerDepthShader.setMat4("model", model);
+			cubeMesh.Draw(simplerDepthShader);
+			//3
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(-1.0f, 0.0f, 2.0));
+			model = glm::rotate(model, glm::radians(60.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
+			model = glm::scale(model, glm::vec3(0.25));
+			simplerDepthShader.setMat4("model", model);
+			cubeMesh.Draw(simplerDepthShader);
+
+			//绘制地板
+			model = glm::mat4(1.0f);
+			simplerDepthShader.setMat4("model", model);
+			simplerDepthShader.setVec3("viewPos", lightSpaceCamera.GetPos());
+			planeMesh.Draw(simplerDepthShader);
 		}
-		//绘制地板
-		model = glm::mat4(1.0f);
-		simplerDepthShader.setMat4("model", model);
-		simplerDepthShader.setVec3("viewPos", mainCamera.GetPos());
-		planeMesh.Draw(simplerDepthShader);
+
+
+		//默认缓冲
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-
+		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		sceneShadowShader.use();
+		model = glm::mat4(1.0f);
+		sceneShadowShader.setMat4("model", model);
+		sceneShadowShader.setVec3("viewPos", mainCamera.GetPos());
+		quadMesh.Draw(sceneShadowShader);
 
 	});
 

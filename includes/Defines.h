@@ -9,18 +9,20 @@ namespace Define
 	//阴影贴图
 	const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 	const glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-	const float NEAR_PLANE = -10.0f;
-	const float FAR_PLANE = 100.0f;
+	const float NEAR_PLANE = 1.0f;
+	const float FAR_PLANE = 7.5f;
 	const float YAW = -90.0f;
 	const float PITCH = 0.0f;
 	const float ZOOM = 45.0f;
 
 	// 相机相关设置
 	const std::string str_MainCamera = "MainCamera";
-	//const unsigned int SCR_WIDTH = 1280;
-	//const unsigned int SCR_HEIGHT = 720;
-	const unsigned int SCR_WIDTH = 800;
-	const unsigned int SCR_HEIGHT = 600;
+	//const unsigned int SCR_WIDTH = 1024;
+	//const unsigned int SCR_HEIGHT = 1024;
+	const unsigned int SCR_WIDTH = 1280;
+	const unsigned int SCR_HEIGHT = 720;
+	//const unsigned int SCR_WIDTH = 800;
+	//const unsigned int SCR_HEIGHT = 600;
 
 	const std::string  str_DeltaTime = "DeltaTime";
 	const std::string  windowTitle = "windowTitle";
@@ -52,9 +54,9 @@ namespace Define
 		//---------------
 		// positions          // colors           // texture coords
 		 1.0f,   1.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
-		 1.0f,   0.0f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
-		 0.0f,   0.0f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-		 0.0f,   1.0f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+		 1.0f,   -1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+		 -1.0f,  -1.0f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+		 -1.0f,  1.0f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
 	};
 	//awesome face quad index
 	const unsigned int quadIndices[] = {
@@ -112,9 +114,9 @@ namespace Define
 
 	// world space positions of our cubes
 	const std::vector<glm::vec3>  cubePositions{
-		glm::vec3(0.0f, 0.0f, 0.0),
-		glm::vec3(2.0f, 1.0f, 1.0),
-		glm::vec3(-1.0f, 1.5f, 2.0),
+		glm::vec3(0.0f, 1.5f, 0.0),
+		glm::vec3(2.0f, 0.0f, 1.0),
+		glm::vec3(-1.0f, 0.0f, 2.0),
 		//glm::vec3(-3.8f, -2.0f, -12.3f),
 		//glm::vec3(2.4f, -0.4f, -3.5f),
 		//glm::vec3(-1.7f,  3.0f, -7.5f),
