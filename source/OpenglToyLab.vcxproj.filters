@@ -327,5 +327,11 @@
     <None Include="shader\advancedLighting\sceneShadow.fs">
       <Filter>Source Files\shader\advancedLighting</Filter>
     </None>
+    <None Include="shader\advancedLighting\sceneShadow_1.fs">
+      <Filter>Source Files\shader\advancedLighting</Filter>
+    </None>
+    <None Include="shader\advancedLighting\sceneShadow_1.vs">
+      <Filter>Source Files\shader\advancedLighting</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -8,7 +8,7 @@ in VS_OUT
 	vec2 TexCoords;
 } fs_in;
 
-uniform sampler2D texture_diffuse1;
+uniform sampler2D shadowMap;
 uniform float near_plane;
 uniform float far_plane;
 
@@ -21,7 +21,7 @@ float LinearizeDepth(float depth)
 
 void main()
 {             
-    float depthValue = texture(texture_diffuse1, fs_in.TexCoords).r;
+    float depthValue = texture(shadowMap, fs_in.TexCoords).r;
     // FragColor = vec4(vec3(LinearizeDepth(depthValue) / far_plane), 1.0); // perspective
     FragColor = vec4(vec3(depthValue), 1.0); // orthographic
 }

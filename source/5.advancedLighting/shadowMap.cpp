@@ -50,7 +50,7 @@ int main()
 
 	//注册相机, 窗口
 	float ratioWH = (float)SCR_WIDTH / (float)SCR_HEIGHT;
-	Camera mainCamera(ratioWH, moveSpeed, rotateSpeed, glm::vec3(0.0f, 0.0f, 4.0f));
+	Camera mainCamera(ratioWH, moveSpeed, rotateSpeed, glm::vec3(0.0f, 0.0f, 3.0f));
 	GStorage<Camera *>::GetInstance()->Register(str_MainCamera.c_str(), &mainCamera);
 	//创建世界空间到光线空间的变换矩阵（用于生成阴影贴图)
 
@@ -64,7 +64,8 @@ int main()
 	VAO  cubeVAO(CubeVertices, sizeof(CubeVertices), { 3, 3, 2 });
 	VAO  quadVAO(quadVertices, sizeof(quadVertices), { 3, 3, 2 }, quadIndices, sizeof(quadIndices));
 
-	Shader sceneShadowShader("./shader/advancedLighting/sceneShadow.vs", "./shader/advancedLighting/sceneShadow.fs");
+	//Shader sceneShadowShader("./shader/advancedLighting/sceneShadow.vs", "./shader/advancedLighting/sceneShadow.fs");
+	Shader sceneShadowShader("./shader/advancedLighting/sceneShadow_1.vs", "./shader/advancedLighting/sceneShadow_1.fs");
 	GStorage<Shader*>::GetInstance()->Register(str_BlinnPhong, &sceneShadowShader);
 	sceneShadowShader.BindUniformBlockIndex("Matrices", 0);
 	Shader   simplerDepthShader("./shader/advancedLighting/depthMap.vs", "./shader/advancedLighting/depthMap.fs");
@@ -76,6 +77,7 @@ int main()
 
 	FBO		depthFbo(SHADOW_WIDTH, SHADOW_HEIGHT, FBO::Enum_Type::ENUM_TYPE_DEPTH);
 	Texture depthMap(depthFbo.GetDepthTexture());
+	depthMap.SetName("shadowMap");
 
 	//网格物体
 	Mesh	planeMesh(planeVAO, planeTex);
@@ -227,7 +229,40 @@ int main()
 		model = glm::mat4(1.0f);
 		sceneShadowShader.setMat4("model", model);
 		sceneShadowShader.setVec3("viewPos", mainCamera.GetPos());
-		quadMesh.Draw(sceneShadowShader);
+		sceneShadowShader.setInt(depthMap.getName(), 1);
+		depthMap.Use(1);
+		{
+			sceneShadowShader.use();
+			sceneShadowShader.setVec3("viewPos", lightSpaceCamera.GetPos());
+			//1 
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(0.0f, 1.5f, 0.0));
+			model = glm::scale(model, glm::vec3(0.5f));
+			sceneShadowShader.setMat4("model", model);
+			cubeMesh.Draw(sceneShadowShader);
+			//2
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(2.0f, 0.0f, 1.0));
+			model = glm::scale(model, glm::vec3(0.5f));
+			sceneShadowShader.setMat4("model", model);
+			cubeMesh.Draw(sceneShadowShader);
+			//3
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(-1.0f, 0.0f, 2.0));
+			model = glm::rotate(model, glm::radians(60.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
+			model = glm::scale(model, glm::vec3(0.25));
+			sceneShadowShader.setMat4("model", model);
+			cubeMesh.Draw(sceneShadowShader);
+
+			//绘制地板
+			model = glm::mat4(1.0f);
+			sceneShadowShader.setMat4("model", model);
+			sceneShadowShader.setVec3("viewPos", lightSpaceCamera.GetPos());
+			planeMesh.Draw(sceneShadowShader);
+		}
+
+		////用于渲染阴影贴图
+		//quadMesh.Draw(sceneShadowShader);
 
 	});
 

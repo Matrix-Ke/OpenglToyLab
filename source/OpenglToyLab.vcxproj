@@ -88,6 +88,8 @@
     <None Include="shader\advancedLighting\depthMap.vs" />
     <None Include="shader\advancedLighting\sceneShadow.fs" />
     <None Include="shader\advancedLighting\sceneShadow.vs" />
+    <None Include="shader\advancedLighting\sceneShadow_1.fs" />
+    <None Include="shader\advancedLighting\sceneShadow_1.vs" />
     <None Include="shader\advancedOpengl\blending_discard.fs" />
     <None Include="shader\advancedOpengl\blending_discard.vs" />
     <None Include="shader\advancedOpengl\depthTest.vs" />
