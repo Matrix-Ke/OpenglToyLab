@@ -33,11 +33,11 @@ namespace OpenGL
 
 		void SetFiltering(unsigned int minFilter = GL_NEAREST, unsigned int maxFilter = GL_LINEAR);
 
-		bool Use(unsigned int id /* = 0 */) const;
+		bool Use(unsigned int id  = 0 ) const;
 
 		void UnBind();
 
-		bool  GetID() const;
+		unsigned int  GetID() const;
 
 		unsigned int  getGLType() const;
 

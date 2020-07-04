@@ -1,6 +1,7 @@
 //#pragma once
 //#include <iostream>
 //#include <string>
+//#include <functional>
 //
 //#include <glad/glad.h>
 //#include <GLFW/glfwWrapper.h>
@@ -21,6 +22,8 @@
 //#include "util/VAO.h"
 //#include "util/model.h"
 //#include "util/camera.h"
+//#include "util/fbo.h"
+//#include "util/model.h"
 //
 //
 //using namespace OpenGL;
@@ -35,7 +38,7 @@
 //int main()
 //{
 //	// glfw: initialize and configure
-//	Glfw::GetInstance()->Init(SCR_WIDTH,SCR_HEIGHT, windowTitle.c_str());
+//	Glfw::GetInstance()->Init(SCR_WIDTH, SCR_HEIGHT, windowTitle.c_str());
 //	//Glfw::GetInstance()->LockCursor();
 //
 //
@@ -49,38 +52,55 @@
 //	////设置几何物体
 //	VAO  cubeVAO(CubeVertices, sizeof(CubeVertices), { 3, 3, 2 });
 //	VAO  planeVAO(planeVertices, sizeof(planeVertices), { 3, 0, 2 });
-//	Shader cubeShader("./shader/advancedOpengl/depthTest.vs", "./shader/advancedOpengl/depthTest.fs");
-//	Shader cubeOutlineShader("./shader/advancedOpengl/stencilTest.vs", "./shader/advancedOpengl/stencilTest.fs");
+//	VAO  skyboxVAO(skyboxVertices, sizeof(skyboxVertices), {3});
 //
-//	//Texture  texAwesome(FileSystem::getPath("resources/textures/awesomeface.png").c_str(), true, false);
-//	//Texture  texMatrix(FileSystem::getPath("resources/textures/matrix.jpg").c_str(), true, false);
+//	Shader cubeShader("./shader/advancedOpengl/depthTest.vs", "./shader/advancedOpengl/depthTest.fs");
+//	Shader skyBoxShader("./shader/advancedOpengl/skyBox.vs", "./shader/advancedOpengl/skyBox.fs");
+//	Shader  envirMappingShader("./shader/advancedOpengl/environmentMapping.vs", "./shader/advancedOpengl/environmentMapping.fs");
 //
 //	Texture  texContainer(FileSystem::getPath("resources/textures/container2.png").c_str(), true, false);
 //	Texture  texContainerSpec(FileSystem::getPath("resources/textures/container2_specular.png").c_str(), true, false);
 //	Texture  planeTex(FileSystem::getPath("resources/textures/marble.jpg").c_str(), true, false);
+//	vector<std::string> faces
+//	{
+//		FileSystem::getPath("resources/textures/skybox/right.jpg"),
+//		FileSystem::getPath("resources/textures/skybox/left.jpg"),
+//		FileSystem::getPath("resources/textures/skybox/top.jpg"),
+//		FileSystem::getPath("resources/textures/skybox/bottom.jpg"),
+//		FileSystem::getPath("resources/textures/skybox/front.jpg"),
+//		FileSystem::getPath("resources/textures/skybox/back.jpg")
+//	};
+//	Texture		skyBoxTexture(faces);
 //
 //
-//	texContainer.SetName( "material.diffuse");
-//	planeTex.SetName( "material.diffuse");
-//	texContainerSpec.SetName( "material.specular");
-//	
+//	texContainer.SetName("material.diffuse");
+//	texContainerSpec.SetName("material.specular");
+//	planeTex.SetName("material.diffuse");
+//	skyBoxTexture.SetName("skybox");
+//
+//
 //	std::vector<Texture>  textures{ texContainer, texContainerSpec };
 //	Mesh  cubeMesh(cubeVAO, textures);
+//	Mesh  planeMesh(planeVAO, planeTex);
+//	Mesh    meshSkybox(skyboxVAO, skyBoxTexture);
 //
-//	std::vector<Texture>   temp;
-//	Mesh  cubeOutline(cubeVAO, temp);
+//	Model personModel(FileSystem::getPath("resources/objects/nanosuit/nanosuit.obj"));
 //
-//
-//	std::vector<Texture>   pTexs{ planeTex };
-//	Mesh  planeMesh(planeVAO, pTexs);
 //
 //	auto initOp = new LambdaOp([]() {
+//		//开启深度测试
 //		glEnable(GL_DEPTH_TEST);
 //		glDepthFunc(GL_LESS);
 //
-//		glEnable(GL_STENCIL_TEST);
-//		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-//		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+//		//开启混合模式
+//		//glEnable(GL_BLEND);
+//		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//		//glBlendEquation(GL_FUNC_ADD);
+//
+//		//开启背面剔除
+//		glEnable(GL_CULL_FACE);
+//		glCullFace(GL_BACK);
+//		glFrontFace(GL_CCW); // gl_ccw 代表的是逆时针的环绕方式
 //
 //	}, false);
 //
@@ -107,9 +127,7 @@
 //	//设置物体材质， 环境灯光等
 //	auto  settingEnvir = new LambdaOp([&] {
 //		cubeShader.use();
-//
 //		//绘制之前都必须设置渲染状态, 设置位置, 物体渲染(如果状态不复位可以放置在渲染循环之前)
-//
 //		//全局属性面板
 //		cubeShader.setBool("blinn", true);
 //
@@ -127,49 +145,45 @@
 //	settingEnvir->Run();
 //
 //	auto geomtryOp = new  LambdaOp([&]() {
-//		glStencilMask(0xFF); // 清除模板缓冲必须配合mask， 启用模板缓冲写入
-//		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+//		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 //		glClearColor(0.7, 0.8, 0.9, 1.0);
-//		//glClearStencil(0);
-//		glEnable(GL_DEPTH_TEST);
-//
 //
 //		cubeShader.use();
-//		// world position  and  matrix transform
 //		glm::mat4 model = glm::mat4(1.0f);
 //		cubeShader.setMat4("model", model);
 //		cubeShader.setMat4("projection", mainCamera.GetProjectionMatrix());
 //		cubeShader.setMat4("view", mainCamera.GetViewMatrix());
 //		cubeShader.setVec3("viewPos", mainCamera.GetPos());
-//
-//
-//		//glStencilFunc(GL_ALWAYS, 1, 0xFF);
-//		glStencilMask(0x00);
 //		planeMesh.Draw(cubeShader);
-//
-//		////第一遍用来初始化 模板缓冲
-//		glStencilFunc(GL_ALWAYS, 1, 0xFF);
-//		//glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-//		glStencilMask(0xFF);
 //		cubeMesh.Draw(cubeShader);
 //
-//		////第二遍开始缩放后开始绘制边框
-//		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-//		glStencilMask(0x00);
-//		glDisable(GL_DEPTH_TEST);
-//		float scale = 1.1f;
-//		model = glm::scale(model, glm::vec3(scale, scale, scale));
-//		cubeOutlineShader.use();
-//		cubeOutlineShader.setMat4("model", model);
-//		cubeOutlineShader.setMat4("projection", mainCamera.GetProjectionMatrix());
-//		cubeOutlineShader.setMat4("view", mainCamera.GetViewMatrix());
-//		cubeOutlineShader.setVec3("viewPos", mainCamera.GetPos());
-//		//cubeVAO.Use();
-//		cubeOutline.Draw(cubeOutlineShader);
 //
 //
-//		//恢复现场
-//		glEnable(GL_DEPTH_TEST);// 启用模板缓冲写入
+//		skyBoxShader.use();
+//		//绘制天空盒的时候，需要移除移动矩阵,还需要对shader设置z坐标位1.0；
+//		//修改等于时, 深度测试也通过.
+//		glDepthFunc(GL_LEQUAL);
+//		glm::mat4  view = glm::mat4(glm::mat3(mainCamera.GetViewMatrix()));
+//		skyBoxShader.setMat4("view", view);
+//		skyBoxShader.setMat4("projection", mainCamera.GetProjectionMatrix());
+//		skyBoxShader.setVec3("viewPos", mainCamera.GetPos());
+//		skyBoxShader.setMat4("model", model);
+//		meshSkybox.Draw(skyBoxShader);
+//		//恢复默认值
+//		glDepthFunc(GL_LESS);
+//
+//
+//
+//		envirMappingShader.use();
+//		glm::mat4   tmpModel = glm::translate(model, glm::vec3(0.0, -0.3, 4.0));
+//		tmpModel = glm::scale(tmpModel, glm::vec3(0.05, 0.05, 0.05));
+//		envirMappingShader.setMat4("view",mainCamera.GetViewMatrix());
+//		envirMappingShader.setMat4("projection", mainCamera.GetProjectionMatrix());
+//		envirMappingShader.setVec3("viewPos", mainCamera.GetPos());
+//		envirMappingShader.setMat4("model", tmpModel);
+//		skyBoxTexture.Use(0);
+//		envirMappingShader.setInt("skyBox", 0);
+//		personModel.Draw(envirMappingShader);
 //
 //	});
 //

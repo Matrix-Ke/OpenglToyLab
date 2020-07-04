@@ -23,8 +23,8 @@ Camera::Camera(float rationWH, float moveSpeed, float rotateSpeed, glm::vec3 pos
 	Position = position;
 	WorldUp = up;
 	Yaw = yaw;
-	Pitch = pitch;
 	MovementSpeed = moveSpeed;
+	Pitch = pitch;
 	MouseSensitivity = rotateSpeed;
 	updateCameraVectors();
 }
@@ -138,4 +138,14 @@ glm::mat4 Camera::GetProjectionMatrix() {
 		return glm::mat4(1.0f);
 		break;
 	}
+}
+
+void OpenGL::Camera::SetZoom(float zoom)
+{
+	this->Zoom = zoom;
+}
+
+void OpenGL::Camera::SetFront(const glm::vec3& camerafront)
+{
+	this->Front = camerafront;
 }

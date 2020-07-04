@@ -1,339 +1,227 @@
-//#include <glad/glad.h>
-//#include <GLFW/glfw3.h>
-//#include <stb_image.h>
+//#include <GLFW/Glfw.h>
 //
-//#include <glm/glm.hpp>
-//#include <glm/gtc/matrix_transform.hpp>
-//#include <glm/gtc/type_ptr.hpp>
+//#include <Utility/GStorage.h>
+//#include <Utility/LambdaOp.h>
+//#include <Utility/Config.h>
+//#include <Utility/Cube.h>
+//#include <Utility/OpNode.h>
 //
-//#include <learnopengl/filesystem.h>
-//#include <learnopengl/shader_m.h>
-//#include <learnopengl/camera.h>
-//#include <learnopengl/model.h>
+//#include <LOGL/Camera.h>
+//#include <LOGL/Texture.h>
+//#include <LOGL/VAO.h>
+//#include <LOGL/FBO.h>
+//#include <LOGL/Shader.h>
 //
 //#include <iostream>
 //
-//void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-//void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-//void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-//void processInput(GLFWwindow *window);
-//unsigned int loadTexture(const char *path);
+//#include "Defines.h"
+//#include "RegisterInput.h"
 //
-//// settings
-//const unsigned int SCR_WIDTH = 1280;
-//const unsigned int SCR_HEIGHT = 720;
+//using namespace LOGL;
+//using namespace std;
+//using namespace Ubpa;
+//using namespace Define;
 //
-//// camera
-//Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-//float lastX = (float)SCR_WIDTH / 2.0;
-//float lastY = (float)SCR_HEIGHT / 2.0;
-//bool firstMouse = true;
+//int main(int argc, char ** argv) {
+//	Config * config = DoConfig();
+//	string rootPath = *config->GetStrPtr(str_RootPath);
+//	GStorage<Config *>::GetInstance()->Register(str_MainConfig, config);
+//	GStorage<string>::GetInstance()->Register(str_RootPath, rootPath);
 //
-//// timing
-//float deltaTime = 0.0f;
-//float lastFrame = 0.0f;
 //
-//int main()
-//{
-//	// glfw: initialize and configure
-//	// ------------------------------
-//	glfwInit();
-//	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-//	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-//	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+//	//------------ 窗口
+//	float ratioWH = (float)val_windowWidth / (float)val_windowHeight;
+//	string windowTitle = str_Chapter + "/" + str_Subchapter;
+//	Glfw::GetInstance()->Init(val_windowWidth, val_windowHeight, windowTitle.c_str());
+//	Glfw::GetInstance()->LockCursor();
 //
-//#ifdef __APPLE__
-//	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // uncomment this statement to fix compilation on OS X
-//#endif
+//	glm::vec3 lightPos(-2.0f, 4.0f, -1.0f);
 //
-//	// glfw window creation
-//	// --------------------
-//	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
-//	if (window == NULL)
-//	{
-//		std::cout << "Failed to create GLFW window" << std::endl;
-//		glfwTerminate();
-//		return -1;
+//	//------------ 模型 . 平面
+//	VAO VAO_Panel(&(data_PlaneVertices[0]), sizeof(data_PlaneVertices), { 3,3,2 });
+//
+//
+//	//------------ 模型 . Cube
+//	Cube cube;
+//	vector<VAO::VBO_DataPatch> cube_Vec_VBO_Data_Patch = {
+//		{cube.GetVertexArr(), cube.GetVertexArrSize(), 3},
+//		{cube.GetNormalArr(), cube.GetNormalArrSize(), 3},
+//		{cube.GetTexCoordsArr(), cube.GetTexCoordsArrSize(), 2},
+//	};
+//	VAO VAO_Cube(cube_Vec_VBO_Data_Patch, cube.GetIndexArr(), cube.GetIndexArrSize());
+//
+//
+//	//------------ Depth 着色器
+//	string depth_vs = rootPath + str_Depth_vs;
+//	string depth_fs = rootPath + str_Depth_fs;
+//	Shader depthShader(depth_vs, depth_fs);
+//	if (!depthShader.IsValid()) {
+//		printf("depthShader load fail\n");
+//		return 1;
 //	}
-//	glfwMakeContextCurrent(window);
-//	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-//	glfwSetCursorPosCallback(window, mouse_callback);
-//	glfwSetScrollCallback(window, scroll_callback);
+//	depthShader.UniformBlockBind("LightMatrix", 1);
 //
-//	// tell GLFW to capture our mouse
-//	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+//	//------------ Shadow 着色器
+//	string shadow_vs = rootPath + str_Shadow_vs;
+//	string shadow_fs = rootPath + str_Shadow_fs;
+//	Shader shadowShader(shadow_vs, shadow_fs);
+//	if (!shadowShader.IsValid()) {
+//		printf("shadowShader load fail\n");
+//		return 1;
+//	}
+//	shadowShader.SetInt("diffuseTexture", 0);
+//	shadowShader.SetInt("shadowMap", 1);
+//	shadowShader.UniformBlockBind("CameraMatrixs", 0);
+//	shadowShader.UniformBlockBind("LightMatrix", 1);
+//	shadowShader.SetVec3f("lightPos", lightPos);
 //
-//	// glad: load all OpenGL function pointers
-//	// ---------------------------------------
-//	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-//	{
-//		std::cout << "Failed to initialize GLAD" << std::endl;
-//		return -1;
+//	//------------ 纹理
+//	const int textureNum = 1;
+//	Texture textures[textureNum];
+//	string imgPath[textureNum] = {
+//		rootPath + str_Img_Wood
+//	};
+//	bool flip[textureNum] = { false };
+//	for (size_t i = 0; i < textureNum; i++) {
+//		if (!textures[i].Load(imgPath[i], flip[i])) {
+//			printf("Load texture [%s] fail.\n", imgPath[i].c_str());
+//			return 1;
+//		}
 //	}
 //
-//	// configure global opengl state
-//	// -----------------------------
-//	glEnable(GL_DEPTH_TEST);
+//	//------------ 相机
+//	float moveSpeed = *config->GetFloatPtr(config_CameraMoveSpeed);
+//	float rotateSpeed = *config->GetFloatPtr(config_CameraRotateSensitivity);
+//	Camera mainCamera(ratioWH, moveSpeed, rotateSpeed, glm::vec3(0.0f, 0.0f, 3.0f));
+//	GStorage<Camera *>::GetInstance()->Register(str_MainCamera.c_str(), &mainCamera);
 //
-//	// build and compile shaders
-//	// -------------------------
-//	Shader shader("5.2.framebuffers.vs", "5.2.framebuffers.fs");
-//	Shader screenShader("5.2.framebuffers_screen.vs", "5.2.framebuffers_screen.fs");
+//	//------------ Camera Matrixs UBO
+//	size_t cameraMatrixsUBO;
+//	glGenBuffers(1, &cameraMatrixsUBO);
+//	glBindBuffer(GL_UNIFORM_BUFFER, cameraMatrixsUBO);
+//	glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), NULL, GL_DYNAMIC_DRAW);
+//	glBindBufferBase(GL_UNIFORM_BUFFER, 0, cameraMatrixsUBO);
+//	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 //
-//	// set up vertex data (and buffer(s)) and configure vertex attributes
-//	// ------------------------------------------------------------------
-//	float cubeVertices[] = {
-//		// positions          // texture Coords
-//		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-//		 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-//		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-//		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-//		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-//		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+//	//------------ Light Matrix UBO
+//	glm::mat4 lightProjection, lightView;
+//	glm::mat4 lightSpaceMatrix;
+//	float near_plane = 1.0f, far_plane = 7.5f;
+//	lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+//	lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+//	lightSpaceMatrix = lightProjection * lightView;
 //
-//		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-//		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-//		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-//		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-//		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-//		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+//	size_t lightMatrixUBO;
+//	glGenBuffers(1, &lightMatrixUBO);
+//	glBindBuffer(GL_UNIFORM_BUFFER, lightMatrixUBO);
+//	glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), glm::value_ptr(lightSpaceMatrix), GL_STATIC_DRAW);
+//	glBindBufferBase(GL_UNIFORM_BUFFER, 1, lightMatrixUBO);
+//	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 //
-//		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-//		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-//		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-//		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-//		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-//		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 //
-//		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-//		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-//		 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-//		 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-//		 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-//		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+//	//------------ 深度缓冲
+//	FBO FBO_DepthMap(1024, 1024, FBO::ENUM_TYPE_DEPTH);
+//	Texture depthMap(FBO_DepthMap.GetDepthTexture().GetID());
 //
-//		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-//		 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-//		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-//		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-//		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-//		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
 //
-//		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-//		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-//		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-//		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-//		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-//		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-//	};
-//	float planeVertices[] = {
-//		// positions          // texture Coords 
-//		 5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
-//		-5.0f, -0.5f,  5.0f,  0.0f, 0.0f,
-//		-5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
+//	//------------ 输入
+//	auto registerInputOp = new RegisterInput(false);
 //
-//		 5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
-//		-5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
-//		 5.0f, -0.5f, -5.0f,  2.0f, 2.0f
-//	};
-//	float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates. NOTE that this plane is now much smaller and at the top of the screen
-//		// positions   // texCoords
-//		-0.3f,  1.0f,  0.0f, 1.0f,
-//		-0.3f,  0.7f,  0.0f, 0.0f,
-//		 0.3f,  0.7f,  1.0f, 0.0f,
-//
-//		-0.3f,  1.0f,  0.0f, 1.0f,
-//		 0.3f,  0.7f,  1.0f, 0.0f,
-//		 0.3f,  1.0f,  1.0f, 1.0f
-//	};
-//	// cube VAO
-//	unsigned int cubeVAO, cubeVBO;
-//	glGenVertexArrays(1, &cubeVAO);
-//	glGenBuffers(1, &cubeVBO);
-//	glBindVertexArray(cubeVAO);
-//	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-//	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
-//	glEnableVertexAttribArray(0);
-//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-//	glEnableVertexAttribArray(1);
-//	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-//	// plane VAO
-//	unsigned int planeVAO, planeVBO;
-//	glGenVertexArrays(1, &planeVAO);
-//	glGenBuffers(1, &planeVBO);
-//	glBindVertexArray(planeVAO);
-//	glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
-//	glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), &planeVertices, GL_STATIC_DRAW);
-//	glEnableVertexAttribArray(0);
-//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-//	glEnableVertexAttribArray(1);
-//	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-//	// screen quad VAO
-//	unsigned int quadVAO, quadVBO;
-//	glGenVertexArrays(1, &quadVAO);
-//	glGenBuffers(1, &quadVBO);
-//	glBindVertexArray(quadVAO);
-//	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-//	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-//	glEnableVertexAttribArray(0);
-//	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-//	glEnableVertexAttribArray(1);
-//	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-//
-//	// load textures
-//	// -------------
-//	unsigned int cubeTexture = loadTexture(FileSystem::getPath("resources/textures/marble.jpg").c_str());
-//	unsigned int floorTexture = loadTexture(FileSystem::getPath("resources/textures/metal.png").c_str());
-//
-//	// shader configuration
-//	// --------------------
-//	shader.use();
-//	shader.setInt("texture1", 0);
-//
-//	screenShader.use();
-//	screenShader.setInt("screenTexture", 0);
-//
-//	// framebuffer configuration
-//	// -------------------------
-//	unsigned int framebuffer;
-//	glGenFramebuffers(1, &framebuffer);
-//	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-//	// create a color attachment texture
-//	unsigned int textureColorbuffer;
-//	glGenTextures(1, &textureColorbuffer);
-//	glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
-//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
-//	// create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
-//	unsigned int rbo;
-//	glGenRenderbuffers(1, &rbo);
-//	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-//	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT); // use a single renderbuffer object for both a depth AND stencil buffer.
-//	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo); // now actually attach it
-//																								  // now that we actually created the framebuffer and added all attachments we want to check if it is actually complete now
-//	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-//		cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << endl;
-//	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-//
-//	// draw as wireframe
-//	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-//
-//	// render loop
-//	// -----------
-//	while (!glfwWindowShouldClose(window))
-//	{
-//		// per-frame time logic
-//		// --------------------
+//	//------------- 时间
+//	float deltaTime = 0.0f; // 当前帧与上一帧的时间差
+//	GStorage<float *>::GetInstance()->Register(str_DeltaTime.c_str(), &deltaTime);
+//	float lastFrame = 0.0f; // 上一帧的时间
+//	auto timeOp = new LambdaOp([&]() {
 //		float currentFrame = glfwGetTime();
 //		deltaTime = currentFrame - lastFrame;
 //		lastFrame = currentFrame;
+//	});
 //
-//		// input
-//		// -----
-//		processInput(window);
+//	//------------ 更新相机
+//	auto cameraMatrixsUBO_Update = new LambdaOp([&]() {
+//		glBindBuffer(GL_UNIFORM_BUFFER, cameraMatrixsUBO);
+//		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(mainCamera.GetViewMatrix()));
+//		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(mainCamera.GetProjectionMatrix()));
+//		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+//	});
 //
-//
-//		// first render pass: mirror texture.
-//		// bind to framebuffer and draw to color texture as we normally 
-//		// would, but with the view camera reversed.
-//		// bind to framebuffer and draw scene as we normally would to color texture 
-//		// ------------------------------------------------------------------------
-//		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-//		glEnable(GL_DEPTH_TEST); // enable depth testing (is disabled for rendering screen-space quad)
-//
-//		// make sure we clear the framebuffer's content
-//		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-//		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//
-//		shader.use();
-//		glm::mat4 model = glm::mat4(1.0f);
-//		camera.Yaw += 180.0f; // rotate the camera's yaw 180 degrees around
-//		camera.Pitch += 180.0f; // rotate the camera's pitch 180 degrees around
-//		camera.ProcessMouseMovement(0, 0, false); // call this to make sure it updates its camera vectors, note that we disable pitch constrains for this specific case (otherwise we can't reverse camera's pitch values)
-//		glm::mat4 view = camera.GetViewMatrix();
-//		camera.Yaw -= 180.0f; // reset it back to its original orientation
-//		camera.Pitch -= 180.0f;
-//		camera.ProcessMouseMovement(0, 0, true);
-//		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-//		shader.setMat4("view", view);
-//		shader.setMat4("projection", projection);
-//		// cubes
-//		glBindVertexArray(cubeVAO);
-//		glActiveTexture(GL_TEXTURE0);
-//		glBindTexture(GL_TEXTURE_2D, cubeTexture);
-//		model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
-//		shader.setMat4("model", model);
-//		glDrawArrays(GL_TRIANGLES, 0, 36);
-//		model = glm::mat4(1.0f);
-//		model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
-//		shader.setMat4("model", model);
-//		glDrawArrays(GL_TRIANGLES, 0, 36);
+//	//------------ 模型场景
+//	Shader * curShader = NULL;
+//	auto sceneOp = Operation::ToPtr(new LambdaOp([&]() {
 //		// floor
-//		glBindVertexArray(planeVAO);
-//		glBindTexture(GL_TEXTURE_2D, floorTexture);
-//		shader.setMat4("model", glm::mat4(1.0f));
+//		curShader->SetMat4f("model", glm::mat4(1.0f));
+//		VAO_Panel.Use();
 //		glDrawArrays(GL_TRIANGLES, 0, 6);
-//		glBindVertexArray(0);
 //
-//		// second render pass: draw as normal
-//		// ----------------------------------
-//		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-//
-//		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-//		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//
-//		model = glm::mat4(1.0f);
-//		view = camera.GetViewMatrix();
-//		shader.setMat4("view", view);
-//
+//		glm::mat4 model;
 //		// cubes
-//		glBindVertexArray(cubeVAO);
-//		glActiveTexture(GL_TEXTURE0);
-//		glBindTexture(GL_TEXTURE_2D, cubeTexture);
-//		model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
-//		shader.setMat4("model", model);
-//		glDrawArrays(GL_TRIANGLES, 0, 36);
 //		model = glm::mat4(1.0f);
-//		model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
-//		shader.setMat4("model", model);
-//		glDrawArrays(GL_TRIANGLES, 0, 36);
-//		// floor
-//		glBindVertexArray(planeVAO);
-//		glBindTexture(GL_TEXTURE_2D, floorTexture);
-//		shader.setMat4("model", glm::mat4(1.0f));
-//		glDrawArrays(GL_TRIANGLES, 0, 6);
-//		glBindVertexArray(0);
+//		model = glm::translate(model, glm::vec3(0.0f, 1.5f, 0.0));
+//		model = glm::scale(model, glm::vec3(0.5f));
+//		curShader->SetMat4f("model", model);
+//		VAO_Cube.Use();
+//		glDrawElements(GL_TRIANGLES, cube.GetTriNum() * 3, GL_UNSIGNED_INT, NULL);
+//		model = glm::mat4(1.0f);
+//		model = glm::translate(model, glm::vec3(2.0f, 0.0f, 1.0));
+//		model = glm::scale(model, glm::vec3(0.5f));
+//		curShader->SetMat4f("model", model);
+//		VAO_Cube.Use();
+//		glDrawElements(GL_TRIANGLES, cube.GetTriNum() * 3, GL_UNSIGNED_INT, NULL);
+//		model = glm::mat4(1.0f);
+//		model = glm::translate(model, glm::vec3(-1.0f, 0.0f, 2.0));
+//		model = glm::rotate(model, glm::radians(60.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
+//		model = glm::scale(model, glm::vec3(0.25));
+//		curShader->SetMat4f("model", model);
+//		VAO_Cube.Use();
+//		glDrawElements(GL_TRIANGLES, cube.GetTriNum() * 3, GL_UNSIGNED_INT, NULL);
+//	}));
 //
-//		// now draw the mirror quad with screen texture
-//		// --------------------------------------------
-//		glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
+//	//------------ 渲染深度图
+//	auto depthOp = new OpNode([&]() {//init
+//		glEnable(GL_DEPTH_TEST);
+//		glViewport(0, 0, 1024, 1024);
+//		FBO_DepthMap.Use();
+//		glClear(GL_DEPTH_BUFFER_BIT);
+//		textures[0].Use();
+//		curShader = &depthShader;
+//	},
+//		[]() {//end
+//		FBO::UseDefault();
+//		glViewport(0, 0, val_windowWidth, val_windowHeight);
+//	});
+//	(*depthOp) << sceneOp;
 //
-//		screenShader.use();
-//		glBindVertexArray(quadVAO);
-//		glBindTexture(GL_TEXTURE_2D, textureColorbuffer);	// use the color attachment texture as the texture of the quad plane
-//		glDrawArrays(GL_TRIANGLES, 0, 6);
+//	//------------ 渲染带阴影的场景
+//	auto shadowOp = new OpNode([&]() {//init
+//		curShader = &shadowShader;
+//		curShader->SetVec3f("viewPos", mainCamera.GetPos());
+//		textures[0].Use(0);
+//		depthMap.Use(1);
+//	});
+//	(*shadowOp) << sceneOp;
 //
-//
-//		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-//		// -------------------------------------------------------------------------------
-//		glfwSwapBuffers(window);
+//	//------------ 渲染操作
+//	auto renderOp = new OpNode([]() {//init
+//		glEnable(GL_DEPTH_TEST);
+//		glClearColor(0.01f, 0.01f, 0.01f, 1.0f);
+//		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//	}, []() {//end
+//		glfwSwapBuffers(Glfw::GetInstance()->GetWindow());
 //		glfwPollEvents();
-//	}
+//	});
 //
-//	// optional: de-allocate all resources once they've outlived their purpose:
-//	// ------------------------------------------------------------------------
-//	glDeleteVertexArrays(1, &cubeVAO);
-//	glDeleteVertexArrays(1, &planeVAO);
-//	glDeleteVertexArrays(1, &quadVAO);
-//	glDeleteBuffers(1, &cubeVBO);
-//	glDeleteBuffers(1, &planeVBO);
-//	glDeleteBuffers(1, &quadVBO);
+//	(*renderOp) << shadowOp;
 //
-//	glfwTerminate();
+//	//------------- 整合
+//	auto opQueue = new OpQueue;
+//	(*opQueue) << registerInputOp << timeOp << cameraMatrixsUBO_Update << depthOp << renderOp;
+//
+//	//------------
+//	Glfw::GetInstance()->Run(opQueue);
+//
+//	//------------
+//	Glfw::GetInstance()->Terminate();
+//
 //	return 0;
 //}
 //
-//// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-//// ---------------------------------------------------------------------------------------------------------

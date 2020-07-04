@@ -1,0 +1,195 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="发起事件调用">
+    <Position X="7.986" Y="9.45" Height="0.364" Width="1.495" />
+  </Comment>
+  <Comment CommentText="通过存储全局变量来进行解耦">
+    <Position X="4.532" Y="5.827" Height="0.617" Width="1.483" />
+  </Comment>
+  <Class Name="FileSystem" Collapsed="true">
+    <Position X="12.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAiAAAGAAAGAEAoBEAIAAAAAAAAAAEAAAAAEAAA=</HashCode>
+      <FileName>D:\GitDemo\OpenglToyLab\includes\util\filesystem.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RegisterInput" Collapsed="true">
+    <Position X="2.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAEIAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>D:\GitDemo\OpenglToyLab\includes\util\registerInput.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Shader" Collapsed="true">
+    <Position X="7.75" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QDgAAAAAAAAIgBCAABIMCAAAAAAAAAEABAAAAAAAAAA=</HashCode>
+      <FileName>D:\GitDemo\OpenglToyLab\includes\util\shader.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Singleton&lt;T&gt;" Collapsed="true">
+    <Position X="1.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAACAAAAABAAAAAEAAAAAAAAAAAA=</HashCode>
+      <FileName>D:\GitDemo\OpenglToyLab\includes\util\singleton.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Oper::Config" Collapsed="true">
+    <Position X="9.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAABAgAAAAAAIAgAAAAAAAAAAAAAAgAAIBgAAIQ=</HashCode>
+      <FileName>D:\GitDemo\OpenglToyLab\includes\config.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Oper::EventManager">
+    <Position X="1.5" Y="5.75" Width="2" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="Oper::EventManager::ENUM_EVENT" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>D:\GitDemo\OpenglToyLab\includes\util\eventManager.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAABAAAABQAAAAAAAAAAAABAEBAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>D:\GitDemo\OpenglToyLab\includes\util\eventManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Oper::GStorage&lt;T&gt;" Collapsed="true">
+    <Position X="1.5" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABAAAAAAACAAAABAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>D:\GitDemo\OpenglToyLab\includes\util\GStorage.H</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Oper::Image" Collapsed="true">
+    <Position X="9.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABQAgBAAEAAAICwAQAgBAABAAAChABYAAgAQQEAAAAI=</HashCode>
+      <FileName>D:\GitDemo\OpenglToyLab\includes\util\Image.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Oper::LambdaOp" Collapsed="true">
+    <Position X="0.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAAAAAAAAAIgAAAAAAAAAAAAAAAoAAAAAAI=</HashCode>
+      <FileName>D:\GitDemo\OpenglToyLab\includes\util\lambdaOp.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Oper::LStorage&lt;T&gt;" Collapsed="true">
+    <Position X="4.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAQAAAAAAAAAAAEAAABAAAAAAAAAAAAEAA=</HashCode>
+      <FileName>D:\GitDemo\OpenglToyLab\includes\util\LStorage.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Oper::Mesh" Collapsed="true">
+    <Position X="11" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgQgAAAECACgBAAAAAAAAACAAQAAAAASAACAAAACA=</HashCode>
+      <FileName>D:\GitDemo\OpenglToyLab\includes\util\mesh.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Oper::Model" Collapsed="true">
+    <Position X="12.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAQAAACAAQAigAAACAAAAAAAAAAAASAAgAAAAAAAA=</HashCode>
+      <FileName>D:\GitDemo\OpenglToyLab\includes\util\model.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Oper::Operation" Collapsed="true">
+    <Position X="2.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAIAAIAAAIEAAAAAAAAAAgAAAAAAEgAIAAAAI=</HashCode>
+      <FileName>D:\GitDemo\OpenglToyLab\includes\util\operation.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Oper::OpNode" Collapsed="true">
+    <Position X="5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAQIAAgAAAAAAAAABAAAAgAAAAAgAAAAAAY=</HashCode>
+      <FileName>D:\GitDemo\OpenglToyLab\includes\util\opNode.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Oper::OpQueue" Collapsed="true">
+    <Position X="5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAAgAAAAACAAAAAAIAABAAAAAAgAAAACAI=</HashCode>
+      <FileName>D:\GitDemo\OpenglToyLab\includes\util\opQueue.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OpenGL::Glfw">
+    <Position X="8" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAACBAAAAABAAAAAAAQABAAAAAAIAAAmABKAAAA=</HashCode>
+      <FileName>D:\GitDemo\OpenglToyLab\includes\GLFW\glfwWrapper.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OpenGL::Camera" Collapsed="true">
+    <Position X="11.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQDFBAAAEAAQQEoFQBAAAoBACkAEAgAAATQABQAAAM=</HashCode>
+      <FileName>D:\GitDemo\OpenglToyLab\includes\util\camera.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OpenGL::Texture" Collapsed="true">
+    <Position X="9.5" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAEAAAIAAAEAiAhQkCAAAFABAAABoEQAQBAAA=</HashCode>
+      <FileName>D:\GitDemo\OpenglToyLab\includes\util\texture.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OpenGL::VAO" Collapsed="true">
+    <Position X="11.25" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAQAAgAAAACAiggAAAgAgAAAAAAEAAAgACAASAAAAAA=</HashCode>
+      <FileName>D:\GitDemo\OpenglToyLab\includes\util\VAO.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OpenGL::FBO" Collapsed="true">
+    <Position X="11" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQBBIACAQEAAAAABAAgAgANIIAhEAACACAIiAEAAAAw=</HashCode>
+      <FileName>D:\GitDemo\OpenglToyLab\includes\util\fbo.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Oper::VertexInfo" Collapsed="true">
+    <Position X="9.5" Y="16" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAAgAAIAAAAAAAAIAAACAAAAAAAAAAA=</HashCode>
+      <FileName>D:\GitDemo\OpenglToyLab\includes\util\mesh.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Oper::TextureInfo" Collapsed="true">
+    <Position X="7.75" Y="16" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAACAAAAAAABAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>D:\GitDemo\OpenglToyLab\includes\util\mesh.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Typedef Name="PFNWGLGETPROCADDRESSPROC_PRIVATE" Collapsed="true">
+    <Position X="9.5" Y="17.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>glad.c</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="PFNGLXGETPROCADDRESSPROC_PRIVATE" Collapsed="true">
+    <Position X="7.75" Y="17.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>glad.c</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="Oper::uByte" Collapsed="true">
+    <Position X="11.25" Y="17.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>D:\GitDemo\OpenglToyLab\includes\util\Image.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Font Name="Microsoft YaHei UI" Size="9" />
+</ClassDiagram>

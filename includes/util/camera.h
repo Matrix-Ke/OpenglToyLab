@@ -32,6 +32,8 @@ namespace OpenGL {
 		void SetPerspective();
 
 		void SetOrtho();
+		void SetZoom(float zoom);
+		void SetFront(const glm::vec3& camerafront);
 
 		glm::vec3 & GetPos();
 		glm::vec3 & GetFront();

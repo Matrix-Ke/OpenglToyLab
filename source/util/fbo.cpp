@@ -318,17 +318,21 @@ bool OpenGL::FBO::GenFBO_DEPTH(unsigned int width, unsigned int height)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
-	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	//GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+	//glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 	// attach depth texture as FBO's depth buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, m_FboID);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBufferID, 0);
+	//从光的透视图下渲染场景的时候深度信息，所以颜色缓冲没有用。
+	//然而，不包含颜色缓冲的帧缓冲对象是不完整的，所以我们需要显式告诉OpenGL我们不适用任何颜色数据进行渲染
+	//所以我们设置glDrawBuffer(GL_NONE), glReadBuffer(GL_NONE);
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 
 	m_isValid = IsComplete();
 	if (!m_isValid) {
