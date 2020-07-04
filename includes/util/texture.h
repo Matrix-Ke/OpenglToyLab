@@ -37,7 +37,7 @@ namespace OpenGL
 
 		void UnBind();
 
-		bool  GetID() const;
+		unsigned int  GetID() const;
 
 		unsigned int  getGLType() const;
 

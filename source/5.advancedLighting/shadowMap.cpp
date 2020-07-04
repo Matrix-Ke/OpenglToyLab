@@ -45,7 +45,7 @@ int main()
 {
 	// glfw: initialize and configure
 	Glfw::GetInstance()->Init(SCR_WIDTH, SCR_HEIGHT, windowTitle.c_str());
-	//Glfw::GetInstance()->LockCursor();
+	Glfw::GetInstance()->LockCursor();
 
 
 	//注册相机, 窗口
@@ -68,6 +68,7 @@ int main()
 	Shader sceneShadowShader("./shader/advancedLighting/sceneShadow_1.vs", "./shader/advancedLighting/sceneShadow_1.fs");
 	GStorage<Shader*>::GetInstance()->Register(str_BlinnPhong, &sceneShadowShader);
 	sceneShadowShader.BindUniformBlockIndex("Matrices", 0);
+	sceneShadowShader.BindUniformBlockIndex("LightSpaceMatrix", 1);
 	Shader   simplerDepthShader("./shader/advancedLighting/depthMap.vs", "./shader/advancedLighting/depthMap.fs");
 	simplerDepthShader.BindUniformBlockIndex("LightSpaceMatrix", 1);
 
@@ -76,12 +77,12 @@ int main()
 	planeTex.SetName("texture_diffuse1");
 
 	FBO		depthFbo(SHADOW_WIDTH, SHADOW_HEIGHT, FBO::Enum_Type::ENUM_TYPE_DEPTH);
-	Texture depthMap(depthFbo.GetDepthTexture());
+	Texture depthMap(depthFbo.GetDepthTexture().GetID());
 	depthMap.SetName("shadowMap");
 
 	//网格物体
 	Mesh	planeMesh(planeVAO, planeTex);
-	Mesh    cubeMesh(cubeVAO, texContainer);
+	Mesh    cubeMesh(cubeVAO, planeTex);
 	Mesh    quadMesh(quadVAO, depthFbo.GetDepthTexture());
 
 
@@ -222,9 +223,14 @@ int main()
 
 		//默认缓冲
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		// reset viewport
 		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		// 2. render scene as normal using the generated depth/shadow map  
+		// --------------------------------------------------------------
+		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 		sceneShadowShader.use();
 		model = glm::mat4(1.0f);
 		sceneShadowShader.setMat4("model", model);

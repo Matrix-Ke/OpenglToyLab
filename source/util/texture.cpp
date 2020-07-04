@@ -168,7 +168,7 @@ void OpenGL::Texture::UnBind()
 	glBindTexture(Type2GL(type), 0);
 }
 
-bool OpenGL::Texture::GetID() const
+unsigned int OpenGL::Texture::GetID() const
 {
 	return textureID;
 }
