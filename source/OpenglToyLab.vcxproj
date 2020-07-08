@@ -33,6 +33,7 @@
     <ClCompile Include="4.advanced_opengl\registerInput.cpp" />
     <ClCompile Include="4.advanced_opengl\uniformBufferObject.cpp" />
     <ClCompile Include="5.advancedLighting\BlinnPhong.cpp" />
+    <ClCompile Include="5.advancedLighting\deferredShadering.cpp" />
     <ClCompile Include="5.advancedLighting\shadowMap.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Main.cpp" />
@@ -84,8 +85,12 @@
     <None Include="ClassDiagram.cd" />
     <None Include="shader\advancedLighting\BlinnPhong.fs" />
     <None Include="shader\advancedLighting\BlinnPhong.vs" />
+    <None Include="shader\advancedLighting\deferred_shading.fs" />
+    <None Include="shader\advancedLighting\deferred_shading.vs" />
     <None Include="shader\advancedLighting\depthMap.fs" />
     <None Include="shader\advancedLighting\depthMap.vs" />
+    <None Include="shader\advancedLighting\g_buffer.fs" />
+    <None Include="shader\advancedLighting\g_buffer.vs" />
     <None Include="shader\advancedLighting\sceneShadow.fs" />
     <None Include="shader\advancedLighting\sceneShadow.vs" />
     <None Include="shader\advancedLighting\sceneShadow_1.fs" />

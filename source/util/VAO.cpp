@@ -130,7 +130,8 @@ bool OpenGL::VAO::indexValid() const
 	return this->hasIndex;
 }
 
-bool VAO::GenBindEBO(unsigned int const * index, unsigned int indexSize) {
+bool VAO::GenBindEBO(unsigned int const * index, unsigned int indexSize)
+{
 	unsigned int EBO;
 	glGenBuffers(1, &EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
@@ -138,19 +139,23 @@ bool VAO::GenBindEBO(unsigned int const * index, unsigned int indexSize) {
 	return true;
 }
 
-unsigned int VAO::GetID() const {
+unsigned int VAO::GetID() const 
+{
 	return ID;
 }
 
-unsigned int VAO::GetAttrNum() const {
+unsigned int VAO::GetAttrNum() const
+{
 	return ID;
 }
 
-bool VAO::IsValid() const {
+bool VAO::IsValid() const
+{
 	return isValid;
 }
 
-bool VAO::Use() const {
+bool VAO::Use() const
+{
 	if (!IsValid())
 		return false;
 
@@ -158,9 +163,9 @@ bool VAO::Use() const {
 	return true;
 }
 
-bool VAO::Draw() const {
-	if (!Use())
-		return false;
+bool VAO::Draw() const 
+{
+	this->Use();
 
 	if (hasIndex)
 		glDrawElements(GL_TRIANGLES, pointNum, GL_UNSIGNED_INT, NULL);

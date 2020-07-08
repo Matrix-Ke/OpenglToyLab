@@ -159,6 +159,9 @@
     <ClCompile Include="5.advancedLighting\shadowMap.cpp">
       <Filter>Source Files\5.advancedLighting</Filter>
     </ClCompile>
+    <ClCompile Include="5.advancedLighting\deferredShadering.cpp">
+      <Filter>Source Files\5.advancedLighting</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\includes\util\camera.h">
@@ -331,6 +334,18 @@
       <Filter>Source Files\shader\advancedLighting</Filter>
     </None>
     <None Include="shader\advancedLighting\sceneShadow_1.vs">
+      <Filter>Source Files\shader\advancedLighting</Filter>
+    </None>
+    <None Include="shader\advancedLighting\g_buffer.fs">
+      <Filter>Source Files\shader\advancedLighting</Filter>
+    </None>
+    <None Include="shader\advancedLighting\g_buffer.vs">
+      <Filter>Source Files\shader\advancedLighting</Filter>
+    </None>
+    <None Include="shader\advancedLighting\deferred_shading.fs">
+      <Filter>Source Files\shader\advancedLighting</Filter>
+    </None>
+    <None Include="shader\advancedLighting\deferred_shading.vs">
       <Filter>Source Files\shader\advancedLighting</Filter>
     </None>
   </ItemGroup>
