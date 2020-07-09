@@ -19,10 +19,11 @@ namespace Define
 	const std::string str_MainCamera = "MainCamera";
 	//const unsigned int SCR_WIDTH = 1024;
 	//const unsigned int SCR_HEIGHT = 1024;
-	//const unsigned int SCR_WIDTH = 1280;
-	//const unsigned int SCR_HEIGHT = 720;
-	const unsigned int SCR_WIDTH = 800;
-	const unsigned int SCR_HEIGHT = 600;
+	const unsigned int SCR_WIDTH = 1280;
+	const unsigned int SCR_HEIGHT = 720;
+	//const unsigned int SCR_WIDTH = 800;
+	//const unsigned int SCR_HEIGHT = 600;
+	const float ratioWH = (float)SCR_WIDTH / (float)SCR_HEIGHT;
 
 	const std::string  str_DeltaTime = "DeltaTime";
 	const std::string  windowTitle = "windowTitle";
@@ -60,6 +61,25 @@ namespace Define
 	};
 	//awesome face quad index
 	const unsigned int quadIndices[] = {
+		1, 0, 3,// first triangle
+		1, 3, 2  // second triangle
+	};
+
+	//derferShaderQuadShowing
+	const float derferShaderQuad[] = {
+		// 3  ----->  0
+		// |		  |
+		// V		  V
+		// 2  ----->  1
+		//---------------
+		// positions								// colors           // texture coords
+		 -0.5f,   -0.5f ,  0.0f,		1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+		 -0.5f,   -1.0f,   0.0f,	    0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+		 -1.0f,	  -1.0f,   0.0f,		0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+		 -1.0f,   -0.5f ,  0.0f,	    1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+	};
+	//derferShaderQuadShowing index
+	const unsigned int derferShaderQuadIndices[] = {
 		1, 0, 3,// first triangle
 		1, 3, 2  // second triangle
 	};

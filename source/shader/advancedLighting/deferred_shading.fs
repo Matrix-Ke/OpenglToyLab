@@ -16,13 +16,15 @@ struct Light {
 };
 
 const int NR_LIGHTS = 32;
-uniform Light lights[NR_LIGHTS];
+uniform Light lights[NR_LIGHTS]; 
 uniform vec3 viewPos;
 
 void main()
 {             
     // retrieve data from gbuffer
     vec3 FragPos = texture(gPosition, TexCoords).rgb;
+//	FragColor = vec4(FragPos, 1.0);
+
     vec3 Normal = texture(gNormal, TexCoords).rgb;
     vec3 Diffuse = texture(gAlbedoSpec, TexCoords).rgb;
     float Specular = texture(gAlbedoSpec, TexCoords).a;

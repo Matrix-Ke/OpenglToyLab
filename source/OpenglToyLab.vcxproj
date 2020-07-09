@@ -89,6 +89,10 @@
     <None Include="shader\advancedLighting\deferred_shading.vs" />
     <None Include="shader\advancedLighting\depthMap.fs" />
     <None Include="shader\advancedLighting\depthMap.vs" />
+    <None Include="shader\advancedLighting\derferShaderShowing.fs" />
+    <None Include="shader\advancedLighting\derferShaderShowing.vs" />
+    <None Include="shader\advancedLighting\derferShaderShowing_1.fs" />
+    <None Include="shader\advancedLighting\derferShaderShowing_1.vs" />
     <None Include="shader\advancedLighting\g_buffer.fs" />
     <None Include="shader\advancedLighting\g_buffer.vs" />
     <None Include="shader\advancedLighting\sceneShadow.fs" />

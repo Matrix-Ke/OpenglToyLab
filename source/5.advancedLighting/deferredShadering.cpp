@@ -40,34 +40,48 @@ int main()
 
 
 	//注册相机, 窗口
-	float ratioWH = (float)SCR_WIDTH / (float)SCR_HEIGHT;
-	Camera mainCamera(ratioWH, moveSpeed, rotateSpeed, glm::vec3(0.0f, 0.0f, 5.0f));
+	Camera mainCamera(ratioWH, moveSpeed, rotateSpeed, glm::vec3(0.0f, -2.0f, 5.0f));
 	GStorage<Camera *>::GetInstance()->Register(str_MainCamera.c_str(), &mainCamera);
 
 
-	//////设置几何物体
+	//设置几何物体
 	VAO  cubeVAO(CubeVertices, sizeof(CubeVertices), { 3, 3, 2 });
 	VAO  quadVAO(quadVertices, sizeof(quadVertices), { 3, 3, 2 }, quadIndices, sizeof(quadIndices));
+	VAO	 quadShaderVAO(derferShaderQuad, sizeof(derferShaderQuad), { 3, 3, 2 }, derferShaderQuadIndices, sizeof(derferShaderQuadIndices));
+
 
 	Texture  texContainer(FileSystem::getPath("resources/textures/container2.png").c_str(), true, false);
+	texContainer.SetName("texture_diffuse1");
+	Texture  texContainerSpec(FileSystem::getPath("resources/textures/container2_specular.png").c_str(), true, false);
+	texContainerSpec.SetName("texture_specular1");
 	Texture  planeTex(FileSystem::getPath("resources/textures/wood.png").c_str(), true, false);
 
 
 	Shader shaderGeometryPass("./shader/advancedLighting/g_buffer.vs", "./shader/advancedLighting/g_buffer.fs");
 	shaderGeometryPass.BindUniformBlockIndex("Matrices", 0);
 	Shader   shaderLightingPass("./shader/advancedLighting/deferred_shading.vs", "./shader/advancedLighting/deferred_shading.fs");
-	
+	Shader   shaderQuadShowPass("./shader/advancedLighting/derferShaderShowing.vs", "./shader/advancedLighting/derferShaderShowing.fs");
+	Shader   shaderQuadShowSpePass("./shader/advancedLighting/derferShaderShowing_1.vs", "./shader/advancedLighting/derferShaderShowing_1.fs");
 
-	FBO		gBufferFBO(SHADOW_WIDTH, SHADOW_HEIGHT, FBO::Enum_Type::ENUM_TYPE_GBUFFER);
+	FBO		gBufferFBO(SCR_WIDTH, SCR_HEIGHT, FBO::Enum_Type::ENUM_TYPE_GBUFFER);
+	Texture gPositionTex = gBufferFBO.GetColorTexture(0);
+	gPositionTex.SetName("gPosition");
+	Texture	gNormalTex = gBufferFBO.GetColorTexture(1);
+	gNormalTex.SetName("gNormal");
+	Texture gAlbedoSpecularTex = gBufferFBO.GetColorTexture(2);
+	gAlbedoSpecularTex.SetName("gAlbedoSpec");
 
 	//网格物体
-	Mesh    cubeMesh(cubeVAO, texContainer);
+	std::vector<Texture>  textures{ texContainer, texContainerSpec };
+	Mesh    cubeMesh(cubeVAO, textures);
+	std::vector<Texture>   gBufferTextures{ gPositionTex , gNormalTex, gAlbedoSpecularTex};
+	Mesh    quadSrceenMesh(quadVAO, gBufferTextures);
+	Mesh    quadSpecularMesh(quadShaderVAO, gAlbedoSpecularTex);
 
 
 	//几何模型
-	Model cyborg(FileSystem::getPath("resources/objects/nanosuit/nanosuit.obj"));
+	//Model cyborg(FileSystem::getPath("resources/objects/nanosuit/nanosuit.obj"));
 	std::vector<glm::vec3> objectPositions = {
-		glm::vec3(-0.0, -0.0, -0.0),
 		glm::vec3(-3.0, -3.0, -3.0),
 		glm::vec3(0.0, -3.0, -3.0),
 		glm::vec3(3.0, -3.0, -3.0),
@@ -120,17 +134,17 @@ int main()
 	auto initOp = new LambdaOp([]() {
 		//开启深度测试
 		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LESS);
+		glDepthFunc(GL_LEQUAL);
 
 		////开启混合模式
 		//glEnable(GL_BLEND);
 		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		//glBlendEquation(GL_FUNC_ADD);
 
-		////开启背面剔除
-		//glEnable(GL_CULL_FACE);
-		//glCullFace(GL_BACK);
-		//glFrontFace(GL_CCW); // gl_ccw 代表的是逆时针的环绕方式
+		//开启背面剔除
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+		glFrontFace(GL_CCW); // gl_ccw 代表的是逆时针的环绕方式
 	}, false);
 	initOp->Run();
 
@@ -203,42 +217,51 @@ int main()
 
 	auto geomtryOp = new  LambdaOp([&]() {
 
-		//gBufferFBO.Use();
+		gBufferFBO.Use();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glm::mat4 model = glm::mat4(1.0f);
 		shaderGeometryPass.use();
-		//shaderGeometryPass.setMat4("model", model);
-		//cyborg.Draw(shaderGeometryPass);
 		{
-			for (unsigned int i = 0; i < 1; i++)
+			for (unsigned int i = 0; i < objectPositions.size(); i++)
 			{
-				//model = glm::mat4();
-				//model = glm::translate(model, objectPositions[i]);
-				model = scale(model, glm::vec3(0.25));
+				model = glm::mat4(1.0f);
+				model = glm::translate(model, objectPositions[i]);
+				model = scale(model, glm::vec3(0.25, 0.25, 0.25));
 				shaderGeometryPass.setMat4("model", model);
-				cyborg.Draw(shaderGeometryPass);
+				cubeMesh.Draw(shaderGeometryPass);
 			}
 		}
 
 
-		////默认缓冲
-		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		//默认缓冲
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		//glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
+		 
+		//shader
+		shaderLightingPass.use();
+		shaderLightingPass.setVec3("viewPos", mainCamera.GetPos());
+		quadSrceenMesh.Draw(shaderLightingPass);
 
-		////shader
-		//shaderLightingPass.use();
-		//glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D, gBufferFBO.GetColorTexture(0).GetID());
-		//glActiveTexture(GL_TEXTURE1);
-		//glBindTexture(GL_TEXTURE_2D, gBufferFBO.GetColorTexture(1).GetID());
-		//glActiveTexture(GL_TEXTURE2);
-		//glBindTexture(GL_TEXTURE_2D, gBufferFBO.GetColorTexture(2).GetID());
-		//shaderLightingPass.setVec3("viewPos", mainCamera.GetPos());
-
-		////用于渲染阴影贴图
-		//quadVAO.Draw();
+		shaderQuadShowPass.use();
+		model = glm::mat4(1.0f);
+		for (unsigned int i = 0;  i < 3; i++)
+		{
+			model = glm::translate(model, glm::vec3(0.5, 0.0, 0.0));
+			shaderQuadShowPass.setMat4("model", model);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, gBufferTextures[2-i].GetID());
+			quadShaderVAO.Draw();
+		}
+		shaderQuadShowSpePass.use();
+		model = glm::mat4(1.0f);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, gBufferTextures[2].GetID());
+		shaderQuadShowSpePass.setMat4("model", model);
+		quadShaderVAO.Draw();
+		//quadSpecularMesh.Draw(shaderQuadShowSpePass);
 
 	});
 

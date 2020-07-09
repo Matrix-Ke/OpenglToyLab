@@ -348,5 +348,17 @@
     <None Include="shader\advancedLighting\deferred_shading.vs">
       <Filter>Source Files\shader\advancedLighting</Filter>
     </None>
+    <None Include="shader\advancedLighting\derferShaderShowing.fs">
+      <Filter>Source Files\shader\advancedLighting</Filter>
+    </None>
+    <None Include="shader\advancedLighting\derferShaderShowing.vs">
+      <Filter>Source Files\shader\advancedLighting</Filter>
+    </None>
+    <None Include="shader\advancedLighting\derferShaderShowing_1.fs">
+      <Filter>Source Files\shader\advancedLighting</Filter>
+    </None>
+    <None Include="shader\advancedLighting\derferShaderShowing_1.vs">
+      <Filter>Source Files\shader\advancedLighting</Filter>
+    </None>
   </ItemGroup>
 </Project>

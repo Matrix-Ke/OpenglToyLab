@@ -84,7 +84,7 @@ void Mesh::Draw(Shader shader)
 			else if (name == "texture_height")
 				number = std::to_string(heightNr++);
 			else
-				number = std::to_string(diffuseNr++);//default  name == "texture_diffuse"
+				number = std::to_string(diffuseNr++);//default  name == "texture_diffuse1"
 				//throw exception("undefined texture type");
 
 			glActiveTexture(GL_TEXTURE0 + i);
