@@ -41,18 +41,17 @@ int main()
 
 	//注册相机, 窗口
 	float ratioWH = (float)SCR_WIDTH / (float)SCR_HEIGHT;
-	Camera mainCamera(ratioWH, moveSpeed, rotateSpeed, glm::vec3(0.0f, 0.0f, 3.0f));
+	Camera mainCamera(ratioWH, moveSpeed, rotateSpeed, glm::vec3(0.0f, 0.0f, 5.0f));
 	GStorage<Camera *>::GetInstance()->Register(str_MainCamera.c_str(), &mainCamera);
-	//创建世界空间到光线空间的变换矩阵（用于生成阴影贴图)
 
-	float ratioWH_2 = (float)SHADOW_WIDTH / (float)SHADOW_HEIGHT;
-	Camera   lightSpaceCamera(ratioWH_2, moveSpeed, rotateSpeed, lightPos, NEAR_PLANE, FAR_PLANE, up, YAW, PITCH, Camera::ENUM_Projection::PROJECTION_ORTHO);
-	lightSpaceCamera.SetFront(glm::normalize(glm::vec3(0.0f) - lightPos));
-	lightSpaceCamera.SetZoom(40.0);
 
 	//////设置几何物体
-	//VAO  cubeVAO(CubeVertices, sizeof(CubeVertices), { 3, 3, 2 });
+	VAO  cubeVAO(CubeVertices, sizeof(CubeVertices), { 3, 3, 2 });
 	VAO  quadVAO(quadVertices, sizeof(quadVertices), { 3, 3, 2 }, quadIndices, sizeof(quadIndices));
+
+	Texture  texContainer(FileSystem::getPath("resources/textures/container2.png").c_str(), true, false);
+	Texture  planeTex(FileSystem::getPath("resources/textures/wood.png").c_str(), true, false);
+
 
 	Shader shaderGeometryPass("./shader/advancedLighting/g_buffer.vs", "./shader/advancedLighting/g_buffer.fs");
 	shaderGeometryPass.BindUniformBlockIndex("Matrices", 0);
@@ -61,9 +60,14 @@ int main()
 
 	FBO		gBufferFBO(SHADOW_WIDTH, SHADOW_HEIGHT, FBO::Enum_Type::ENUM_TYPE_GBUFFER);
 
+	//网格物体
+	Mesh    cubeMesh(cubeVAO, texContainer);
+
+
 	//几何模型
 	Model cyborg(FileSystem::getPath("resources/objects/nanosuit/nanosuit.obj"));
 	std::vector<glm::vec3> objectPositions = {
+		glm::vec3(-0.0, -0.0, -0.0),
 		glm::vec3(-3.0, -3.0, -3.0),
 		glm::vec3(0.0, -3.0, -3.0),
 		glm::vec3(3.0, -3.0, -3.0),
@@ -203,13 +207,14 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glm::mat4 model = glm::mat4(1.0f);
-
+		shaderGeometryPass.use();
+		//shaderGeometryPass.setMat4("model", model);
+		//cyborg.Draw(shaderGeometryPass);
 		{
-			shaderGeometryPass.use();
-			for (unsigned int i = 0; i < objectPositions.size(); i++)
+			for (unsigned int i = 0; i < 1; i++)
 			{
-				model = glm::mat4();
-				model = glm::translate(model, objectPositions[i]);
+				//model = glm::mat4();
+				//model = glm::translate(model, objectPositions[i]);
 				model = scale(model, glm::vec3(0.25));
 				shaderGeometryPass.setMat4("model", model);
 				cyborg.Draw(shaderGeometryPass);

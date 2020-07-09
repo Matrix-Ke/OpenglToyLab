@@ -17,7 +17,7 @@ uniform  sampler2D	texture_specular1;
 
 void main()
 {
-	FragColor = vec4(fs_in.FragPos, 1.0);
+	FragColor = vec4(vec3(0.7), 1.0);
 //	//记住必须是在世界空间
 //	gPosition = fs_in.FragPos;
 //
