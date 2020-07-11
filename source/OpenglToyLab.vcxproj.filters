@@ -132,9 +132,6 @@
     <ClCompile Include="util\texture.cpp">
       <Filter>util</Filter>
     </ClCompile>
-    <ClCompile Include="4.advanced_opengl\registerInput.cpp">
-      <Filter>Source Files\4.advanced_opengl</Filter>
-    </ClCompile>
     <ClCompile Include="4.advanced_opengl\blending_discard.cpp">
       <Filter>Source Files\4.advanced_opengl</Filter>
     </ClCompile>
@@ -161,6 +158,12 @@
     </ClCompile>
     <ClCompile Include="5.advancedLighting\deferredShadering.cpp">
       <Filter>Source Files\5.advancedLighting</Filter>
+    </ClCompile>
+    <ClCompile Include="oper\glDebug.cpp">
+      <Filter>oper</Filter>
+    </ClCompile>
+    <ClCompile Include="oper\registerInput.cpp">
+      <Filter>oper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -229,6 +232,9 @@
     </ClInclude>
     <ClInclude Include="..\includes\util\fbo.h">
       <Filter>oper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\util\glDebug.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -346,18 +352,6 @@
       <Filter>Source Files\shader\advancedLighting</Filter>
     </None>
     <None Include="shader\advancedLighting\deferred_shading.vs">
-      <Filter>Source Files\shader\advancedLighting</Filter>
-    </None>
-    <None Include="shader\advancedLighting\derferShaderShowing.fs">
-      <Filter>Source Files\shader\advancedLighting</Filter>
-    </None>
-    <None Include="shader\advancedLighting\derferShaderShowing.vs">
-      <Filter>Source Files\shader\advancedLighting</Filter>
-    </None>
-    <None Include="shader\advancedLighting\derferShaderShowing_1.fs">
-      <Filter>Source Files\shader\advancedLighting</Filter>
-    </None>
-    <None Include="shader\advancedLighting\derferShaderShowing_1.vs">
       <Filter>Source Files\shader\advancedLighting</Filter>
     </None>
   </ItemGroup>

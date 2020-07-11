@@ -30,7 +30,6 @@
     <ClCompile Include="4.advanced_opengl\depthTest.cpp" />
     <ClCompile Include="4.advanced_opengl\face_culling.cpp" />
     <ClCompile Include="4.advanced_opengl\framebuffers.cpp" />
-    <ClCompile Include="4.advanced_opengl\registerInput.cpp" />
     <ClCompile Include="4.advanced_opengl\uniformBufferObject.cpp" />
     <ClCompile Include="5.advancedLighting\BlinnPhong.cpp" />
     <ClCompile Include="5.advancedLighting\deferredShadering.cpp" />
@@ -40,11 +39,13 @@
     <ClCompile Include="oper\config.cpp" />
     <ClCompile Include="oper\eventManager.cpp" />
     <ClCompile Include="oper\filesystem.cpp" />
+    <ClCompile Include="oper\glDebug.cpp" />
     <ClCompile Include="oper\glfwWrapper.cpp" />
     <ClCompile Include="oper\lambdaOp.cpp" />
     <ClCompile Include="oper\operation.cpp" />
     <ClCompile Include="oper\opNode.cpp" />
     <ClCompile Include="oper\opQueue.cpp" />
+    <ClCompile Include="oper\registerInput.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="util\camera.cpp" />
     <ClCompile Include="util\commonUtil.cpp" />
@@ -65,6 +66,7 @@
     <ClInclude Include="..\includes\util\eventManager.h" />
     <ClInclude Include="..\includes\util\fbo.h" />
     <ClInclude Include="..\includes\util\filesystem.h" />
+    <ClInclude Include="..\includes\util\glDebug.h" />
     <ClInclude Include="..\includes\util\GStorage.H" />
     <ClInclude Include="..\includes\util\Image.h" />
     <ClInclude Include="..\includes\util\lambdaOp.h" />
@@ -89,10 +91,6 @@
     <None Include="shader\advancedLighting\deferred_shading.vs" />
     <None Include="shader\advancedLighting\depthMap.fs" />
     <None Include="shader\advancedLighting\depthMap.vs" />
-    <None Include="shader\advancedLighting\derferShaderShowing.fs" />
-    <None Include="shader\advancedLighting\derferShaderShowing.vs" />
-    <None Include="shader\advancedLighting\derferShaderShowing_1.fs" />
-    <None Include="shader\advancedLighting\derferShaderShowing_1.vs" />
     <None Include="shader\advancedLighting\g_buffer.fs" />
     <None Include="shader\advancedLighting\g_buffer.vs" />
     <None Include="shader\advancedLighting\sceneShadow.fs" />

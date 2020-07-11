@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include "util/GStorage.H"
+#include "util/glDebug.h"
 
 using namespace OpenGL;
 using namespace Oper;
@@ -25,9 +26,33 @@ void  Glfw::Init(size_t width /* = 800 */, size_t height /* = 600 */, const std:
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+
+	//对debug版本进行GLFW调试
+#ifdef  _DEBUG
+	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+#endif
+
 	//------------
 	GenWindow(width, height, title);
 	LoadGL();
+
+
+#ifdef _DEBUG
+	// enable OpenGL debug context if context allows for debug context
+	GLint flags; 
+	glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
+	if (flags & GL_CONTEXT_FLAG_DEBUG_BIT)
+	{
+		std::cout << "gl_context_flag_debug_bit is Enable" << std::endl;
+		glEnable(GL_DEBUG_OUTPUT);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); // makes sure errors are displayed synchronously
+		glDebugMessageCallback(glDebugOutput, nullptr);
+		//opengl错误过滤， 在这里仅显示OpenGL API的高严重等级错误消息
+		//glDebugMessageControl(GL_DEBUG_SOURCE_API, GL_DEBUG_TYPE_ERROR, GL_DEBUG_SEVERITY_HIGH, 0, nullptr, GL_TRUE);
+		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_HIGH, 0, nullptr, GL_TRUE);
+	}
+#endif // DEBUG
+
 	glViewport(0, 0, width, height);
 
 
