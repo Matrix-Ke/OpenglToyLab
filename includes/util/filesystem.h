@@ -43,13 +43,13 @@ private:
 public:
 	static std::string getPath(const std::string& path);
 
+	static std::string  getProjectRoot();
+
+	static std::string	getSourceDir();
 
 private:
 
 	typedef std::string(*Builder) (const std::string& path);
-
-
-	static std::string const getRoot();
 
 
   //static std::string(*foo (std::string const &)) getPathBuilder()

@@ -10,7 +10,9 @@
 char* getCurrentDir()
 {
 	char* buffer = _getcwd(NULL, 0);
-	std::cout << buffer << std::endl;
+#ifdef _DEBUG	
+	std::cout << "current working dirrectory : "<< buffer << std::endl;
+#endif //_DEBUG
 	return buffer;
 }
 

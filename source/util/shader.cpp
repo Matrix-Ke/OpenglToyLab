@@ -5,12 +5,22 @@
 #include <glad/glad.h>
 
 #include "util/shader.h"
+#include "util/filesystem.h"
+
 
 using namespace std;
 
-Shader::Shader(const char* vertexPath, const char* fragmentPath)
+
+Shader::Shader(const char* vertexPath, const char* fragmentPath, bool isRelativePath /*= true*/)
 {
-	using namespace std;
+	////环境变量检查
+	string vertexPathStr(vertexPath);
+	string fragmentPathStr(fragmentPath);
+	if (isRelativePath)
+	{
+		vertexPathStr = FileSystem::getSourceDir() + vertexPathStr;
+		fragmentPathStr = FileSystem::getSourceDir() + fragmentPathStr;
+	}
 
 	string vertexCode;
 	string fragmentCode;
@@ -23,8 +33,8 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 
 	try
 	{
-		vShaderFile.open(vertexPath);
-		fShaderFile.open(fragmentPath);
+		vShaderFile.open(vertexPathStr);
+		fShaderFile.open(fragmentPathStr);
 
 		stringstream  vShaderStream;
 		stringstream  fShaderStream;
@@ -57,7 +67,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 	fragment = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragment, 1, &fShaderCode, nullptr);
 	glCompileShader(fragment);
-	checkCompileErrors(fragment,"SHADER");
+	checkCompileErrors(fragment, "SHADER");
 
 
 	ID = glCreateProgram();
@@ -69,8 +79,8 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 	//delete no use shader
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);
-}
 
+}
 
 unsigned int Shader::getID() const
 {
