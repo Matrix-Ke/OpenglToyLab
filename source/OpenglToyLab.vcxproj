@@ -46,7 +46,9 @@
     <ClCompile Include="oper\opNode.cpp" />
     <ClCompile Include="oper\opQueue.cpp" />
     <ClCompile Include="oper\registerInput.cpp" />
+    <ClCompile Include="pbrLighting.cpp" />
     <ClCompile Include="stb_image.cpp" />
+    <ClCompile Include="util\basicShape.cpp" />
     <ClCompile Include="util\camera.cpp" />
     <ClCompile Include="util\commonUtil.cpp" />
     <ClCompile Include="util\fbo.cpp" />
@@ -61,6 +63,7 @@
     <ClInclude Include="..\includes\config.h" />
     <ClInclude Include="..\includes\Defines.h" />
     <ClInclude Include="..\includes\GLFW\glfwWrapper.h" />
+    <ClInclude Include="..\includes\util\baseShape.h" />
     <ClInclude Include="..\includes\util\camera.h" />
     <ClInclude Include="..\includes\util\commonUtil.h" />
     <ClInclude Include="..\includes\util\eventManager.h" />
@@ -81,6 +84,7 @@
     <ClInclude Include="..\includes\util\singleton.h" />
     <ClInclude Include="..\includes\util\texture.h" />
     <ClInclude Include="..\includes\util\VAO.h" />
+    <ClInclude Include="..\includes\util\Vec3.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.md" />
@@ -123,6 +127,8 @@
     <None Include="shader\lighting\multipleLights.vs" />
     <None Include="shader\modelLoading\modelLoading.fs" />
     <None Include="shader\modelLoading\modelLoading.vs" />
+    <None Include="shader\pbrShader\pbrLighting.fs" />
+    <None Include="shader\pbrShader\pbrLighting.vs" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
