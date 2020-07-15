@@ -1,31 +1,29 @@
-#include "util/baseShape.h"
+#include "util/basicShape.h"
 
 
 using namespace BasicShape;
 
 const float Shape::PI = 3.1415926;
 
-Shape::Shape(size_t vertexNum, size_t triNum)
-	: triNum(triNum), vertexNum(vertexNum) {
-	vertexArr = new Array2D<float>(vertexNum, 3);
+
+BasicShape::Shape::Shape(unsigned int vertexNum /*= 0*/, unsigned int triNum /*= 0*/) : m_VertexNum(vertexNum), m_TriangleNum(triNum)
+{
+		m_VertexArr = std::vector<glm::vec3>(vertexNum);
 }
 
-size_t Shape::GetTriNum() {
-	return triNum;
+std::vector<glm::vec3> BasicShape::Shape::GetVertexArr()
+{
+	return m_VertexArr;
 }
 
-Shape::~Shape() {
-	delete vertexArr;
-	vertexArr = nullptr;
+unsigned int BasicShape::Shape::GetTriNum()
+{
+	return m_TriangleNum;
 }
 
-float * Shape::GetVertexArr() {
-	if (vertexArr == nullptr)
-		return nullptr;
-
-	return vertexArr->GetData();
+unsigned int BasicShape::Shape::GetVertexArrSize()
+{
+	return m_VertexArr.size();
 }
 
-size_t Shape::GetVertexArrSize() {
-	return vertexArr->GetMemSize();
-}
+

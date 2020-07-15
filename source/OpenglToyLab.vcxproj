@@ -56,6 +56,7 @@
     <ClCompile Include="util\mesh.cpp" />
     <ClCompile Include="util\model.cpp" />
     <ClCompile Include="util\shader.cpp" />
+    <ClCompile Include="util\sphere.cpp" />
     <ClCompile Include="util\texture.cpp" />
     <ClCompile Include="util\VAO.cpp" />
   </ItemGroup>
@@ -63,7 +64,7 @@
     <ClInclude Include="..\includes\config.h" />
     <ClInclude Include="..\includes\Defines.h" />
     <ClInclude Include="..\includes\GLFW\glfwWrapper.h" />
-    <ClInclude Include="..\includes\util\baseShape.h" />
+    <ClInclude Include="..\includes\util\basicShape.h" />
     <ClInclude Include="..\includes\util\camera.h" />
     <ClInclude Include="..\includes\util\commonUtil.h" />
     <ClInclude Include="..\includes\util\eventManager.h" />
@@ -84,7 +85,7 @@
     <ClInclude Include="..\includes\util\singleton.h" />
     <ClInclude Include="..\includes\util\texture.h" />
     <ClInclude Include="..\includes\util\VAO.h" />
-    <ClInclude Include="..\includes\util\Vec3.h" />
+    <ClInclude Include="..\includes\util\sphere.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.md" />
