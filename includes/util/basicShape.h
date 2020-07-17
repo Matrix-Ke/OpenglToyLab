@@ -20,7 +20,7 @@ namespace BasicShape
 		static const float PI;
 		unsigned int	m_TriangleNum;
 		unsigned int	m_VertexNum;
-		std::vector<glm::vec3>  m_VertexArr;
+		std::vector<glm::vec3>  m_positionArr;
 
 
 	private:

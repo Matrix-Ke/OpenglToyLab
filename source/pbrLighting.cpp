@@ -24,13 +24,14 @@
 #include "util/camera.h"
 #include "util/fbo.h"
 #include "util/model.h"
+#include "util/sphere.h"
 
 
 using namespace OpenGL;
 using namespace Oper;
 using namespace Define;
 using namespace std;
-
+using namespace BasicShape;
 
 int main()
 {
@@ -44,73 +45,38 @@ int main()
 	GStorage<Camera *>::GetInstance()->Register(str_MainCamera.c_str(), &mainCamera);
 
 
-	//设置几何物体
-	VAO  cubeVAO(CubeVertices, sizeof(CubeVertices), { 3, 3, 2 });
+	//设置几何物体, 创建球体网格
+	Sphere   baseSphere(100);
+	std::vector<glm::vec3>  position = baseSphere.GetVertexArr();
+	std::vector<glm::vec3>  normal = baseSphere.GetNormalArr();
+	std::vector<glm::vec2>  texcoord = baseSphere.GetTexCoordsArr();
+	std::vector<glm::uvec3> indexArray = baseSphere.GetIndexArr();
+	std::vector<float>  sphereVertices;
+	for (unsigned int index = 0; index < position.size(); ++index)
+	{
+		sphereVertices.push_back(position[index].x);
+		sphereVertices.push_back(position[index].y);
+		sphereVertices.push_back(position[index].z);
+
+		sphereVertices.push_back(normal[index].x);
+		sphereVertices.push_back(normal[index].y);
+		sphereVertices.push_back(normal[index].z);
+
+		sphereVertices.push_back(texcoord[index].x);
+		sphereVertices.push_back(texcoord[index].y);
+	};
+
+	VAO  sphereVAO(&sphereVertices[0], sizeof(float) * sphereVertices.size(), { 3, 3, 2 }, &indexArray[0][0], sizeof(int) * 3 * indexArray.size());
+
 	VAO  quadVAO(quadVertices, sizeof(quadVertices), { 3, 3, 2 }, quadIndices, sizeof(quadIndices));
 	VAO	 quadShaderVAO(derferShaderQuad, sizeof(derferShaderQuad), { 3, 3, 2 }, derferShaderQuadIndices, sizeof(derferShaderQuadIndices));
 
-
-	Texture  texContainer(FileSystem::getPath("resources/textures/container2.png").c_str(), true, false);
-	texContainer.SetName("texture_diffuse1");
-	Texture  texContainerSpec(FileSystem::getPath("resources/textures/container2_specular.png").c_str(), true, false);
-	texContainerSpec.SetName("texture_specular1");
-	Texture  planeTex(FileSystem::getPath("resources/textures/wood.png").c_str(), true, false);
+	Shader   pbrShaderPass("./pbrShaderPass/pbrShader/pbrLighting.vs", "./pbrShaderPass/pbrShader/pbrLighting.fs");
+	pbrShaderPass.BindUniformBlockIndex("Matrices", 0);
+	//Shader   shaderQuadShowPass("./pbrShaderPass/advancedLighting/derferShaderShowing.vs", "./pbrShaderPass/advancedLighting/derferShaderShowing.fs");
+	//Shader   shaderQuadShowSpePass("./pbrShaderPass/advancedLighting/derferShaderShowing_1.vs", "./pbrShaderPass/advancedLighting/derferShaderShowing_1.fs");
 
 
-	Shader shaderGeometryPass("./shader/advancedLighting/g_buffer.vs", "./shader/advancedLighting/g_buffer.fs");
-	shaderGeometryPass.BindUniformBlockIndex("Matrices", 0);
-	Shader   shaderLightingPass("./shader/advancedLighting/deferred_shading.vs", "./shader/advancedLighting/deferred_shading.fs");
-	Shader   shaderQuadShowPass("./shader/advancedLighting/derferShaderShowing.vs", "./shader/advancedLighting/derferShaderShowing.fs");
-	Shader   shaderQuadShowSpePass("./shader/advancedLighting/derferShaderShowing_1.vs", "./shader/advancedLighting/derferShaderShowing_1.fs");
-
-	FBO		gBufferFBO(SCR_WIDTH, SCR_HEIGHT, FBO::Enum_Type::ENUM_TYPE_GBUFFER);
-	Texture gPositionTex = gBufferFBO.GetColorTexture(0);
-	gPositionTex.SetName("gPosition");
-	Texture	gNormalTex = gBufferFBO.GetColorTexture(1);
-	gNormalTex.SetName("gNormal");
-	Texture gAlbedoSpecularTex = gBufferFBO.GetColorTexture(2);
-	gAlbedoSpecularTex.SetName("gAlbedoSpec");
-
-	//网格物体
-	std::vector<Texture>  textures{ texContainer, texContainerSpec };
-	Mesh    cubeMesh(cubeVAO, textures);
-	std::vector<Texture>   gBufferTextures{ gPositionTex , gNormalTex, gAlbedoSpecularTex };
-	Mesh    quadSrceenMesh(quadVAO, gBufferTextures);
-	Mesh    quadSpecularMesh(quadShaderVAO, gAlbedoSpecularTex);
-
-
-	//几何模型
-	//Model cyborg(FileSystem::getPath("resources/objects/nanosuit/nanosuit.obj"));
-	std::vector<glm::vec3> objectPositions = {
-		glm::vec3(-3.0, -3.0, -3.0),
-		glm::vec3(0.0, -3.0, -3.0),
-		glm::vec3(3.0, -3.0, -3.0),
-		glm::vec3(-3.0, -3.0, 0.0),
-		glm::vec3(0.0, -3.0, 0.0),
-		glm::vec3(3.0, -3.0, 0.0),
-		glm::vec3(-3.0, -3.0, 3.0),
-		glm::vec3(0.0, -3.0, 3.0),
-		glm::vec3(3.0, -3.0, 3.0)
-	};
-
-	// - Colors
-	const GLuint NR_LIGHTS = 32;
-	std::vector<glm::vec3> lightPositions;
-	std::vector<glm::vec3> lightColors;
-	srand(13);
-	for (GLuint i = 0; i < NR_LIGHTS; i++)
-	{
-		// Calculate slightly random offsets
-		GLfloat xPos = ((rand() % 100) / 100.0) * 6.0 - 3.0;
-		GLfloat yPos = ((rand() % 100) / 100.0) * 6.0 - 4.0;
-		GLfloat zPos = ((rand() % 100) / 100.0) * 6.0 - 3.0;
-		lightPositions.push_back(glm::vec3(xPos, yPos, zPos));
-		// Also calculate random color
-		GLfloat rColor = ((rand() % 100) / 200.0f) + 0.5; // Between 0.5 and 1.0
-		GLfloat gColor = ((rand() % 100) / 200.0f) + 0.5; // Between 0.5 and 1.0
-		GLfloat bColor = ((rand() % 100) / 200.0f) + 0.5; // Between 0.5 and 1.0
-		lightColors.push_back(glm::vec3(rColor, gColor, bColor));
-	}
 
 
 	//创建uniform buffer object 
@@ -123,7 +89,22 @@ int main()
 	glBindBufferBase(GL_UNIFORM_BUFFER, 0, uboMatrices);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-
+	// lights
+	std::vector<glm::vec3> lightPositions = {
+		glm::vec3(-10.0f,  10.0f, 10.0f),
+		glm::vec3(10.0f,  10.0f, 10.0f),
+		glm::vec3(-10.0f, -10.0f, 10.0f),
+		glm::vec3(10.0f, -10.0f, 10.0f),
+	};
+	std::vector<glm::vec3> lightColors = {
+		glm::vec3(300.0f, 300.0f, 300.0f),
+		glm::vec3(300.0f, 300.0f, 300.0f),
+		glm::vec3(300.0f, 300.0f, 300.0f),
+		glm::vec3(300.0f, 300.0f, 300.0f)
+	};
+	int nrRows = 7;
+	int nrColumns = 7;
+	float spacing = 2.5;
 
 	//注册处理函数（需要和windows相应绑定处理各种输入）
 	auto registerInputOp = new RegisterInput(false);
@@ -149,7 +130,7 @@ int main()
 	initOp->Run();
 
 
-	//设置shader材质， 环境灯光, 等其他 uniform 变量
+	//设置pbrShaderPass材质， 环境灯光, 等其他 uniform 变量
 	auto  settingEnvir = new LambdaOp([&] {
 		//shaderGeometryPass.use();
 		//绘制之前都必须设置渲染状态, 设置位置, 物体渲染(如果状态不复位可以放置在渲染循环之前)
@@ -170,21 +151,21 @@ int main()
 		//shaderGeometryPass.unBind();
 
 
-		shaderLightingPass.use();
+		pbrShaderPass.use();
 		// Also send light relevant uniforms
 		for (GLuint i = 0; i < lightPositions.size(); i++)
 		{
-			shaderLightingPass.setVec3("lights[" + std::to_string(i) + "].position", lightPositions[i]);
-			shaderLightingPass.setVec3("lights[" + std::to_string(i) + "].color", lightColors[i]);
+			pbrShaderPass.setVec3("lights[" + std::to_string(i) + "].position", lightPositions[i]);
+			pbrShaderPass.setVec3("lights[" + std::to_string(i) + "].color", lightColors[i]);
 
 			// Update attenuation parameters and calculate radius
-			const GLfloat constant = 1.0; // Note that we don't send this to the shader, we assume it is always 1.0 (in our case)
+			const GLfloat constant = 1.0; // Note that we don't send this to the pbrShaderPass, we assume it is always 1.0 (in our case)
 			const GLfloat linear = 0.7;
 			const GLfloat quadratic = 1.8;
-			shaderLightingPass.setFloat("lights[" + std::to_string(i) + "].linear", linear);
-			shaderLightingPass.setFloat("lights[" + std::to_string(i) + "].quadratic", quadratic);
+			pbrShaderPass.setFloat("lights[" + std::to_string(i) + "].linear", linear);
+			pbrShaderPass.setFloat("lights[" + std::to_string(i) + "].quadratic", quadratic);
 		}
-		shaderLightingPass.unBind();
+		pbrShaderPass.unBind();
 
 	});
 	settingEnvir->Run();
@@ -216,52 +197,49 @@ int main()
 
 	auto geomtryOp = new  LambdaOp([&]() {
 
-		gBufferFBO.Use();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+
+
+		pbrShaderPass.setVec3("viewPos", mainCamera.GetPos());
+
+		// render rows*column number of spheres with varying metallic/roughness values scaled by rows and columns respectively
 		glm::mat4 model = glm::mat4(1.0f);
-		shaderGeometryPass.use();
+		for (int row = 0; row < nrRows; ++row)
 		{
-			for (unsigned int i = 0; i < objectPositions.size(); i++)
+			pbrShaderPass.setFloat("metallic", (float)row / (float)nrRows);
+			for (int col = 0; col < nrColumns; ++col)
 			{
+				// we clamp the roughness to 0.025 - 1.0 as perfectly smooth surfaces (roughness of 0.0) tend to look a bit off
+				// on direct lighting.
+				pbrShaderPass.setFloat("roughness", glm::clamp((float)col / (float)nrColumns, 0.05f, 1.0f));
+
 				model = glm::mat4(1.0f);
-				model = glm::translate(model, objectPositions[i]);
-				model = scale(model, glm::vec3(0.25, 0.25, 0.25));
-				shaderGeometryPass.setMat4("model", model);
-				cubeMesh.Draw(shaderGeometryPass);
+				model = glm::translate(model, glm::vec3(
+					(col - (nrColumns / 2)) * spacing,
+					(row - (nrRows / 2)) * spacing,
+					0.0f
+				));
+				pbrShaderPass.setMat4("model", model);
+				sphereVAO.Draw();
 			}
 		}
 
-
-		//默认缓冲
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		//glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
-
-		//shader
-		shaderLightingPass.use();
-		shaderLightingPass.setVec3("viewPos", mainCamera.GetPos());
-		quadSrceenMesh.Draw(shaderLightingPass);
-
-		shaderQuadShowPass.use();
-		model = glm::mat4(1.0f);
-		for (unsigned int i = 0; i < 3; i++)
+		// render light source (simply re-render sphere at light positions)
+		// this looks a bit off as we use the same pbrShaderPass, but it'll make their positions obvious and keeps the codeprint small.
+		for (unsigned int i = 0; i < sizeof(lightPositions) / sizeof(lightPositions[0]); ++i)
 		{
-			model = glm::translate(model, glm::vec3(0.5, 0.0, 0.0));
-			shaderQuadShowPass.setMat4("model", model);
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, gBufferTextures[2 - i].GetID());
-			quadShaderVAO.Draw();
-		}
-		shaderQuadShowSpePass.use();
-		model = glm::mat4(1.0f);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, gBufferTextures[2].GetID());
-		shaderQuadShowSpePass.setMat4("model", model);
-		quadShaderVAO.Draw();
-		//quadSpecularMesh.Draw(shaderQuadShowSpePass);
+			glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 0.0, 0.0);
+			newPos = lightPositions[i];
+			pbrShaderPass.setVec3("lightPositions[" + std::to_string(i) + "]", newPos);
+			pbrShaderPass.setVec3("lightColors[" + std::to_string(i) + "]", lightColors[i]);
 
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, newPos);
+			model = glm::scale(model, glm::vec3(0.5f));
+			pbrShaderPass.setMat4("model", model);
+			sphereVAO.Draw();
+		}
 	});
 
 

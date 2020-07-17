@@ -5,9 +5,9 @@ BasicShape::Sphere::Sphere(unsigned int num) : Shape( (num +1)* (num +1), 2 *num
 {
 	//构造球体网格
 	//球体的 normal和pos的值相同
-	m_NormalArr = m_VertexArr;
+	m_NormalArr = m_positionArr;
 	m_TexCoordsArr = std::vector<glm::vec2>(m_VertexNum);
-	m_IndexArr = std::vector<glm::ivec3>(m_TriangleNum);
+	m_IndexArr = std::vector<glm::uvec3>(m_TriangleNum);
 
 	float inc = 1.0f / num;
 	for (unsigned int i = 0; i <= num; i++) {
@@ -17,9 +17,9 @@ BasicShape::Sphere::Sphere(unsigned int num) : Shape( (num +1)* (num +1), 2 *num
 			float theta = PI * (1 - u);
 			float phi = 2 * PI * v;
 			// 右手系: 上y, 右x, 垂直屏幕外为 z
-			m_VertexArr[i*(num + 1) + j].x = sinf(theta) * sinf(phi);
-			m_VertexArr[i*(num + 1) + j].y = cosf(theta);
-			m_VertexArr[i*(num + 1) + j].z = sinf(theta) * cosf(phi);
+			m_positionArr[i*(num + 1) + j].x = sinf(theta) * sinf(phi);
+			m_positionArr[i*(num + 1) + j].y = cosf(theta);
+			m_positionArr[i*(num + 1) + j].z = sinf(theta) * cosf(phi);
 			// u 对应纵轴所以应该是纹理坐标的 t
 			// v 对应横轴所以应该是纹理坐标的 s
 			m_TexCoordsArr[i*(num + 1) + j].x = v;
@@ -56,7 +56,7 @@ std::vector<glm::vec2> BasicShape::Sphere::GetTexCoordsArr()
 	return m_TexCoordsArr;
 }
 
-std::vector<glm::ivec3> BasicShape::Sphere::GetIndexArr()
+std::vector<glm::uvec3> BasicShape::Sphere::GetIndexArr()
 {
 	return m_IndexArr;
 }
