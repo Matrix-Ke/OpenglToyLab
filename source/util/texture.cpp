@@ -23,10 +23,10 @@ OpenGL::Texture::Texture(const std::vector<std::string> & skybox)
 {
 	type = ENUM_TYPE_NOT_VALID;
 	GL_Type = 0;
-	Load(skybox);
-
 	this->SetWrapping();
 	this->SetFiltering();
+
+	Load(skybox);
 }
 
 OpenGL::Texture::Texture(ENUM_TYPE type) : Texture(0, type) { }
@@ -35,10 +35,10 @@ OpenGL::Texture::Texture(const std::string & path, bool flip /*= false*/, bool g
 {
 	type = ENUM_TYPE_NOT_VALID;
 	GL_Type = 0;
-	Load(path, flip, gammaCorrection);
-
 	this->SetWrapping();
 	this->SetFiltering();
+
+	Load(path, flip, gammaCorrection);
 }
 
 OpenGL::Texture::Texture(unsigned int width, unsigned int height, float const* data, unsigned int dataType, unsigned int srcFormat, unsigned int internalFormat)
@@ -53,8 +53,8 @@ OpenGL::Texture::Texture(unsigned int width, unsigned int height, float const* d
 	type = ENUM_TYPE_2D;
 	GL_Type = GL_TEXTURE_2D;
 
-	this->SetWrapping();
-	this->SetFiltering();
+	this->SetWrapping(GL_REPEAT, GL_REPEAT);
+	this->SetFiltering(GL_NEAREST, GL_LINEAR);
 }
 
 bool OpenGL::Texture::Load(const std::string & path, bool flip /*= false*/, bool gammaCorrection /*= false*/, unsigned int desiredChannel /*= 0*/)
@@ -73,7 +73,7 @@ bool OpenGL::Texture::Load(const std::string & path, bool flip /*= false*/, bool
 	unsigned char* data = stbi_load(path.c_str(), &width, &height, &channel, desiredChannel);
 	if (data == nullptr)
 	{
-		printf("texture load failed, filepath = %s", path.c_str());
+		printf("texture load failed, filepath = %s \n", path.c_str());
 		type = ENUM_TYPE_NOT_VALID;
 		GL_Type = 0;
 		return false;
@@ -142,7 +142,7 @@ bool OpenGL::Texture::SetImage(const Oper::Image & image)
 void OpenGL::Texture::SetWrapping(unsigned int wrap_s /*= GL_REPEAT*/, unsigned int wrap_t /*= GL_REPEAT*/)
 {
 	glWrapS = wrap_s;
-	wrap_t = wrap_t;
+	glWrapT = wrap_t;
 }
 
 void OpenGL::Texture::SetFiltering(unsigned int minFilter /*= GL_NEAREST*/, unsigned int maxFilter /*= GL_LINEAR*/)

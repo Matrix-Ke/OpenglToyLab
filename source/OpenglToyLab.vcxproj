@@ -30,21 +30,25 @@
     <ClCompile Include="4.advanced_opengl\depthTest.cpp" />
     <ClCompile Include="4.advanced_opengl\face_culling.cpp" />
     <ClCompile Include="4.advanced_opengl\framebuffers.cpp" />
-    <ClCompile Include="4.advanced_opengl\registerInput.cpp" />
     <ClCompile Include="4.advanced_opengl\uniformBufferObject.cpp" />
     <ClCompile Include="5.advancedLighting\BlinnPhong.cpp" />
+    <ClCompile Include="5.advancedLighting\deferredShadering.cpp" />
+    <ClCompile Include="5.advancedLighting\pbrLighting.cpp" />
     <ClCompile Include="5.advancedLighting\shadowMap.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="oper\config.cpp" />
     <ClCompile Include="oper\eventManager.cpp" />
     <ClCompile Include="oper\filesystem.cpp" />
+    <ClCompile Include="oper\glDebug.cpp" />
     <ClCompile Include="oper\glfwWrapper.cpp" />
     <ClCompile Include="oper\lambdaOp.cpp" />
     <ClCompile Include="oper\operation.cpp" />
     <ClCompile Include="oper\opNode.cpp" />
     <ClCompile Include="oper\opQueue.cpp" />
+    <ClCompile Include="oper\registerInput.cpp" />
     <ClCompile Include="stb_image.cpp" />
+    <ClCompile Include="util\basicShape.cpp" />
     <ClCompile Include="util\camera.cpp" />
     <ClCompile Include="util\commonUtil.cpp" />
     <ClCompile Include="util\fbo.cpp" />
@@ -52,6 +56,7 @@
     <ClCompile Include="util\mesh.cpp" />
     <ClCompile Include="util\model.cpp" />
     <ClCompile Include="util\shader.cpp" />
+    <ClCompile Include="util\sphere.cpp" />
     <ClCompile Include="util\texture.cpp" />
     <ClCompile Include="util\VAO.cpp" />
   </ItemGroup>
@@ -59,11 +64,13 @@
     <ClInclude Include="..\includes\config.h" />
     <ClInclude Include="..\includes\Defines.h" />
     <ClInclude Include="..\includes\GLFW\glfwWrapper.h" />
+    <ClInclude Include="..\includes\util\basicShape.h" />
     <ClInclude Include="..\includes\util\camera.h" />
     <ClInclude Include="..\includes\util\commonUtil.h" />
     <ClInclude Include="..\includes\util\eventManager.h" />
     <ClInclude Include="..\includes\util\fbo.h" />
     <ClInclude Include="..\includes\util\filesystem.h" />
+    <ClInclude Include="..\includes\util\glDebug.h" />
     <ClInclude Include="..\includes\util\GStorage.H" />
     <ClInclude Include="..\includes\util\Image.h" />
     <ClInclude Include="..\includes\util\lambdaOp.h" />
@@ -78,14 +85,19 @@
     <ClInclude Include="..\includes\util\singleton.h" />
     <ClInclude Include="..\includes\util\texture.h" />
     <ClInclude Include="..\includes\util\VAO.h" />
+    <ClInclude Include="..\includes\util\sphere.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.md" />
     <None Include="ClassDiagram.cd" />
     <None Include="shader\advancedLighting\BlinnPhong.fs" />
     <None Include="shader\advancedLighting\BlinnPhong.vs" />
+    <None Include="shader\advancedLighting\deferred_shading.fs" />
+    <None Include="shader\advancedLighting\deferred_shading.vs" />
     <None Include="shader\advancedLighting\depthMap.fs" />
     <None Include="shader\advancedLighting\depthMap.vs" />
+    <None Include="shader\advancedLighting\g_buffer.fs" />
+    <None Include="shader\advancedLighting\g_buffer.vs" />
     <None Include="shader\advancedLighting\sceneShadow.fs" />
     <None Include="shader\advancedLighting\sceneShadow.vs" />
     <None Include="shader\advancedLighting\sceneShadow_1.fs" />
@@ -116,6 +128,8 @@
     <None Include="shader\lighting\multipleLights.vs" />
     <None Include="shader\modelLoading\modelLoading.fs" />
     <None Include="shader\modelLoading\modelLoading.vs" />
+    <None Include="shader\pbrShader\pbrLighting.fs" />
+    <None Include="shader\pbrShader\pbrLighting.vs" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -181,6 +195,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)..\bin\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -248,7 +263,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)../includes</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

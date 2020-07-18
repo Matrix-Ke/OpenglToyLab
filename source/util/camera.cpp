@@ -1,5 +1,5 @@
 #pragma once
-#include "util/camera.h";
+#include "util/camera.h"
 
 #include <iostream>
 

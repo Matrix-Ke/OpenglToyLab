@@ -52,6 +52,9 @@
     <Filter Include="Source Files\shader\advancedLighting">
       <UniqueIdentifier>{f5918236-b071-46f4-848e-3cf570862fa6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\shader\pbrShader">
+      <UniqueIdentifier>{19ddf96c-4365-4dc1-a0d5-ad31362eff22}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="1.getting_started\hello_window.cpp">
@@ -132,9 +135,6 @@
     <ClCompile Include="util\texture.cpp">
       <Filter>util</Filter>
     </ClCompile>
-    <ClCompile Include="4.advanced_opengl\registerInput.cpp">
-      <Filter>Source Files\4.advanced_opengl</Filter>
-    </ClCompile>
     <ClCompile Include="4.advanced_opengl\blending_discard.cpp">
       <Filter>Source Files\4.advanced_opengl</Filter>
     </ClCompile>
@@ -157,6 +157,24 @@
       <Filter>Source Files\5.advancedLighting</Filter>
     </ClCompile>
     <ClCompile Include="5.advancedLighting\shadowMap.cpp">
+      <Filter>Source Files\5.advancedLighting</Filter>
+    </ClCompile>
+    <ClCompile Include="5.advancedLighting\deferredShadering.cpp">
+      <Filter>Source Files\5.advancedLighting</Filter>
+    </ClCompile>
+    <ClCompile Include="oper\glDebug.cpp">
+      <Filter>oper</Filter>
+    </ClCompile>
+    <ClCompile Include="oper\registerInput.cpp">
+      <Filter>oper</Filter>
+    </ClCompile>
+    <ClCompile Include="util\basicShape.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="util\sphere.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="5.advancedLighting\pbrLighting.cpp">
       <Filter>Source Files\5.advancedLighting</Filter>
     </ClCompile>
   </ItemGroup>
@@ -225,6 +243,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\includes\util\fbo.h">
+      <Filter>oper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\util\glDebug.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\util\basicShape.h">
+      <Filter>oper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\util\sphere.h">
       <Filter>oper</Filter>
     </ClInclude>
   </ItemGroup>
@@ -332,6 +359,24 @@
     </None>
     <None Include="shader\advancedLighting\sceneShadow_1.vs">
       <Filter>Source Files\shader\advancedLighting</Filter>
+    </None>
+    <None Include="shader\advancedLighting\g_buffer.fs">
+      <Filter>Source Files\shader\advancedLighting</Filter>
+    </None>
+    <None Include="shader\advancedLighting\g_buffer.vs">
+      <Filter>Source Files\shader\advancedLighting</Filter>
+    </None>
+    <None Include="shader\advancedLighting\deferred_shading.fs">
+      <Filter>Source Files\shader\advancedLighting</Filter>
+    </None>
+    <None Include="shader\advancedLighting\deferred_shading.vs">
+      <Filter>Source Files\shader\advancedLighting</Filter>
+    </None>
+    <None Include="shader\pbrShader\pbrLighting.fs">
+      <Filter>Source Files\shader\pbrShader</Filter>
+    </None>
+    <None Include="shader\pbrShader\pbrLighting.vs">
+      <Filter>Source Files\shader\pbrShader</Filter>
     </None>
   </ItemGroup>
 </Project>

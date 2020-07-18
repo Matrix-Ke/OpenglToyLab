@@ -1,227 +1,376 @@
-//#include <GLFW/Glfw.h>
 //
-//#include <Utility/GStorage.h>
-//#include <Utility/LambdaOp.h>
-//#include <Utility/Config.h>
-//#include <Utility/Cube.h>
-//#include <Utility/OpNode.h>
+//#include <glad/glad.h>
+//#include <GLFW/glfw3.h>
+//#include <stb_image.h>
 //
-//#include <LOGL/Camera.h>
-//#include <LOGL/Texture.h>
-//#include <LOGL/VAO.h>
-//#include <LOGL/FBO.h>
-//#include <LOGL/Shader.h>
+//#include <glm/glm.hpp>
+//#include <glm/gtc/matrix_transform.hpp>
+//#include <glm/gtc/type_ptr.hpp>
+//
+//#include <learnopengl/filesystem.h>
+//#include <learnopengl/shader.h>
+//#include <learnopengl/camera.h>
+//#include <learnopengl/model.h>
 //
 //#include <iostream>
 //
-//#include "Defines.h"
-//#include "RegisterInput.h"
+//void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+//void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+//void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+//void processInput(GLFWwindow *window);
+//unsigned int loadTexture(const char *path);
+//void renderSphere();
 //
-//using namespace LOGL;
-//using namespace std;
-//using namespace Ubpa;
-//using namespace Define;
+//// settings
+//const unsigned int SCR_WIDTH = 1280;
+//const unsigned int SCR_HEIGHT = 720;
 //
-//int main(int argc, char ** argv) {
-//	Config * config = DoConfig();
-//	string rootPath = *config->GetStrPtr(str_RootPath);
-//	GStorage<Config *>::GetInstance()->Register(str_MainConfig, config);
-//	GStorage<string>::GetInstance()->Register(str_RootPath, rootPath);
+//// camera
+//Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+//float lastX = 800.0f / 2.0;
+//float lastY = 600.0 / 2.0;
+//bool firstMouse = true;
 //
+//// timing
+//float deltaTime = 0.0f;
+//float lastFrame = 0.0f;
 //
-//	//------------ 窗口
-//	float ratioWH = (float)val_windowWidth / (float)val_windowHeight;
-//	string windowTitle = str_Chapter + "/" + str_Subchapter;
-//	Glfw::GetInstance()->Init(val_windowWidth, val_windowHeight, windowTitle.c_str());
-//	Glfw::GetInstance()->LockCursor();
+//int main()
+//{
+//	// glfw: initialize and configure
+//	// ------------------------------
+//	glfwInit();
+//	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+//	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+//	glfwWindowHint(GLFW_SAMPLES, 4);
+//	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 //
-//	glm::vec3 lightPos(-2.0f, 4.0f, -1.0f);
+//#ifdef __APPLE__
+//	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // uncomment this statement to fix compilation on OS X
+//#endif
 //
-//	//------------ 模型 . 平面
-//	VAO VAO_Panel(&(data_PlaneVertices[0]), sizeof(data_PlaneVertices), { 3,3,2 });
+//	// glfw window creation
+//	// --------------------
+//	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+//	glfwMakeContextCurrent(window);
+//	if (window == NULL)
+//	{
+//		std::cout << "Failed to create GLFW window" << std::endl;
+//		glfwTerminate();
+//		return -1;
+//	}
+//	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+//	glfwSetCursorPosCallback(window, mouse_callback);
+//	glfwSetScrollCallback(window, scroll_callback);
 //
+//	// tell GLFW to capture our mouse
+//	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 //
-//	//------------ 模型 . Cube
-//	Cube cube;
-//	vector<VAO::VBO_DataPatch> cube_Vec_VBO_Data_Patch = {
-//		{cube.GetVertexArr(), cube.GetVertexArrSize(), 3},
-//		{cube.GetNormalArr(), cube.GetNormalArrSize(), 3},
-//		{cube.GetTexCoordsArr(), cube.GetTexCoordsArrSize(), 2},
+//	// glad: load all OpenGL function pointers
+//	// ---------------------------------------
+//	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+//	{
+//		std::cout << "Failed to initialize GLAD" << std::endl;
+//		return -1;
+//	}
+//
+//	// configure global opengl state
+//	// -----------------------------
+//	glEnable(GL_DEPTH_TEST);
+//
+//	// build and compile shaders
+//	// -------------------------
+//	Shader shader("1.1.pbr.vs", "1.1.pbr.fs");
+//
+//	shader.use();
+//	shader.setVec3("albedo", 0.5f, 0.0f, 0.0f);
+//	shader.setFloat("ao", 1.0f);
+//
+//	// lights
+//	// ------
+//	glm::vec3 lightPositions[] = {
+//		glm::vec3(-10.0f,  10.0f, 10.0f),
+//		glm::vec3(10.0f,  10.0f, 10.0f),
+//		glm::vec3(-10.0f, -10.0f, 10.0f),
+//		glm::vec3(10.0f, -10.0f, 10.0f),
 //	};
-//	VAO VAO_Cube(cube_Vec_VBO_Data_Patch, cube.GetIndexArr(), cube.GetIndexArrSize());
-//
-//
-//	//------------ Depth 着色器
-//	string depth_vs = rootPath + str_Depth_vs;
-//	string depth_fs = rootPath + str_Depth_fs;
-//	Shader depthShader(depth_vs, depth_fs);
-//	if (!depthShader.IsValid()) {
-//		printf("depthShader load fail\n");
-//		return 1;
-//	}
-//	depthShader.UniformBlockBind("LightMatrix", 1);
-//
-//	//------------ Shadow 着色器
-//	string shadow_vs = rootPath + str_Shadow_vs;
-//	string shadow_fs = rootPath + str_Shadow_fs;
-//	Shader shadowShader(shadow_vs, shadow_fs);
-//	if (!shadowShader.IsValid()) {
-//		printf("shadowShader load fail\n");
-//		return 1;
-//	}
-//	shadowShader.SetInt("diffuseTexture", 0);
-//	shadowShader.SetInt("shadowMap", 1);
-//	shadowShader.UniformBlockBind("CameraMatrixs", 0);
-//	shadowShader.UniformBlockBind("LightMatrix", 1);
-//	shadowShader.SetVec3f("lightPos", lightPos);
-//
-//	//------------ 纹理
-//	const int textureNum = 1;
-//	Texture textures[textureNum];
-//	string imgPath[textureNum] = {
-//		rootPath + str_Img_Wood
+//	glm::vec3 lightColors[] = {
+//		glm::vec3(300.0f, 300.0f, 300.0f),
+//		glm::vec3(300.0f, 300.0f, 300.0f),
+//		glm::vec3(300.0f, 300.0f, 300.0f),
+//		glm::vec3(300.0f, 300.0f, 300.0f)
 //	};
-//	bool flip[textureNum] = { false };
-//	for (size_t i = 0; i < textureNum; i++) {
-//		if (!textures[i].Load(imgPath[i], flip[i])) {
-//			printf("Load texture [%s] fail.\n", imgPath[i].c_str());
-//			return 1;
-//		}
-//	}
+//	int nrRows = 7;
+//	int nrColumns = 7;
+//	float spacing = 2.5;
 //
-//	//------------ 相机
-//	float moveSpeed = *config->GetFloatPtr(config_CameraMoveSpeed);
-//	float rotateSpeed = *config->GetFloatPtr(config_CameraRotateSensitivity);
-//	Camera mainCamera(ratioWH, moveSpeed, rotateSpeed, glm::vec3(0.0f, 0.0f, 3.0f));
-//	GStorage<Camera *>::GetInstance()->Register(str_MainCamera.c_str(), &mainCamera);
+//	// initialize static shader uniforms before rendering
+//	// --------------------------------------------------
+//	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+//	shader.use();
+//	shader.setMat4("projection", projection);
 //
-//	//------------ Camera Matrixs UBO
-//	size_t cameraMatrixsUBO;
-//	glGenBuffers(1, &cameraMatrixsUBO);
-//	glBindBuffer(GL_UNIFORM_BUFFER, cameraMatrixsUBO);
-//	glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), NULL, GL_DYNAMIC_DRAW);
-//	glBindBufferBase(GL_UNIFORM_BUFFER, 0, cameraMatrixsUBO);
-//	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-//
-//	//------------ Light Matrix UBO
-//	glm::mat4 lightProjection, lightView;
-//	glm::mat4 lightSpaceMatrix;
-//	float near_plane = 1.0f, far_plane = 7.5f;
-//	lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-//	lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
-//	lightSpaceMatrix = lightProjection * lightView;
-//
-//	size_t lightMatrixUBO;
-//	glGenBuffers(1, &lightMatrixUBO);
-//	glBindBuffer(GL_UNIFORM_BUFFER, lightMatrixUBO);
-//	glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), glm::value_ptr(lightSpaceMatrix), GL_STATIC_DRAW);
-//	glBindBufferBase(GL_UNIFORM_BUFFER, 1, lightMatrixUBO);
-//	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-//
-//
-//	//------------ 深度缓冲
-//	FBO FBO_DepthMap(1024, 1024, FBO::ENUM_TYPE_DEPTH);
-//	Texture depthMap(FBO_DepthMap.GetDepthTexture().GetID());
-//
-//
-//	//------------ 输入
-//	auto registerInputOp = new RegisterInput(false);
-//
-//	//------------- 时间
-//	float deltaTime = 0.0f; // 当前帧与上一帧的时间差
-//	GStorage<float *>::GetInstance()->Register(str_DeltaTime.c_str(), &deltaTime);
-//	float lastFrame = 0.0f; // 上一帧的时间
-//	auto timeOp = new LambdaOp([&]() {
+//	// render loop
+//	// -----------
+//	while (!glfwWindowShouldClose(window))
+//	{
+//		// per-frame time logic
+//		// --------------------
 //		float currentFrame = glfwGetTime();
 //		deltaTime = currentFrame - lastFrame;
 //		lastFrame = currentFrame;
-//	});
 //
-//	//------------ 更新相机
-//	auto cameraMatrixsUBO_Update = new LambdaOp([&]() {
-//		glBindBuffer(GL_UNIFORM_BUFFER, cameraMatrixsUBO);
-//		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(mainCamera.GetViewMatrix()));
-//		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(mainCamera.GetProjectionMatrix()));
-//		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-//	});
+//		// input
+//		// -----
+//		processInput(window);
 //
-//	//------------ 模型场景
-//	Shader * curShader = NULL;
-//	auto sceneOp = Operation::ToPtr(new LambdaOp([&]() {
-//		// floor
-//		curShader->SetMat4f("model", glm::mat4(1.0f));
-//		VAO_Panel.Use();
-//		glDrawArrays(GL_TRIANGLES, 0, 6);
-//
-//		glm::mat4 model;
-//		// cubes
-//		model = glm::mat4(1.0f);
-//		model = glm::translate(model, glm::vec3(0.0f, 1.5f, 0.0));
-//		model = glm::scale(model, glm::vec3(0.5f));
-//		curShader->SetMat4f("model", model);
-//		VAO_Cube.Use();
-//		glDrawElements(GL_TRIANGLES, cube.GetTriNum() * 3, GL_UNSIGNED_INT, NULL);
-//		model = glm::mat4(1.0f);
-//		model = glm::translate(model, glm::vec3(2.0f, 0.0f, 1.0));
-//		model = glm::scale(model, glm::vec3(0.5f));
-//		curShader->SetMat4f("model", model);
-//		VAO_Cube.Use();
-//		glDrawElements(GL_TRIANGLES, cube.GetTriNum() * 3, GL_UNSIGNED_INT, NULL);
-//		model = glm::mat4(1.0f);
-//		model = glm::translate(model, glm::vec3(-1.0f, 0.0f, 2.0));
-//		model = glm::rotate(model, glm::radians(60.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
-//		model = glm::scale(model, glm::vec3(0.25));
-//		curShader->SetMat4f("model", model);
-//		VAO_Cube.Use();
-//		glDrawElements(GL_TRIANGLES, cube.GetTriNum() * 3, GL_UNSIGNED_INT, NULL);
-//	}));
-//
-//	//------------ 渲染深度图
-//	auto depthOp = new OpNode([&]() {//init
-//		glEnable(GL_DEPTH_TEST);
-//		glViewport(0, 0, 1024, 1024);
-//		FBO_DepthMap.Use();
-//		glClear(GL_DEPTH_BUFFER_BIT);
-//		textures[0].Use();
-//		curShader = &depthShader;
-//	},
-//		[]() {//end
-//		FBO::UseDefault();
-//		glViewport(0, 0, val_windowWidth, val_windowHeight);
-//	});
-//	(*depthOp) << sceneOp;
-//
-//	//------------ 渲染带阴影的场景
-//	auto shadowOp = new OpNode([&]() {//init
-//		curShader = &shadowShader;
-//		curShader->SetVec3f("viewPos", mainCamera.GetPos());
-//		textures[0].Use(0);
-//		depthMap.Use(1);
-//	});
-//	(*shadowOp) << sceneOp;
-//
-//	//------------ 渲染操作
-//	auto renderOp = new OpNode([]() {//init
-//		glEnable(GL_DEPTH_TEST);
-//		glClearColor(0.01f, 0.01f, 0.01f, 1.0f);
+//		// render
+//		// ------
+//		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 //		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//	}, []() {//end
-//		glfwSwapBuffers(Glfw::GetInstance()->GetWindow());
+//
+//		shader.use();
+//		glm::mat4 view = camera.GetViewMatrix();
+//		shader.setMat4("view", view);
+//		shader.setVec3("camPos", camera.Position);
+//
+//		// render rows*column number of spheres with varying metallic/roughness values scaled by rows and columns respectively
+//		glm::mat4 model = glm::mat4(1.0f);
+//		for (int row = 0; row < nrRows; ++row)
+//		{
+//			shader.setFloat("metallic", (float)row / (float)nrRows);
+//			for (int col = 0; col < nrColumns; ++col)
+//			{
+//				// we clamp the roughness to 0.025 - 1.0 as perfectly smooth surfaces (roughness of 0.0) tend to look a bit off
+//				// on direct lighting.
+//				shader.setFloat("roughness", glm::clamp((float)col / (float)nrColumns, 0.05f, 1.0f));
+//
+//				model = glm::mat4(1.0f);
+//				model = glm::translate(model, glm::vec3(
+//					(col - (nrColumns / 2)) * spacing,
+//					(row - (nrRows / 2)) * spacing,
+//					0.0f
+//				));
+//				shader.setMat4("model", model);
+//				renderSphere();
+//			}
+//		}
+//
+//		// render light source (simply re-render sphere at light positions)
+//		// this looks a bit off as we use the same shader, but it'll make their positions obvious and 
+//		// keeps the codeprint small.
+//		for (unsigned int i = 0; i < sizeof(lightPositions) / sizeof(lightPositions[0]); ++i)
+//		{
+//			glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 0.0, 0.0);
+//			newPos = lightPositions[i];
+//			shader.setVec3("lightPositions[" + std::to_string(i) + "]", newPos);
+//			shader.setVec3("lightColors[" + std::to_string(i) + "]", lightColors[i]);
+//
+//			model = glm::mat4(1.0f);
+//			model = glm::translate(model, newPos);
+//			model = glm::scale(model, glm::vec3(0.5f));
+//			shader.setMat4("model", model);
+//			renderSphere();
+//		}
+//
+//		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+//		// -------------------------------------------------------------------------------
+//		glfwSwapBuffers(window);
 //		glfwPollEvents();
-//	});
+//	}
 //
-//	(*renderOp) << shadowOp;
-//
-//	//------------- 整合
-//	auto opQueue = new OpQueue;
-//	(*opQueue) << registerInputOp << timeOp << cameraMatrixsUBO_Update << depthOp << renderOp;
-//
-//	//------------
-//	Glfw::GetInstance()->Run(opQueue);
-//
-//	//------------
-//	Glfw::GetInstance()->Terminate();
-//
+//	// glfw: terminate, clearing all previously allocated GLFW resources.
+//	// ------------------------------------------------------------------
+//	glfwTerminate();
 //	return 0;
 //}
 //
+//// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
+//// ---------------------------------------------------------------------------------------------------------
+//void processInput(GLFWwindow *window)
+//{
+//	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+//		glfwSetWindowShouldClose(window, true);
+//
+//	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+//		camera.ProcessKeyboard(FORWARD, deltaTime);
+//	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+//		camera.ProcessKeyboard(BACKWARD, deltaTime);
+//	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+//		camera.ProcessKeyboard(LEFT, deltaTime);
+//	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+//		camera.ProcessKeyboard(RIGHT, deltaTime);
+//}
+//
+//// glfw: whenever the window size changed (by OS or user resize) this callback function executes
+//// ---------------------------------------------------------------------------------------------
+//void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+//{
+//	// make sure the viewport matches the new window dimensions; note that width and 
+//	// height will be significantly larger than specified on retina displays.
+//	glViewport(0, 0, width, height);
+//}
+//
+//
+//// glfw: whenever the mouse moves, this callback is called
+//// -------------------------------------------------------
+//void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+//{
+//	if (firstMouse)
+//	{
+//		lastX = xpos;
+//		lastY = ypos;
+//		firstMouse = false;
+//	}
+//
+//	float xoffset = xpos - lastX;
+//	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+//
+//	lastX = xpos;
+//	lastY = ypos;
+//
+//	camera.ProcessMouseMovement(xoffset, yoffset);
+//}
+//
+//// glfw: whenever the mouse scroll wheel scrolls, this callback is called
+//// ----------------------------------------------------------------------
+//void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+//{
+//	camera.ProcessMouseScroll(yoffset);
+//}
+//
+//// renders (and builds at first invocation) a sphere
+//// -------------------------------------------------
+//unsigned int sphereVAO = 0;
+//unsigned int indexCount;
+//void renderSphere()
+//{
+//	if (sphereVAO == 0)
+//	{
+//		glGenVertexArrays(1, &sphereVAO);
+//
+//		unsigned int vbo, ebo;
+//		glGenBuffers(1, &vbo);
+//		glGenBuffers(1, &ebo);
+//
+//		std::vector<glm::vec3> positions;
+//		std::vector<glm::vec2> uv;
+//		std::vector<glm::vec3> normals;
+//		std::vector<unsigned int> indices;
+//
+//		const unsigned int X_SEGMENTS = 64;
+//		const unsigned int Y_SEGMENTS = 64;
+//		const float PI = 3.14159265359;
+//		for (unsigned int y = 0; y <= Y_SEGMENTS; ++y)
+//		{
+//			for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
+//			{
+//				float xSegment = (float)x / (float)X_SEGMENTS;
+//				float ySegment = (float)y / (float)Y_SEGMENTS;
+//				float xPos = std::cos(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
+//				float yPos = std::cos(ySegment * PI);
+//				float zPos = std::sin(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
+//
+//				positions.push_back(glm::vec3(xPos, yPos, zPos));
+//				uv.push_back(glm::vec2(xSegment, ySegment));
+//				normals.push_back(glm::vec3(xPos, yPos, zPos));
+//			}
+//		}
+//
+//		bool oddRow = false;
+//		for (unsigned int y = 0; y < Y_SEGMENTS; ++y)
+//		{
+//			if (!oddRow) // even rows: y == 0, y == 2; and so on
+//			{
+//				for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
+//				{
+//					indices.push_back(y       * (X_SEGMENTS + 1) + x);
+//					indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
+//				}
+//			}
+//			else
+//			{
+//				for (unsigned int x = X_SEGMENTS; x >= 0; --x)
+//				{
+//					indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
+//					indices.push_back(y       * (X_SEGMENTS + 1) + x);
+//				}
+//			}
+//			oddRow = !oddRow;
+//		}
+//		indexCount = indices.size();
+//
+//		std::vector<float> data;
+//		for (unsigned int i = 0; i < positions.size(); ++i)
+//		{
+//			data.push_back(positions[i].x);
+//			data.push_back(positions[i].y);
+//			data.push_back(positions[i].z);
+//			if (uv.size() > 0)
+//			{
+//				data.push_back(uv[i].x);
+//				data.push_back(uv[i].y);
+//			}
+//			if (normals.size() > 0)
+//			{
+//				data.push_back(normals[i].x);
+//				data.push_back(normals[i].y);
+//				data.push_back(normals[i].z);
+//			}
+//		}
+//		glBindVertexArray(sphereVAO);
+//		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+//		glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), &data[0], GL_STATIC_DRAW);
+//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+//		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+//		float stride = (3 + 2 + 3) * sizeof(float);
+//		glEnableVertexAttribArray(0);
+//		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
+//		glEnableVertexAttribArray(1);
+//		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
+//		glEnableVertexAttribArray(2);
+//		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride, (void*)(5 * sizeof(float)));
+//	}
+//
+//	glBindVertexArray(sphereVAO);
+//	glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
+//}
+//
+//// utility function for loading a 2D texture from file
+//// ---------------------------------------------------
+//unsigned int loadTexture(char const * path)
+//{
+//	unsigned int textureID;
+//	glGenTextures(1, &textureID);
+//
+//	int width, height, nrComponents;
+//	unsigned char *data = stbi_load(path, &width, &height, &nrComponents, 0);
+//	if (data)
+//	{
+//		GLenum format;
+//		if (nrComponents == 1)
+//			format = GL_RED;
+//		else if (nrComponents == 3)
+//			format = GL_RGB;
+//		else if (nrComponents == 4)
+//			format = GL_RGBA;
+//
+//		glBindTexture(GL_TEXTURE_2D, textureID);
+//		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+//		glGenerateMipmap(GL_TEXTURE_2D);
+//
+//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//
+//		stbi_image_free(data);
+//	}
+//	else
+//	{
+//		std::cout << "Texture failed to load at path: " << path << std::endl;
+//		stbi_image_free(data);
+//	}
+//
+//	return textureID;
+//}

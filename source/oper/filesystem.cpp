@@ -14,19 +14,37 @@ std::string FileSystem::getPath(const std::string& path)
 	return (pathBuilder)(path);
 }
 
-std::string const FileSystem::getRoot()
+std::string  FileSystem::getProjectRoot() 
 {
 	std::string OpenGL_root(getCurrentDir());
-	OpenGL_root += "/../";
-	//static char const * envRoot = _dupenv_s("OpenGL_ROOT_PATH");
-	//static char const * givenRoot = (envRoot != nullptr ? envRoot : OpenGL_root.c_str());
-	//static std::string root = (givenRoot != nullptr ? givenRoot : "");
-	return OpenGL_root;
+
+	char *pValue = nullptr;
+	size_t   len;
+	if (!_dupenv_s(&pValue, &len, "Project_Root") && pValue != nullptr)
+	{
+#ifdef _DEBUG
+		printf("Project_Root = %s\n", pValue);
+#endif // _DEBUG
+		free(pValue);
+		OpenGL_root += "/../";
+		return OpenGL_root;
+	}
+	else
+	{
+		OpenGL_root += "/../../";
+		return OpenGL_root;
+	}
+}
+
+std::string FileSystem::getSourceDir()
+{
+	return getProjectRoot() + std::string("source");
 }
 
 FileSystem::Builder FileSystem::getPathBuilder()
 {
-	if (getRoot() != "")
+	//printf("Project_Root = %s\n", getRoot());
+	if (getProjectRoot() != "")
 		return &FileSystem::getPathRelativeRoot;
 	else
 		return &FileSystem::getPathRelativeBinary;
@@ -34,12 +52,12 @@ FileSystem::Builder FileSystem::getPathBuilder()
 
 std::string FileSystem::getPathRelativeRoot(const std::string& path)
 {
-	return getRoot() + std::string("/") + path;
+	return getProjectRoot() + path;
 }
 
 std::string FileSystem::getPathRelativeBinary(const std::string& path)
 {
-	return "../../../" + path;
+	return getProjectRoot() + "../../../" + path;
 }
 
 
