@@ -33,20 +33,23 @@ using namespace Define;
 using namespace std;
 using namespace BasicShape;
 
+
+
+
 int main()
 {
 	// glfw: initialize and configure
 	Glfw::GetInstance()->Init(SCR_WIDTH, SCR_HEIGHT, windowTitle.c_str());
-	//Glfw::GetInstance()->LockCursor();
+	Glfw::GetInstance()->LockCursor();
 
 
 	//注册相机, 窗口
-	Camera mainCamera(ratioWH, moveSpeed, rotateSpeed, glm::vec3(0.0f, -2.0f, 5.0f));
+	Camera mainCamera(ratioWH, moveSpeed, rotateSpeed, glm::vec3(0.0f, -2.0f, 20.0f));
 	GStorage<Camera *>::GetInstance()->Register(str_MainCamera.c_str(), &mainCamera);
 
 
 	//设置几何物体, 创建球体网格
-	Sphere   baseSphere(100);
+	Sphere   baseSphere(30);
 	std::vector<glm::vec3>  position = baseSphere.GetVertexArr();
 	std::vector<glm::vec3>  normal = baseSphere.GetNormalArr();
 	std::vector<glm::vec2>  texcoord = baseSphere.GetTexCoordsArr();
@@ -66,15 +69,9 @@ int main()
 		sphereVertices.push_back(texcoord[index].y);
 	};
 
-	VAO  sphereVAO(&sphereVertices[0], sizeof(float) * sphereVertices.size(), { 3, 3, 2 }, &indexArray[0][0], sizeof(int) * 3 * indexArray.size());
-
-	VAO  quadVAO(quadVertices, sizeof(quadVertices), { 3, 3, 2 }, quadIndices, sizeof(quadIndices));
-	VAO	 quadShaderVAO(derferShaderQuad, sizeof(derferShaderQuad), { 3, 3, 2 }, derferShaderQuadIndices, sizeof(derferShaderQuadIndices));
-
-	Shader   pbrShaderPass("./pbrShaderPass/pbrShader/pbrLighting.vs", "./pbrShaderPass/pbrShader/pbrLighting.fs");
+	VAO  sphereVAO(&sphereVertices[0], sizeof(float) * sphereVertices.size(), { 3, 3, 2 }, &indexArray[0][0], sizeof(unsigned int) * 3 * indexArray.size());
+	Shader   pbrShaderPass("./shader/pbrShader/pbrLighting.vs", "./shader/pbrShader/pbrLighting.fs");
 	pbrShaderPass.BindUniformBlockIndex("Matrices", 0);
-	//Shader   shaderQuadShowPass("./pbrShaderPass/advancedLighting/derferShaderShowing.vs", "./pbrShaderPass/advancedLighting/derferShaderShowing.fs");
-	//Shader   shaderQuadShowSpePass("./pbrShaderPass/advancedLighting/derferShaderShowing_1.vs", "./pbrShaderPass/advancedLighting/derferShaderShowing_1.fs");
 
 
 
@@ -122,7 +119,7 @@ int main()
 		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		//glBlendEquation(GL_FUNC_ADD);
 
-		//开启背面剔除
+		////开启背面剔除
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 		glFrontFace(GL_CCW); // gl_ccw 代表的是逆时针的环绕方式
@@ -132,26 +129,11 @@ int main()
 
 	//设置pbrShaderPass材质， 环境灯光, 等其他 uniform 变量
 	auto  settingEnvir = new LambdaOp([&] {
-		//shaderGeometryPass.use();
-		//绘制之前都必须设置渲染状态, 设置位置, 物体渲染(如果状态不复位可以放置在渲染循环之前)
-		//全局属性面板
-		//shaderGeometryPass.setBool("blinn", true);
-
-		////材质属性
-		//shaderGeometryPass.setFloat("material.shininess", material_shininess);
-
-		//// 灯光属性
-		//shaderGeometryPass.setVec3("light.position", lightPos);
-		//shaderGeometryPass.setVec3("light.ambient", light_ambient);
-		//shaderGeometryPass.setVec3("light.diffuse", light_diffuse);
-		//shaderGeometryPass.setVec3("light.specular", light_specular);
-
-		//shaderGeometryPass.setFloat("near_plane", NEAR_PLANE);
-		//shaderGeometryPass.setFloat("far_plane", FAR_PLANE);
-		//shaderGeometryPass.unBind();
-
 
 		pbrShaderPass.use();
+		pbrShaderPass.setVec3("albedo", 0.5f, 0.0f, 0.0f);
+		pbrShaderPass.setFloat("ao", 1.0f);
+
 		// Also send light relevant uniforms
 		for (GLuint i = 0; i < lightPositions.size(); i++)
 		{
@@ -185,13 +167,19 @@ int main()
 
 	//更新相机view 和 projection 矩阵
 	glm::mat4   uboMat4Arrays[2];
-	auto  updateCameraUbo = new LambdaOp([&]() {
+	auto  updateShaderUniform = new LambdaOp([&]() {
+		
 		//更新ubo, 可以采取批量更新也可以逐次更新uniform 
 		glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
 		uboMat4Arrays[0] = mainCamera.GetProjectionMatrix();
 		uboMat4Arrays[1] = mainCamera.GetViewMatrix();
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, 2 * sizeof(glm::mat4), uboMat4Arrays);
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+		pbrShaderPass.use();
+		//设置相机视角
+		pbrShaderPass.setVec3("viewPos", mainCamera.GetPos());
+		pbrShaderPass.unBind();
 	});
 
 
@@ -200,10 +188,9 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-
-		pbrShaderPass.setVec3("viewPos", mainCamera.GetPos());
-
-		// render rows*column number of spheres with varying metallic/roughness values scaled by rows and columns respectively
+		pbrShaderPass.use();
+		//从下往上球体的金属性从0.0变到1.0， 
+		//从左到右球体的粗糙度从0.0变到1.0。
 		glm::mat4 model = glm::mat4(1.0f);
 		for (int row = 0; row < nrRows; ++row)
 		{
@@ -213,7 +200,6 @@ int main()
 				// we clamp the roughness to 0.025 - 1.0 as perfectly smooth surfaces (roughness of 0.0) tend to look a bit off
 				// on direct lighting.
 				pbrShaderPass.setFloat("roughness", glm::clamp((float)col / (float)nrColumns, 0.05f, 1.0f));
-
 				model = glm::mat4(1.0f);
 				model = glm::translate(model, glm::vec3(
 					(col - (nrColumns / 2)) * spacing,
@@ -224,10 +210,9 @@ int main()
 				sphereVAO.Draw();
 			}
 		}
-
 		// render light source (simply re-render sphere at light positions)
 		// this looks a bit off as we use the same pbrShaderPass, but it'll make their positions obvious and keeps the codeprint small.
-		for (unsigned int i = 0; i < sizeof(lightPositions) / sizeof(lightPositions[0]); ++i)
+		for (unsigned int i = 0; i < lightPositions.size(); ++i)
 		{
 			glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 0.0, 0.0);
 			newPos = lightPositions[i];
@@ -245,7 +230,7 @@ int main()
 
 	//渲染队列
 	auto renderQueue = new  OpQueue();
-	*renderQueue << updateCameraUbo << geomtryOp;
+	*renderQueue << updateShaderUniform << geomtryOp;
 
 
 	//swap buffer 

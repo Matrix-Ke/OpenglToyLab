@@ -33,6 +33,7 @@
     <ClCompile Include="4.advanced_opengl\uniformBufferObject.cpp" />
     <ClCompile Include="5.advancedLighting\BlinnPhong.cpp" />
     <ClCompile Include="5.advancedLighting\deferredShadering.cpp" />
+    <ClCompile Include="5.advancedLighting\pbrLighting.cpp" />
     <ClCompile Include="5.advancedLighting\shadowMap.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Main.cpp" />
@@ -46,7 +47,6 @@
     <ClCompile Include="oper\opNode.cpp" />
     <ClCompile Include="oper\opQueue.cpp" />
     <ClCompile Include="oper\registerInput.cpp" />
-    <ClCompile Include="pbrLighting.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="util\basicShape.cpp" />
     <ClCompile Include="util\camera.cpp" />

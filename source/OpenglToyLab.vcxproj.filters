@@ -168,14 +168,14 @@
     <ClCompile Include="oper\registerInput.cpp">
       <Filter>oper</Filter>
     </ClCompile>
-    <ClCompile Include="pbrLighting.cpp">
-      <Filter>Source Files\5.advancedLighting</Filter>
-    </ClCompile>
     <ClCompile Include="util\basicShape.cpp">
       <Filter>util</Filter>
     </ClCompile>
     <ClCompile Include="util\sphere.cpp">
       <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="5.advancedLighting\pbrLighting.cpp">
+      <Filter>Source Files\5.advancedLighting</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

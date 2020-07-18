@@ -22,6 +22,9 @@ GLenum glCheckError_(const char *file, int line)
 	return errorCode;
 }
 
+
+//调试输出 :  通过使用调试输出拓展，OpenGL自身会直接发送一个比起glGetError更为完善的错误或警告信息给用户。
+//它不仅提供了更多的信息，也能够帮助你使用调试器(Debugger)捕捉错误源头
 void APIENTRY glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity, 
 							GLsizei length, const GLchar *message, const void *userParam)
 {

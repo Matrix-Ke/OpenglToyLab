@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include "GLFW/glfwWrapper.h"
@@ -27,7 +28,7 @@ void  Glfw::Init(size_t width /* = 800 */, size_t height /* = 600 */, const std:
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 
-	//对debug版本进行GLFW调试
+	//对debug版本进行GLFW调试, 需要在调用glfwCreateWindow之前完成debug_output请求
 #ifdef  _DEBUG
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 #endif
@@ -53,9 +54,8 @@ void  Glfw::Init(size_t width /* = 800 */, size_t height /* = 600 */, const std:
 	}
 #endif // DEBUG
 
+
 	glViewport(0, 0, width, height);
-
-
 	glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scanCode, int state, int mods) {
 		size_t kbState =
 			(state == GLFW_PRESS ? EventManager::KEYBOARD_PRESS
