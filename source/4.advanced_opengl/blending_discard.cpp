@@ -63,10 +63,10 @@
 //	Texture  texWindows(FileSystem::getPath("resources/textures/window.png").c_str(), false, false);
 //
 //
-//	texContainer.SetTexNameInShader(cubeShader.getID(), "material.diffuse");
-//	planeTex.SetTexNameInShader(cubeShader.getID(), "material.diffuse");
-//	texContainerSpec.SetTexNameInShader(cubeShader.getID(), "material.specular");
-//	texWindows.SetTexNameInShader(blendlingTestShader.getID(), "texture1");
+//	texContainer.SetName( "material.diffuse");
+//	planeTex.SetName("material.diffuse");
+//	texContainerSpec.SetName("material.specular");
+//	texWindows.SetName( "texture1");
 //
 //	std::vector<Texture>  textures{ texContainer, texContainerSpec };
 //	Mesh  cubeMesh(cubeVAO, textures);
@@ -86,9 +86,9 @@
 //		glDepthFunc(GL_LESS);
 //
 //
-//		//glEnable(GL_STENCIL_TEST);
-//		//glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-//		//glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+//		glEnable(GL_STENCIL_TEST);
+//		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+//		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 //
 //		//开启混合模式
 //		glEnable(GL_BLEND);

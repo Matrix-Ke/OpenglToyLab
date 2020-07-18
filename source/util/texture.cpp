@@ -19,6 +19,7 @@ OpenGL::Texture::Texture(unsigned int ID /*= 0*/, ENUM_TYPE type /*= ENUM_TYPE_2
 	this->SetFiltering();
 };
 
+
 OpenGL::Texture::Texture(const std::vector<std::string> & skybox)
 {
 	type = ENUM_TYPE_NOT_VALID;
@@ -31,10 +32,11 @@ OpenGL::Texture::Texture(const std::vector<std::string> & skybox)
 
 OpenGL::Texture::Texture(ENUM_TYPE type) : Texture(0, type) { }
 
-OpenGL::Texture::Texture(const std::string & path, bool flip /*= false*/, bool gammaCorrection /*= false*/)
+OpenGL::Texture::Texture(const std::string & path,  bool flip /*= false*/, bool gammaCorrection /*= false*/, std::string texName /*= std::string("texture_diffuse1")*/)
 {
 	type = ENUM_TYPE_NOT_VALID;
 	GL_Type = 0;
+	m_TexName = texName;
 	this->SetWrapping();
 	this->SetFiltering();
 

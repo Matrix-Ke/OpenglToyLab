@@ -21,7 +21,7 @@ namespace OpenGL
 		Texture(ENUM_TYPE type);
 		Texture(unsigned int width, unsigned int height, float const* data, unsigned int dateType, unsigned int srcFormat, unsigned int internalFormat);
 		Texture(const std::vector<std::string> & skybox);
-		Texture(const std::string & path, bool flip = false, bool gammaCorrection = false);
+		Texture(const std::string & path,  bool flip = false, bool gammaCorrection = false, std::string texName = std::string("texture_diffuse1"));
 
 		bool Load(const std::vector<std::string> & skybox);
 

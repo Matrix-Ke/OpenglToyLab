@@ -34,6 +34,7 @@
     <ClCompile Include="5.advancedLighting\BlinnPhong.cpp" />
     <ClCompile Include="5.advancedLighting\deferredShadering.cpp" />
     <ClCompile Include="5.advancedLighting\pbrLighting.cpp" />
+    <ClCompile Include="5.advancedLighting\pbrLightingTexture.cpp" />
     <ClCompile Include="5.advancedLighting\shadowMap.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Main.cpp" />
@@ -130,6 +131,8 @@
     <None Include="shader\modelLoading\modelLoading.vs" />
     <None Include="shader\pbrShader\pbrLighting.fs" />
     <None Include="shader\pbrShader\pbrLighting.vs" />
+    <None Include="shader\pbrShader\pbrLighting_Texture.fs" />
+    <None Include="shader\pbrShader\pbrLighting_Texture.vs" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
