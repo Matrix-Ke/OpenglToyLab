@@ -396,5 +396,11 @@
     <None Include="shader\pbrShader\pbrGbuffer.vs">
       <Filter>Source Files\shader\pbrShader</Filter>
     </None>
+    <None Include="shader\pbrShader\pbrDeferrdShadering.fs">
+      <Filter>Source Files\shader\pbrShader</Filter>
+    </None>
+    <None Include="shader\pbrShader\pbrDeferrdShadering.vs">
+      <Filter>Source Files\shader\pbrShader</Filter>
+    </None>
   </ItemGroup>
 </Project>

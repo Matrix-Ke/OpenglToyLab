@@ -48,6 +48,10 @@ OpenGL::FBO::FBO(unsigned int width, unsigned int height, Enum_Type type /*= ENU
 		if (!GenFBO_GBUFFER(width, height))
 			printf("GenFBO_GBUFFER fail\n");
 		break;
+	case OpenGL::FBO::ENUM_TYPE_PBR_GBUFFER:
+		if (!GenFBO_PBR_GBUFFER(width, height))
+			printf("GenFBO_PBR_GBUFFER fail\n");
+		break;
 	default:
 		printf("ERROR: FBO type not know\n");
 		m_isValid = false;
@@ -406,7 +410,7 @@ bool OpenGL::FBO::GenFBO_GBUFFER(unsigned int width, unsigned int height)
 	// color + specular color buffer
 	glGenTextures(1, &gAlbedoSpec);
 	glBindTexture(GL_TEXTURE_2D, gAlbedoSpec);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gAlbedoSpec, 0);
@@ -434,6 +438,76 @@ bool OpenGL::FBO::GenFBO_GBUFFER(unsigned int width, unsigned int height)
 	m_colorTextures.push_back(gAlbedoSpec);
 
 	return true;
+}
+
+
+
+bool OpenGL::FBO::GenFBO_PBR_GBUFFER(unsigned int width, unsigned int height)
+{
+	glGenFramebuffers(1, &m_FboID);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_FboID);
+	unsigned int  gPosition, gNormalAo, gAlbedoSpec, gNormalmapRoughness;
+
+	// position color buffer
+	glGenTextures(1, &gPosition);
+	glBindTexture(GL_TEXTURE_2D, gPosition);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPosition, 0);
+
+	// normal color buffer
+	glGenTextures(1, &gNormalAo);
+	glBindTexture(GL_TEXTURE_2D, gNormalAo);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormalAo, 0);
+
+	// color + specular color buffer
+	glGenTextures(1, &gAlbedoSpec);
+	glBindTexture(GL_TEXTURE_2D, gAlbedoSpec);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gAlbedoSpec, 0);
+
+	//metellic map
+	glGenTextures(1, &gNormalmapRoughness);
+	glBindTexture(GL_TEXTURE_2D, gNormalmapRoughness);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, gNormalmapRoughness, 0);
+
+
+	// tell OpenGL which color attachments we'll use (of this framebuffer) for rendering 
+	unsigned int  attachments[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
+	glDrawBuffers(4, attachments);
+
+	// create and attach depth buffer (renderbuffer)
+	unsigned int  rboDepth;
+	glGenRenderbuffers(1, &rboDepth);
+	glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
+
+	// finally check if framebuffer is complete
+	m_isValid = IsComplete();
+	if (!m_isValid) {
+		printf("Framebuffer is not complete!\n");
+		return false;
+	}
+
+	m_colorTextures.push_back(gPosition);
+	m_colorTextures.push_back(gNormalAo);
+	m_colorTextures.push_back(gAlbedoSpec);
+	m_colorTextures.push_back(gNormalmapRoughness);
+
+	return true;
+
 }
 
 bool OpenGL::FBO::IsComplete() const

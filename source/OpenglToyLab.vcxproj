@@ -130,6 +130,8 @@
     <None Include="shader\lighting\multipleLights.vs" />
     <None Include="shader\modelLoading\modelLoading.fs" />
     <None Include="shader\modelLoading\modelLoading.vs" />
+    <None Include="shader\pbrShader\pbrDeferrdShadering.fs" />
+    <None Include="shader\pbrShader\pbrDeferrdShadering.vs" />
     <None Include="shader\pbrShader\pbrGbuffer.fs" />
     <None Include="shader\pbrShader\pbrGbuffer.vs" />
     <None Include="shader\pbrShader\pbrLighting.fs" />

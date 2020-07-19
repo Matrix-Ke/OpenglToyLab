@@ -6,7 +6,7 @@ layout (location = 2) in vec2 aTexCoords;
 
 out VS_OUT
 {
-	vec3 FragPos;
+	vec3 WorldPos;
 	vec3 Normal;
 	vec2 TexCoords;
 } vs_out;
@@ -25,7 +25,7 @@ void main()
 {
 
 	vec4 worldPos = model * vec4(aPos, 1.0f);
-	vs_out.FragPos = worldPos.xyz;
+	vs_out.WorldPos = worldPos.xyz;
 	mat3 normalMatrix = transpose(inverse(mat3(model)));
 	vs_out.Normal = normalMatrix * aNormal;
 	vs_out.TexCoords = aTexCoords;

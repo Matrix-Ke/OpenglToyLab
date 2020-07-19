@@ -44,37 +44,41 @@ int main()
 	GStorage<Camera *>::GetInstance()->Register(str_MainCamera.c_str(), &mainCamera);
 
 
+	Shader shaderGeometryPass("./shader/pbrShader/pbrGbuffer.vs", "./shader/pbrShader/pbrGbuffer.fs");
+	shaderGeometryPass.BindUniformBlockIndex("Matrices", 0);
+	Shader   pbrDeferredShaderingPass("./shader/pbrShader/pbrDeferrdShadering.vs", "./shader/pbrShader/pbrDeferrdShadering.fs");
+	Shader   shaderQuadShowPass("./shader/advancedLighting/derferShaderShowing.vs", "./shader/advancedLighting/derferShaderShowing.fs");
+	Shader   shaderQuadShowSpePass("./shader/advancedLighting/derferShaderShowing_1.vs", "./shader/advancedLighting/derferShaderShowing_1.fs");
+
+
 	//设置几何物体
 	VAO  cubeVAO(CubeVertices, sizeof(CubeVertices), { 3, 3, 2 });
 	VAO  quadVAO(quadVertices, sizeof(quadVertices), { 3, 3, 2 }, quadIndices, sizeof(quadIndices));
 	VAO	 quadShaderVAO(derferShaderQuad, sizeof(derferShaderQuad), { 3, 3, 2 }, derferShaderQuadIndices, sizeof(derferShaderQuadIndices));
 
 
-	Texture  texContainer(FileSystem::getPath("resources/textures/container2.png").c_str(), true, false);
-	texContainer.SetName("texture_diffuse1");
-	Texture  texContainerSpec(FileSystem::getPath("resources/textures/container2_specular.png").c_str(), true, false);
-	texContainerSpec.SetName("texture_specular1");
-	Texture  planeTex(FileSystem::getPath("resources/textures/wood.png").c_str(), true, false);
+	Texture  texture_albedo(FileSystem::getPath("resources/textures/pbr/rusted_iron/albedo.png").c_str(), true, false, "texture_albedo");
+	Texture  texture_metallic(FileSystem::getPath("resources/textures/pbr/rusted_iron/normal.png").c_str(), true, false, "texture_metallic");
+	Texture  texture_normalMap(FileSystem::getPath("resources/textures/pbr/rusted_iron/metallic.png").c_str(), true, false, "texture_normalMap");
+	Texture  texture_roughness(FileSystem::getPath("resources/textures/pbr/rusted_iron/roughness.png").c_str(), true, false, "texture_roughness");
+	Texture  texture_Ao(FileSystem::getPath("resources/textures/pbr/rusted_iron/ao.png").c_str(), true, false, "texture_Ao");
 
 
-	Shader shaderGeometryPass("./shader/pbrShader/pbrGbuffer.vs", "./shader/pbrShader/pbrGbuffer.fs");
-	shaderGeometryPass.BindUniformBlockIndex("Matrices", 0);
-	Shader   shaderLightingPass("./shader/advancedLighting/deferred_shading.vs", "./shader/advancedLighting/deferred_shading.fs");
-	Shader   shaderQuadShowPass("./shader/advancedLighting/derferShaderShowing.vs", "./shader/advancedLighting/derferShaderShowing.fs");
-	Shader   shaderQuadShowSpePass("./shader/advancedLighting/derferShaderShowing_1.vs", "./shader/advancedLighting/derferShaderShowing_1.fs");
-
-	FBO		gBufferFBO(SCR_WIDTH, SCR_HEIGHT, FBO::Enum_Type::ENUM_TYPE_GBUFFER);
+	FBO		gBufferFBO(SCR_WIDTH, SCR_HEIGHT, FBO::Enum_Type::ENUM_TYPE_PBR_GBUFFER);
 	Texture gPositionTex = gBufferFBO.GetColorTexture(0);
 	gPositionTex.SetName("gPosition");
 	Texture	gNormalTex = gBufferFBO.GetColorTexture(1);
-	gNormalTex.SetName("gNormal");
+	gNormalTex.SetName("gNormalAo");
 	Texture gAlbedoSpecularTex = gBufferFBO.GetColorTexture(2);
 	gAlbedoSpecularTex.SetName("gAlbedoSpec");
+	Texture gNormalmapRoughnessTex = gBufferFBO.GetColorTexture(3);
+	gNormalmapRoughnessTex.SetName("gNormalmapRoughness");
+
 
 	//网格物体
-	std::vector<Texture>  textures{ texContainer, texContainerSpec };
+	std::vector<Texture>  textures{ texture_albedo, texture_metallic , texture_normalMap , texture_roughness, texture_Ao };
 	Mesh    cubeMesh(cubeVAO, textures);
-	std::vector<Texture>   gBufferTextures{ gPositionTex , gNormalTex, gAlbedoSpecularTex};
+	std::vector<Texture>   gBufferTextures{ gPositionTex , gNormalTex, gAlbedoSpecularTex, gNormalmapRoughnessTex };
 	Mesh    quadSrceenMesh(quadVAO, gBufferTextures);
 	Mesh    quadSpecularMesh(quadShaderVAO, gAlbedoSpecularTex);
 
@@ -151,40 +155,22 @@ int main()
 
 	//设置shader材质， 环境灯光, 等其他 uniform 变量
 	auto  settingEnvir = new LambdaOp([&] {
-		//shaderGeometryPass.use();
-		//绘制之前都必须设置渲染状态, 设置位置, 物体渲染(如果状态不复位可以放置在渲染循环之前)
-		//全局属性面板
-		//shaderGeometryPass.setBool("blinn", true);
 
-		////材质属性
-		//shaderGeometryPass.setFloat("material.shininess", material_shininess);
-
-		//// 灯光属性
-		//shaderGeometryPass.setVec3("light.position", lightPos);
-		//shaderGeometryPass.setVec3("light.ambient", light_ambient);
-		//shaderGeometryPass.setVec3("light.diffuse", light_diffuse);
-		//shaderGeometryPass.setVec3("light.specular", light_specular);
-
-		//shaderGeometryPass.setFloat("near_plane", NEAR_PLANE);
-		//shaderGeometryPass.setFloat("far_plane", FAR_PLANE);
-		//shaderGeometryPass.unBind();
-
-
-		shaderLightingPass.use();
+		pbrDeferredShaderingPass.use();
 		// Also send light relevant uniforms
 		for (GLuint i = 0; i < lightPositions.size(); i++)
 		{
-			shaderLightingPass.setVec3("lights[" + std::to_string(i) + "].position", lightPositions[i]);
-			shaderLightingPass.setVec3("lights[" + std::to_string(i) + "].color", lightColors[i]);
+			pbrDeferredShaderingPass.setVec3("lights[" + std::to_string(i) + "].position", lightPositions[i]);
+			pbrDeferredShaderingPass.setVec3("lights[" + std::to_string(i) + "].color", lightColors[i]);
 
 			// Update attenuation parameters and calculate radius
 			const GLfloat constant = 1.0; // Note that we don't send this to the shader, we assume it is always 1.0 (in our case)
 			const GLfloat linear = 0.7;
 			const GLfloat quadratic = 1.8;
-			shaderLightingPass.setFloat("lights[" + std::to_string(i) + "].linear", linear);
-			shaderLightingPass.setFloat("lights[" + std::to_string(i) + "].quadratic", quadratic);
+			pbrDeferredShaderingPass.setFloat("lights[" + std::to_string(i) + "].linear", linear);
+			pbrDeferredShaderingPass.setFloat("lights[" + std::to_string(i) + "].quadratic", quadratic);
 		}
-		shaderLightingPass.unBind();
+		pbrDeferredShaderingPass.unBind();
 
 	});
 	settingEnvir->Run();
@@ -241,26 +227,26 @@ int main()
 		//glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
 		 
 		//shader
-		shaderLightingPass.use();
-		shaderLightingPass.setVec3("viewPos", mainCamera.GetPos());
-		quadSrceenMesh.Draw(shaderLightingPass);
+		pbrDeferredShaderingPass.use();
+		pbrDeferredShaderingPass.setVec3("viewPos", mainCamera.GetPos());
+		quadSrceenMesh.Draw(pbrDeferredShaderingPass);
 
-		shaderQuadShowPass.use();
-		model = glm::mat4(1.0f);
-		for (unsigned int i = 0;  i < 3; i++)
-		{
-			model = glm::translate(model, glm::vec3(0.5, 0.0, 0.0));
-			shaderQuadShowPass.setMat4("model", model);
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, gBufferTextures[2-i].GetID());
-			quadShaderVAO.Draw();
-		}
-		shaderQuadShowSpePass.use();
-		model = glm::mat4(1.0f);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, gBufferTextures[2].GetID());
-		shaderQuadShowSpePass.setMat4("model", model);
-		quadShaderVAO.Draw();
+		//shaderQuadShowPass.use();
+		//model = glm::mat4(1.0f);
+		//for (unsigned int i = 0;  i < 3; i++)
+		//{
+		//	model = glm::translate(model, glm::vec3(0.5, 0.0, 0.0));
+		//	shaderQuadShowPass.setMat4("model", model);
+		//	glActiveTexture(GL_TEXTURE0);
+		//	glBindTexture(GL_TEXTURE_2D, gBufferTextures[2-i].GetID());
+		//	quadShaderVAO.Draw();
+		//}
+		//shaderQuadShowSpePass.use();
+		//model = glm::mat4(1.0f);
+		//glActiveTexture(GL_TEXTURE0);
+		//glBindTexture(GL_TEXTURE_2D, gBufferTextures[2].GetID());
+		//shaderQuadShowSpePass.setMat4("model", model);
+		//quadShaderVAO.Draw();
 		//quadSpecularMesh.Draw(shaderQuadShowSpePass);
 
 	});
