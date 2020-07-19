@@ -180,6 +180,9 @@
     <ClCompile Include="5.advancedLighting\pbrLightingTexture.cpp">
       <Filter>Source Files\5.advancedLighting</Filter>
     </ClCompile>
+    <ClCompile Include="5.advancedLighting\derferShaderingPbr.cpp">
+      <Filter>Source Files\5.advancedLighting</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\includes\util\camera.h">
@@ -385,6 +388,12 @@
       <Filter>Source Files\shader\pbrShader</Filter>
     </None>
     <None Include="shader\pbrShader\pbrLighting_Texture.fs">
+      <Filter>Source Files\shader\pbrShader</Filter>
+    </None>
+    <None Include="shader\pbrShader\pbrGbuffer.fs">
+      <Filter>Source Files\shader\pbrShader</Filter>
+    </None>
+    <None Include="shader\pbrShader\pbrGbuffer.vs">
       <Filter>Source Files\shader\pbrShader</Filter>
     </None>
   </ItemGroup>
