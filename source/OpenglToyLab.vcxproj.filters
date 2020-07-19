@@ -402,5 +402,11 @@
     <None Include="shader\pbrShader\pbrDeferrdShadering.vs">
       <Filter>Source Files\shader\pbrShader</Filter>
     </None>
+    <None Include="shader\pbrShader\simple_sphere.fs">
+      <Filter>Source Files\shader\pbrShader</Filter>
+    </None>
+    <None Include="shader\pbrShader\simple_sphere.vs">
+      <Filter>Source Files\shader\pbrShader</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -42,11 +42,13 @@ int main()
 
 
 	//注册相机, 窗口
-	Camera mainCamera(ratioWH, moveSpeed, rotateSpeed, glm::vec3(0.0f, 0.0f, 5.0f));
+	Camera mainCamera(ratioWH, moveSpeed, rotateSpeed, glm::vec3(0.0f, 0.0f, 8.0f));
 	GStorage<Camera *>::GetInstance()->Register(str_MainCamera.c_str(), &mainCamera);
 
 
 	Shader shaderGeometryPass("./shader/pbrShader/pbrGbuffer.vs", "./shader/pbrShader/pbrGbuffer.fs");
+	shaderGeometryPass.BindUniformBlockIndex("Matrices", 0);
+	Shader   shaderLightSphere("./shader/pbrShader/simple_sphere.vs", "./shader/pbrShader/simple_sphere.fs");
 	shaderGeometryPass.BindUniformBlockIndex("Matrices", 0);
 	Shader   pbrDeferredShaderingPass("./shader/pbrShader/pbrDeferrdShadering.vs", "./shader/pbrShader/pbrDeferrdShadering.fs");
 	Shader   shaderQuadShowPass("./shader/advancedLighting/derferShaderShowing.vs", "./shader/advancedLighting/derferShaderShowing.fs");
@@ -106,8 +108,11 @@ int main()
 	//网格物体
 	std::vector<Texture>  textures{ texture_albedo, texture_metallic , texture_normalMap , texture_roughness, texture_Ao };
 	Mesh    cubeMesh(cubeVAO, textures);
+	Mesh    sphereMesh(sphereVAO, textures);
 	std::vector<Texture>   gBufferTextures{ gPositionTex , gNormalTex, gAlbedoSpecularTex, gNormalmapRoughnessTex };
 	Mesh    quadSrceenMesh(quadVAO, gBufferTextures);
+
+
 	Mesh    quadSpecularMesh(quadShaderVAO, gAlbedoSpecularTex);
 
 
@@ -116,7 +121,7 @@ int main()
 
 
 	// - Colors
-	const GLuint NR_LIGHTS = 32;
+	const GLuint NR_LIGHTS = 64;
 	std::vector<glm::vec3> lightPositions;
 	std::vector<glm::vec3> lightColors;
 	srand(13);
@@ -190,6 +195,14 @@ int main()
 		}
 		pbrDeferredShaderingPass.unBind();
 
+		// 灯光属性
+		shaderLightSphere.use();
+		shaderLightSphere.setVec3("light.position", lightPos);
+		shaderLightSphere.setVec3("light.ambient", light_ambient);
+		shaderLightSphere.setVec3("light.diffuse", light_diffuse);
+		shaderLightSphere.unBind();
+
+
 	});
 	settingEnvir->Run();
 
@@ -233,7 +246,13 @@ int main()
 				model = glm::translate(model, objectPositions[i]);
 				model = scale(model, glm::vec3(0.25, 0.25, 0.25));
 				shaderGeometryPass.setMat4("model", model);
-				cubeMesh.Draw(shaderGeometryPass);
+				if ((i % 2) == 0) {
+					sphereMesh.Draw(shaderGeometryPass);
+				}
+				else
+				{
+					cubeMesh.Draw(shaderGeometryPass);
+				}
 			}
 		}
 
@@ -249,23 +268,24 @@ int main()
 		pbrDeferredShaderingPass.setVec3("viewPos", mainCamera.GetPos());
 		quadSrceenMesh.Draw(pbrDeferredShaderingPass);
 
-		//shaderQuadShowPass.use();
-		//model = glm::mat4(1.0f);
-		//for (unsigned int i = 0;  i < 3; i++)
-		//{
-		//	model = glm::translate(model, glm::vec3(0.5, 0.0, 0.0));
-		//	shaderQuadShowPass.setMat4("model", model);
-		//	glActiveTexture(GL_TEXTURE0);
-		//	glBindTexture(GL_TEXTURE_2D, gBufferTextures[2-i].GetID());
-		//	quadShaderVAO.Draw();
-		//}
-		//shaderQuadShowSpePass.use();
-		//model = glm::mat4(1.0f);
-		//glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D, gBufferTextures[2].GetID());
-		//shaderQuadShowSpePass.setMat4("model", model);
-		//quadShaderVAO.Draw();
-		//quadSpecularMesh.Draw(shaderQuadShowSpePass);
+		// 2.5. copy content of geometry's depth buffer to default framebuffer's depth buffer
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, gBufferFBO.GetID());
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // write to default framebuffer
+		glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		// 3. render lights on top of scene
+		// --------------------------------
+		shaderLightSphere.use();
+		for (unsigned int i = 0; i < lightPositions.size(); i++)
+		{
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, lightPositions[i]);
+			model = glm::scale(model, glm::vec3(0.1f));
+			shaderLightSphere.setMat4("model", model);
+			shaderLightSphere.setVec3("lightColor", lightColors[i]);
+			sphereVAO.Draw();
+		}
 
 	});
 

@@ -138,6 +138,8 @@
     <None Include="shader\pbrShader\pbrLighting.vs" />
     <None Include="shader\pbrShader\pbrLighting_Texture.fs" />
     <None Include="shader\pbrShader\pbrLighting_Texture.vs" />
+    <None Include="shader\pbrShader\simple_sphere.fs" />
+    <None Include="shader\pbrShader\simple_sphere.vs" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
