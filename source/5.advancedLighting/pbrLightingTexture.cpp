@@ -44,7 +44,7 @@
 //
 //
 //	//注册相机, 窗口
-//	Camera mainCamera(ratioWH, moveSpeed, rotateSpeed, glm::vec3(0.0f, -2.0f, 20.0f));
+//	Camera mainCamera(ratioWH, moveSpeed, rotateSpeed, glm::vec3(0.0f, 0.0f, 5.0f));
 //	GStorage<Camera *>::GetInstance()->Register(str_MainCamera.c_str(), &mainCamera);
 //
 //
@@ -69,12 +69,21 @@
 //		sphereVertices.push_back(texcoord[index].y);
 //	};
 //
+//
 //	VAO  sphereVAO(&sphereVertices[0], sizeof(float) * sphereVertices.size(), { 3, 3, 2 }, &indexArray[0][0], sizeof(unsigned int) * 3 * indexArray.size());
-//	Shader   pbrShaderPass("./shader/pbrShader/pbrLighting.vs", "./shader/pbrShader/pbrLighting.fs");
+//	Shader   pbrShaderPass("./shader/pbrShader/pbrLighting_Texture.vs", "./shader/pbrShader/pbrLighting_Texture.fs");
 //	pbrShaderPass.BindUniformBlockIndex("Matrices", 0);
 //
+//	Texture  albedoTexture(FileSystem::getPath("resources/textures/pbr/rusted_iron/albedo.png").c_str(), true, false, "albedoTexture");
+//	Texture  normalTexture(FileSystem::getPath("resources/textures/pbr/rusted_iron/normal.png").c_str(), true, false, "normalTexture");
+//	Texture  metallicTexture(FileSystem::getPath("resources/textures/pbr/rusted_iron/metallic.png").c_str(), true, false, "metallicTexture");
+//	Texture  roughnessTexture(FileSystem::getPath("resources/textures/pbr/rusted_iron/roughness.png").c_str(), true, false, "roughnessTexture");
+//	Texture  aoTexture(FileSystem::getPath("resources/textures/pbr/rusted_iron/ao.png").c_str(), true, false, "aoTexture");
 //
 //
+//	//网格物体
+//	std::vector<Texture>  textures{ albedoTexture, normalTexture ,metallicTexture, roughnessTexture, aoTexture };
+//	Mesh    sphereMesh(sphereVAO, textures);
 //
 //	//创建uniform buffer object 
 //	unsigned int uboMatrices;
@@ -99,9 +108,7 @@
 //		glm::vec3(300.0f, 300.0f, 300.0f),
 //		glm::vec3(300.0f, 300.0f, 300.0f)
 //	};
-//	int nrRows = 7;
-//	int nrColumns = 7;
-//	float spacing = 2.5;
+//
 //
 //	//注册处理函数（需要和windows相应绑定处理各种输入）
 //	auto registerInputOp = new RegisterInput(false);
@@ -131,22 +138,15 @@
 //	auto  settingEnvir = new LambdaOp([&] {
 //
 //		pbrShaderPass.use();
-//		pbrShaderPass.setVec3("albedo", 0.5f, 0.0f, 0.0f);
-//		pbrShaderPass.setFloat("ao", 1.0f);
 //
-//		// Also send light relevant uniforms
-//		for (GLuint i = 0; i < lightPositions.size(); i++)
+//		for (unsigned int i = 0; i < lightPositions.size(); ++i)
 //		{
-//			pbrShaderPass.setVec3("lights[" + std::to_string(i) + "].position", lightPositions[i]);
-//			pbrShaderPass.setVec3("lights[" + std::to_string(i) + "].color", lightColors[i]);
-//
-//			// Update attenuation parameters and calculate radius
-//			const GLfloat constant = 1.0; // Note that we don't send this to the pbrShaderPass, we assume it is always 1.0 (in our case)
-//			const GLfloat linear = 0.7;
-//			const GLfloat quadratic = 1.8;
-//			pbrShaderPass.setFloat("lights[" + std::to_string(i) + "].linear", linear);
-//			pbrShaderPass.setFloat("lights[" + std::to_string(i) + "].quadratic", quadratic);
+//			glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 0.0, 0.0);
+//			newPos = lightPositions[i];
+//			pbrShaderPass.setVec3("lightPositions[" + std::to_string(i) + "]", newPos);
+//			pbrShaderPass.setVec3("lightColors[" + std::to_string(i) + "]", lightColors[i]);
 //		}
+//
 //		pbrShaderPass.unBind();
 //
 //	});
@@ -168,7 +168,7 @@
 //	//更新相机view 和 projection 矩阵
 //	glm::mat4   uboMat4Arrays[2];
 //	auto  updateShaderUniform = new LambdaOp([&]() {
-//		
+//
 //		//更新ubo, 可以采取批量更新也可以逐次更新uniform 
 //		glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
 //		uboMat4Arrays[0] = mainCamera.GetProjectionMatrix();
@@ -189,42 +189,10 @@
 //		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 //
 //		pbrShaderPass.use();
-//		//从下往上球体的金属性从0.0变到1.0， 
-//		//从左到右球体的粗糙度从0.0变到1.0。
 //		glm::mat4 model = glm::mat4(1.0f);
-//		for (int row = 0; row < nrRows; ++row)
-//		{
-//			pbrShaderPass.setFloat("metallic", (float)row / (float)nrRows);
-//			for (int col = 0; col < nrColumns; ++col)
-//			{
-//				// we clamp the roughness to 0.025 - 1.0 as perfectly smooth surfaces (roughness of 0.0) tend to look a bit off
-//				// on direct lighting.
-//				pbrShaderPass.setFloat("roughness", glm::clamp((float)col / (float)nrColumns, 0.05f, 1.0f));
-//				model = glm::mat4(1.0f);
-//				model = glm::translate(model, glm::vec3(
-//					(col - (nrColumns / 2)) * spacing,
-//					(row - (nrRows / 2)) * spacing,
-//					0.0f
-//				));
-//				pbrShaderPass.setMat4("model", model);
-//				sphereVAO.Draw();
-//			}
-//		}
-//		// render light source (simply re-render sphere at light positions)
-//		// this looks a bit off as we use the same pbrShaderPass, but it'll make their positions obvious and keeps the codeprint small.
-//		for (unsigned int i = 0; i < lightPositions.size(); ++i)
-//		{
-//			glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 0.0, 0.0);
-//			newPos = lightPositions[i];
-//			pbrShaderPass.setVec3("lightPositions[" + std::to_string(i) + "]", newPos);
-//			pbrShaderPass.setVec3("lightColors[" + std::to_string(i) + "]", lightColors[i]);
+//		pbrShaderPass.setMat4("model", model);
+//		sphereMesh.Draw(pbrShaderPass);
 //
-//			model = glm::mat4(1.0f);
-//			model = glm::translate(model, newPos);
-//			model = glm::scale(model, glm::vec3(0.5f));
-//			pbrShaderPass.setMat4("model", model);
-//			sphereVAO.Draw();
-//		}
 //	});
 //
 //

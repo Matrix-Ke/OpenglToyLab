@@ -177,6 +177,12 @@
     <ClCompile Include="5.advancedLighting\pbrLighting.cpp">
       <Filter>Source Files\5.advancedLighting</Filter>
     </ClCompile>
+    <ClCompile Include="5.advancedLighting\pbrLightingTexture.cpp">
+      <Filter>Source Files\5.advancedLighting</Filter>
+    </ClCompile>
+    <ClCompile Include="5.advancedLighting\derferShaderingPbr.cpp">
+      <Filter>Source Files\5.advancedLighting</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\includes\util\camera.h">
@@ -376,6 +382,30 @@
       <Filter>Source Files\shader\pbrShader</Filter>
     </None>
     <None Include="shader\pbrShader\pbrLighting.vs">
+      <Filter>Source Files\shader\pbrShader</Filter>
+    </None>
+    <None Include="shader\pbrShader\pbrLighting_Texture.vs">
+      <Filter>Source Files\shader\pbrShader</Filter>
+    </None>
+    <None Include="shader\pbrShader\pbrLighting_Texture.fs">
+      <Filter>Source Files\shader\pbrShader</Filter>
+    </None>
+    <None Include="shader\pbrShader\pbrGbuffer.fs">
+      <Filter>Source Files\shader\pbrShader</Filter>
+    </None>
+    <None Include="shader\pbrShader\pbrGbuffer.vs">
+      <Filter>Source Files\shader\pbrShader</Filter>
+    </None>
+    <None Include="shader\pbrShader\pbrDeferrdShadering.fs">
+      <Filter>Source Files\shader\pbrShader</Filter>
+    </None>
+    <None Include="shader\pbrShader\pbrDeferrdShadering.vs">
+      <Filter>Source Files\shader\pbrShader</Filter>
+    </None>
+    <None Include="shader\pbrShader\simple_sphere.fs">
+      <Filter>Source Files\shader\pbrShader</Filter>
+    </None>
+    <None Include="shader\pbrShader\simple_sphere.vs">
       <Filter>Source Files\shader\pbrShader</Filter>
     </None>
   </ItemGroup>

@@ -21,6 +21,7 @@ namespace OpenGL
 			ENUM_TYPE_DEPTH,
 			ENUM_TYPE_CUBE_DEPTH,
 			ENUM_TYPE_GBUFFER,
+			ENUM_TYPE_PBR_GBUFFER,
 		};
 
 
@@ -55,6 +56,7 @@ namespace OpenGL
 		bool GenFBO_DEPTH(unsigned int width, unsigned int height);
 		bool GenFBO_CUBE_DEPTH(unsigned int width, unsigned int height);
 		bool GenFBO_GBUFFER(unsigned int width, unsigned int height);
+		bool GenFBO_PBR_GBUFFER(unsigned int width, unsigned int height);
 
 		bool IsComplete() const;
 

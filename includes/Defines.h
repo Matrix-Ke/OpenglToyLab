@@ -39,7 +39,7 @@ namespace Define
 	//灯光相关
 	const glm::vec3 lightPos(-2.0f, 4.0f, -1.0f);
 	const glm::vec3 light_ambient = glm::vec3(0.3f, 0.3f, 0.3f);
-	const glm::vec3 light_diffuse = glm::vec3(0.4f, 0.4f, 0.4f);
+	const glm::vec3 light_diffuse = glm::vec3(1.0f, 1.0f, 1.0f);
 	const glm::vec3 light_specular = glm::vec3(0.5f, 0.5f, 0.5f);
 
 	//材质相关
@@ -144,6 +144,29 @@ namespace Define
 		//glm::vec3(1.5f,  2.0f, -2.5f),
 		//glm::vec3(1.5f,  0.2f, -1.5f),
 		//glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
+
+	const std::vector<glm::vec3> objectPositions = {
+		glm::vec3(-2.0, -2.0, -2.0),
+		glm::vec3(0.0, -2.0, -2.0),
+		glm::vec3(2.0, -2.0, -2.0),
+		glm::vec3(-2.0, -2.0, 0.0),
+		glm::vec3(0.0, -2.0, 0.0),
+		glm::vec3(2.0, -2.0, 0.0),
+		glm::vec3(-2.0, -2.0, 2.0),
+		glm::vec3(0.0, -2.0, 2.0),
+		glm::vec3(2.0, -2.0, 2.0),
+		//---------------------------
+		glm::vec3(2.0, 0.0, 2.0),
+		glm::vec3(-2.0, 0.0, -2.0),
+		glm::vec3(0.0, 0.0, -2.0),
+		glm::vec3(2.0, 0.0, -2.0),
+		glm::vec3(-2.0, 0.0, 0.0),
+		glm::vec3(0.0, 0.0, 0.0),
+		glm::vec3(2.0, 0.0, 0.0),
+		glm::vec3(-2.0, 0.0, 2.0),
+		glm::vec3(0.0, 0.0, 2.0),
+		glm::vec3(2.0, 0.0, 2.0)
 	};
 
 	const float skyboxVertices[] = {

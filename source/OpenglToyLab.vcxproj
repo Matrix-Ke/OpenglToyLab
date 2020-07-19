@@ -33,7 +33,9 @@
     <ClCompile Include="4.advanced_opengl\uniformBufferObject.cpp" />
     <ClCompile Include="5.advancedLighting\BlinnPhong.cpp" />
     <ClCompile Include="5.advancedLighting\deferredShadering.cpp" />
+    <ClCompile Include="5.advancedLighting\derferShaderingPbr.cpp" />
     <ClCompile Include="5.advancedLighting\pbrLighting.cpp" />
+    <ClCompile Include="5.advancedLighting\pbrLightingTexture.cpp" />
     <ClCompile Include="5.advancedLighting\shadowMap.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Main.cpp" />
@@ -128,8 +130,16 @@
     <None Include="shader\lighting\multipleLights.vs" />
     <None Include="shader\modelLoading\modelLoading.fs" />
     <None Include="shader\modelLoading\modelLoading.vs" />
+    <None Include="shader\pbrShader\pbrDeferrdShadering.fs" />
+    <None Include="shader\pbrShader\pbrDeferrdShadering.vs" />
+    <None Include="shader\pbrShader\pbrGbuffer.fs" />
+    <None Include="shader\pbrShader\pbrGbuffer.vs" />
     <None Include="shader\pbrShader\pbrLighting.fs" />
     <None Include="shader\pbrShader\pbrLighting.vs" />
+    <None Include="shader\pbrShader\pbrLighting_Texture.fs" />
+    <None Include="shader\pbrShader\pbrLighting_Texture.vs" />
+    <None Include="shader\pbrShader\simple_sphere.fs" />
+    <None Include="shader\pbrShader\simple_sphere.vs" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
