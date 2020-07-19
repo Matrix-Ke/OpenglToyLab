@@ -19,6 +19,8 @@ namespace OpenGL
 
 		Texture(unsigned int ID = 0, ENUM_TYPE type = ENUM_TYPE_2D);
 		Texture(ENUM_TYPE type);
+		Texture(const Texture& rhs);
+		Texture& operator=(const Texture& rhs);
 		Texture(unsigned int width, unsigned int height, float const* data, unsigned int dateType, unsigned int srcFormat, unsigned int internalFormat);
 		Texture(const std::vector<std::string> & skybox);
 		Texture(const std::string & path,  bool flip = false, bool gammaCorrection = false, std::string texName = std::string("texture_diffuse1"));
@@ -49,8 +51,7 @@ namespace OpenGL
 
 
 	public:
-		static const Texture  InValid;
-
+		static const Texture InValid;
 	private:
 		static unsigned int Type2GL(ENUM_TYPE type);
 		static std::string Type2Str(ENUM_TYPE type);

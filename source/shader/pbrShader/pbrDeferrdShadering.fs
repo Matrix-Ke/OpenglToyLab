@@ -111,7 +111,7 @@ void main()
 
     //初始化出射辐射率
     vec3 Lo = vec3(0.0);
-    for(int i = 0; i < 32; ++i) 
+    for(int i = 0; i < NR_LIGHTS; ++i) 
     {
         // calculate per-light radiance
         vec3 L = normalize(lights[i].position- WorldPos);
@@ -146,12 +146,11 @@ void main()
     
     vec3 color = ambient + Lo;
 
-    // HDR tonemapping
+    // HDR tonemapping and  gamma correct
     color = color / (color + vec3(1.0));
-    // gamma correct
-//    color = pow(color, vec3(1.0/2.2)); 
-//	FragColor = vec4(color, 1.0);
+    color = pow(color, vec3(1.0/2.2)); 
+	FragColor = vec4(color, 1.0);
 
-	FragColor = texture(gPosition, TexCoords);
+//	FragColor = vec4(texture(gNormalmapRoughness, TexCoords).rgb, 1.0f);
 }
 

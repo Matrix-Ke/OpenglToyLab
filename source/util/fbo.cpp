@@ -104,16 +104,17 @@ const OpenGL::Texture & OpenGL::FBO::GetColorTexture(unsigned int idx /*= 0*/) c
 		return Texture::InValid;
 	}
 
-	if (m_type != ENUM_TYPE_BASIC
-		&& m_type != ENUM_TYPE_MSAA
-		&& m_type != ENUM_TYPE_COLOR
-		&& m_type != ENUM_TYPE_RED
-		&& m_type != ENUM_TYPE_COLOR_FLOAT
-		&& m_type != ENUM_TYPE_RGBF1_DEPTH
-		&& m_type != ENUM_TYPE_RGBF2_DEPTH
-		&& m_type != ENUM_TYPE_RGBF3_DEPTH
-		&& m_type != ENUM_TYPE_GBUFFER)
-		return Texture::InValid;
+	//if (m_type != ENUM_TYPE_BASIC
+	//	&& m_type != ENUM_TYPE_MSAA
+	//	&& m_type != ENUM_TYPE_COLOR
+	//	&& m_type != ENUM_TYPE_RED
+	//	&& m_type != ENUM_TYPE_COLOR_FLOAT
+	//	&& m_type != ENUM_TYPE_RGBF1_DEPTH
+	//	&& m_type != ENUM_TYPE_RGBF2_DEPTH
+	//	&& m_type != ENUM_TYPE_RGBF3_DEPTH
+	//	&& m_type != ENUM_TYPE_GBUFFER
+	//	&& m_type != ENUM_TYPE_PBR_GBUFFER)
+	//	return Texture::InValid;
 
 	return m_colorTextures[idx];
 }

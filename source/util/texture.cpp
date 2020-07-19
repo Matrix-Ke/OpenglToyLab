@@ -10,8 +10,8 @@ using namespace OpenGL;
 using namespace Oper;
 using namespace std;
  
-
 const Texture Texture::InValid(0, ENUM_TYPE_NOT_VALID);
+
 
 OpenGL::Texture::Texture(unsigned int ID /*= 0*/, ENUM_TYPE type /*= ENUM_TYPE_2D*/) : textureID(ID), type(type)
 {
@@ -19,6 +19,32 @@ OpenGL::Texture::Texture(unsigned int ID /*= 0*/, ENUM_TYPE type /*= ENUM_TYPE_2
 	this->SetFiltering();
 };
 
+Texture& OpenGL::Texture::operator=(const Texture& rhs)
+{
+	this->m_TexName = rhs.m_TexName;
+	this->textureID = rhs.textureID;
+	this->channel = rhs.channel;
+	this->type = rhs.type;
+	this->glWrapS = rhs.glWrapS;
+	this->glWrapT = rhs.glWrapT;
+	this->glMinfilter = rhs.glMaxFilter;
+	this->glMaxFilter = rhs.glMaxFilter;
+	this->GL_Type = rhs.GL_Type;
+	return *this;
+};
+
+OpenGL::Texture::Texture(const Texture& rhs)
+{
+	this->m_TexName = rhs.m_TexName;
+	this->textureID = rhs.textureID;
+	this->channel = rhs.channel;
+	this->type = rhs.type;
+	this->glWrapS = rhs.glWrapS;
+	this->glWrapT = rhs.glWrapT;
+	this->glMinfilter = rhs.glMaxFilter;
+	this->glMaxFilter = rhs.glMaxFilter;
+	this->GL_Type = rhs.GL_Type;
+}
 
 OpenGL::Texture::Texture(const std::vector<std::string> & skybox)
 {

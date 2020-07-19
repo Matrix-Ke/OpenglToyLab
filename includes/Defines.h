@@ -146,6 +146,29 @@ namespace Define
 		//glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
 
+	const std::vector<glm::vec3> objectPositions = {
+		glm::vec3(-2.0, -2.0, -2.0),
+		glm::vec3(0.0, -2.0, -2.0),
+		glm::vec3(2.0, -2.0, -2.0),
+		glm::vec3(-2.0, -2.0, 0.0),
+		glm::vec3(0.0, -2.0, 0.0),
+		glm::vec3(2.0, -2.0, 0.0),
+		glm::vec3(-2.0, -2.0, 2.0),
+		glm::vec3(0.0, -2.0, 2.0),
+		glm::vec3(2.0, -2.0, 2.0),
+		//---------------------------
+		glm::vec3(2.0, 0.0, 2.0),
+		glm::vec3(-2.0, 0.0, -2.0),
+		glm::vec3(0.0, 0.0, -2.0),
+		glm::vec3(2.0, 0.0, -2.0),
+		glm::vec3(-2.0, 0.0, 0.0),
+		glm::vec3(0.0, 0.0, 0.0),
+		glm::vec3(2.0, 0.0, 0.0),
+		glm::vec3(-2.0, 0.0, 2.0),
+		glm::vec3(0.0, 0.0, 2.0),
+		glm::vec3(2.0, 0.0, 2.0)
+	};
+
 	const float skyboxVertices[] = {
 		// positions          
 		-1.0f,  1.0f, -1.0f,

@@ -24,12 +24,14 @@
 #include "util/camera.h"
 #include "util/fbo.h"
 #include "util/model.h"
+#include "util/sphere.h"
 
 
 using namespace OpenGL;
 using namespace Oper;
 using namespace Define;
 using namespace std;
+using namespace BasicShape;
 
 
 int main()
@@ -40,7 +42,7 @@ int main()
 
 
 	//注册相机, 窗口
-	Camera mainCamera(ratioWH, moveSpeed, rotateSpeed, glm::vec3(0.0f, -2.0f, 5.0f));
+	Camera mainCamera(ratioWH, moveSpeed, rotateSpeed, glm::vec3(0.0f, 0.0f, 5.0f));
 	GStorage<Camera *>::GetInstance()->Register(str_MainCamera.c_str(), &mainCamera);
 
 
@@ -51,6 +53,32 @@ int main()
 	Shader   shaderQuadShowSpePass("./shader/advancedLighting/derferShaderShowing_1.vs", "./shader/advancedLighting/derferShaderShowing_1.fs");
 
 
+
+		//设置几何物体, 创建球体网格
+	Sphere   baseSphere(30);
+	std::vector<glm::vec3>  position = baseSphere.GetVertexArr();
+	std::vector<glm::vec3>  normal = baseSphere.GetNormalArr();
+	std::vector<glm::vec2>  texcoord = baseSphere.GetTexCoordsArr();
+	std::vector<glm::uvec3> indexArray = baseSphere.GetIndexArr();
+	std::vector<float>  sphereVertices;
+	for (unsigned int index = 0; index < position.size(); ++index)
+	{
+		sphereVertices.push_back(position[index].x);
+		sphereVertices.push_back(position[index].y);
+		sphereVertices.push_back(position[index].z);
+
+		sphereVertices.push_back(normal[index].x);
+		sphereVertices.push_back(normal[index].y);
+		sphereVertices.push_back(normal[index].z);
+
+		sphereVertices.push_back(texcoord[index].x);
+		sphereVertices.push_back(texcoord[index].y);
+	};
+
+
+	VAO  sphereVAO(&sphereVertices[0], sizeof(float) * sphereVertices.size(), { 3, 3, 2 }, &indexArray[0][0], sizeof(unsigned int) * 3 * indexArray.size());
+
+
 	//设置几何物体
 	VAO  cubeVAO(CubeVertices, sizeof(CubeVertices), { 3, 3, 2 });
 	VAO  quadVAO(quadVertices, sizeof(quadVertices), { 3, 3, 2 }, quadIndices, sizeof(quadIndices));
@@ -58,8 +86,8 @@ int main()
 
 
 	Texture  texture_albedo(FileSystem::getPath("resources/textures/pbr/rusted_iron/albedo.png").c_str(), true, false, "texture_albedo");
-	Texture  texture_metallic(FileSystem::getPath("resources/textures/pbr/rusted_iron/normal.png").c_str(), true, false, "texture_metallic");
-	Texture  texture_normalMap(FileSystem::getPath("resources/textures/pbr/rusted_iron/metallic.png").c_str(), true, false, "texture_normalMap");
+	Texture  texture_metallic(FileSystem::getPath("resources/textures/pbr/rusted_iron/metallic.png").c_str(), true, false, "texture_metallic");
+	Texture  texture_normalMap(FileSystem::getPath("resources/textures/pbr/rusted_iron/normal.png").c_str(), true, false, "texture_normalMap");
 	Texture  texture_roughness(FileSystem::getPath("resources/textures/pbr/rusted_iron/roughness.png").c_str(), true, false, "texture_roughness");
 	Texture  texture_Ao(FileSystem::getPath("resources/textures/pbr/rusted_iron/ao.png").c_str(), true, false, "texture_Ao");
 
@@ -85,17 +113,7 @@ int main()
 
 	//几何模型
 	//Model cyborg(FileSystem::getPath("resources/objects/nanosuit/nanosuit.obj"));
-	std::vector<glm::vec3> objectPositions = {
-		glm::vec3(-3.0, -3.0, -3.0),
-		glm::vec3(0.0, -3.0, -3.0),
-		glm::vec3(3.0, -3.0, -3.0),
-		glm::vec3(-3.0, -3.0, 0.0),
-		glm::vec3(0.0, -3.0, 0.0),
-		glm::vec3(3.0, -3.0, 0.0),
-		glm::vec3(-3.0, -3.0, 3.0),
-		glm::vec3(0.0, -3.0, 3.0),
-		glm::vec3(3.0, -3.0, 3.0)
-	};
+
 
 	// - Colors
 	const GLuint NR_LIGHTS = 32;
