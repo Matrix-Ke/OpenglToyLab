@@ -10,84 +10,113 @@ using namespace OpenGL;
 using namespace Oper;
 using namespace std;
  
+
 const Texture Texture::InValid(0, ENUM_TYPE_NOT_VALID);
 
-
-OpenGL::Texture::Texture(unsigned int ID /*= 0*/, ENUM_TYPE type /*= ENUM_TYPE_2D*/) : textureID(ID), type(type)
+OpenGL::Texture::Texture(unsigned int ID /*= 0*/, ENUM_TYPE type /*= ENUM_TYPE_2D*/)
 {
-	this->SetWrapping();
-	this->SetFiltering();
+	this->init();
+	this->m_TextureID = ID;
+	this->m_Type = type;
 };
 
-Texture& OpenGL::Texture::operator=(const Texture& rhs)
-{
-	this->m_TexName = rhs.m_TexName;
-	this->textureID = rhs.textureID;
-	this->channel = rhs.channel;
-	this->type = rhs.type;
-	this->glWrapS = rhs.glWrapS;
-	this->glWrapT = rhs.glWrapT;
-	this->glMinfilter = rhs.glMaxFilter;
-	this->glMaxFilter = rhs.glMaxFilter;
-	this->GL_Type = rhs.GL_Type;
-	return *this;
-};
 
-OpenGL::Texture::Texture(const Texture& rhs)
+OpenGL::Texture::Texture(ENUM_TYPE type, unsigned int width, unsigned int height)
 {
-	this->m_TexName = rhs.m_TexName;
-	this->textureID = rhs.textureID;
-	this->channel = rhs.channel;
-	this->type = rhs.type;
-	this->glWrapS = rhs.glWrapS;
-	this->glWrapT = rhs.glWrapT;
-	this->glMinfilter = rhs.glMaxFilter;
-	this->glMaxFilter = rhs.glMaxFilter;
-	this->GL_Type = rhs.GL_Type;
+	this->init();
+
+
+	switch (type)
+	{
+	case OpenGL::Texture::ENUM_TYPE_NOT_VALID:
+		break;
+	case OpenGL::Texture::ENUM_TYPE_2D:
+		break;
+	case OpenGL::Texture::ENUM_TYPE_CUBE_MAP:
+		this->SetWrapping(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+		this->SetFiltering(GL_LINEAR, GL_LINEAR);
+		this->m_GLtexType = GL_TEXTURE_CUBE_MAP;
+		this->m_Type = ENUM_TYPE_CUBE_MAP;
+		this->constructEmptyCubemap(GL_RGB16F, 512, 512);
+
+		break;
+	case OpenGL::Texture::ENUM_TYPE_2D_DYNAMIC:
+		break;
+	default:
+		break;
+	}
 }
 
 OpenGL::Texture::Texture(const std::vector<std::string> & skybox)
 {
-	type = ENUM_TYPE_NOT_VALID;
-	GL_Type = 0;
-	this->SetWrapping();
-	this->SetFiltering();
+	this->init();
+
+	m_GlMinfilter = GL_LINEAR;
+	m_GlMaxFilter = GL_LINEAR;
+
+	m_Type = ENUM_TYPE_CUBE_MAP;
+	m_GLtexType = GL_TEXTURE_CUBE_MAP;
 
 	Load(skybox);
 }
 
-OpenGL::Texture::Texture(ENUM_TYPE type) : Texture(0, type) { }
-
 OpenGL::Texture::Texture(const std::string & path,  bool flip /*= false*/, bool gammaCorrection /*= false*/, std::string texName /*= std::string("texture_diffuse1")*/)
 {
-	type = ENUM_TYPE_NOT_VALID;
-	GL_Type = 0;
-	m_TexName = texName;
-	this->SetWrapping();
-	this->SetFiltering();
+	this->init();
+
+	m_Type = ENUM_TYPE_2D;
+	m_GLtexType = GL_TEXTURE_2D;
 
 	Load(path, flip, gammaCorrection);
 }
 
 OpenGL::Texture::Texture(unsigned int width, unsigned int height, float const* data, unsigned int dataType, unsigned int srcFormat, unsigned int internalFormat)
 {
-	glGenTextures(1, &textureID);
-	glBindTexture(GL_TEXTURE_2D, textureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, srcFormat, dataType, data);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	type = ENUM_TYPE_2D;
-	GL_Type = GL_TEXTURE_2D;
-
+	this->init();
 	this->SetWrapping(GL_REPEAT, GL_REPEAT);
 	this->SetFiltering(GL_NEAREST, GL_LINEAR);
+
+	glGenTextures(1, &m_TextureID);
+	glBindTexture(m_GLtexType, m_TextureID);
+	glTexImage2D(m_GLtexType, 0, internalFormat, width, height, 0, srcFormat, dataType, data);
+	glTexParameteri(m_GLtexType, GL_TEXTURE_WRAP_S, m_GlWrapS);
+	glTexParameteri(m_GLtexType, GL_TEXTURE_WRAP_T, m_GlWrapT);
+	glTexParameteri(m_GLtexType, GL_TEXTURE_MIN_FILTER, m_GlMinfilter);
+	glTexParameteri(m_GLtexType, GL_TEXTURE_MAG_FILTER, m_GlMaxFilter);
+	m_Type = ENUM_TYPE_2D;
+	m_GLtexType = m_GLtexType;
+}
+
+Texture& OpenGL::Texture::operator=(const Texture& rhs)
+{
+	this->m_TexName = rhs.m_TexName;
+	this->m_TextureID = rhs.m_TextureID;
+	this->m_Channel = rhs.m_Channel;
+	this->m_Type = rhs.m_Type;
+	this->m_GlWrapS = rhs.m_GlWrapS;
+	this->m_GlWrapT = rhs.m_GlWrapT;
+	this->m_GlMinfilter = rhs.m_GlMaxFilter;
+	this->m_GlMaxFilter = rhs.m_GlMaxFilter;
+	this->m_GLtexType = rhs.m_GLtexType;
+	return *this;
+};
+
+OpenGL::Texture::Texture(const Texture& rhs)
+{
+	this->m_TexName = rhs.m_TexName;
+	this->m_TextureID = rhs.m_TextureID;
+	this->m_Channel = rhs.m_Channel;
+	this->m_Type = rhs.m_Type;
+	this->m_GlWrapS = rhs.m_GlWrapS;
+	this->m_GlWrapT = rhs.m_GlWrapT;
+	this->m_GlMinfilter = rhs.m_GlMaxFilter;
+	this->m_GlMaxFilter = rhs.m_GlMaxFilter;
+	this->m_GLtexType = rhs.m_GLtexType;
 }
 
 bool OpenGL::Texture::Load(const std::string & path, bool flip /*= false*/, bool gammaCorrection /*= false*/, unsigned int desiredChannel /*= 0*/)
 {
-	if (IsValid())
+	if (!IsValid())
 	{
 		cout << " Error :  the texture is valid already \n";
 		return false;
@@ -97,42 +126,41 @@ bool OpenGL::Texture::Load(const std::string & path, bool flip /*= false*/, bool
 	int height;
 
 	//加载纹理图片
+	int dataFormat;
 	stbi_set_flip_vertically_on_load(flip);
-	unsigned char* data = stbi_load(path.c_str(), &width, &height, &channel, desiredChannel);
+	unsigned char* data = stbi_load(path.c_str(), &width, &height, &dataFormat, desiredChannel);
 	if (data == nullptr)
 	{
 		printf("texture load failed, filepath = %s \n", path.c_str());
-		type = ENUM_TYPE_NOT_VALID;
-		GL_Type = 0;
+		m_Type = ENUM_TYPE_NOT_VALID;
+		m_GLtexType = 0;
 		return false;
 	}
 	GLenum internalFormat;
-	GLenum dataFormat;
-	if (channel == 1) {
+	if (dataFormat == 1) {
 		internalFormat = GL_RED;
-		dataFormat = GL_RED;
+		m_Channel = GL_RED;
 	}
-	else if (channel == 3) {
+	else if (dataFormat == 3) {
 		internalFormat = gammaCorrection ? GL_SRGB : GL_RGB;
-		dataFormat = GL_RGB;
+		m_Channel = GL_RGB;
 	}
-	else if (channel == 4) {
+	else if (dataFormat == 4) {
 		internalFormat = gammaCorrection ? GL_SRGB_ALPHA : GL_RGBA;
-		dataFormat = GL_RGBA;
+		m_Channel = GL_RGBA;
 	}
 
-	glGenTextures(1, &textureID);
-	glBindTexture(GL_TEXTURE_2D, textureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
+	glGenTextures(1, &m_TextureID);
+	glBindTexture(m_GLtexType, m_TextureID);
+	glTexImage2D(m_GLtexType, 0, internalFormat, width, height, 0, m_Channel, GL_UNSIGNED_BYTE, data);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, glWrapS);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, glWrapT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, glMinfilter);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, glMaxFilter);
+	glTexParameteri(m_GLtexType, GL_TEXTURE_WRAP_S, m_GlWrapS);
+	glTexParameteri(m_GLtexType, GL_TEXTURE_WRAP_T, m_GlWrapT);
+	glTexParameteri(m_GLtexType, GL_TEXTURE_MIN_FILTER, m_GlMinfilter);
+	glTexParameteri(m_GLtexType, GL_TEXTURE_MAG_FILTER, m_GlMaxFilter);
 
-	glGenerateMipmap(GL_TEXTURE_2D);
-	type = ENUM_TYPE_2D;
-	GL_Type = GL_TEXTURE_2D;
+	glGenerateMipmap(m_GLtexType);
+
 	//Opengl时时刻刻记住要解绑， 不然会被坑死， 很难Debug
 	this->UnBind();
 
@@ -141,13 +169,13 @@ bool OpenGL::Texture::Load(const std::string & path, bool flip /*= false*/, bool
 
 bool OpenGL::Texture::SetImage(const Oper::Image & image)
 {
-	if (type != ENUM_TYPE_2D_DYNAMIC) {
-		printf("ERROR: type[%s] can't set image\n", Type2Str(type).c_str());
+	if (m_Type != ENUM_TYPE_2D_DYNAMIC) {
+		printf("ERROR: type[%s] can't set image\n", Type2Str(m_Type).c_str());
 		return false;
 	}
 
-	if (textureID == 0)
-		glGenTextures(1, &textureID);
+	if (m_TextureID == 0)
+		glGenTextures(1, &m_TextureID);
 
 	GLenum format;
 	int nrComponents = image.GetChannel();
@@ -158,25 +186,26 @@ bool OpenGL::Texture::SetImage(const Oper::Image & image)
 	else if (nrComponents == 4)
 		format = GL_RGBA;
 
-	glBindTexture(GL_TEXTURE_2D, textureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, format, image.GetWidth(), image.GetHeight(), 0, format, GL_UNSIGNED_BYTE, image.GetConstData());
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, glMinfilter);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, glMaxFilter);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, glWrapS);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, glWrapT);
+	glBindTexture(m_GLtexType, m_TextureID);
+	glTexImage2D(m_GLtexType, 0, format, image.GetWidth(), image.GetHeight(), 0, format, GL_UNSIGNED_BYTE, image.GetConstData());
+	glTexParameteri(m_GLtexType, GL_TEXTURE_MIN_FILTER, m_GlMinfilter);
+	glTexParameteri(m_GLtexType, GL_TEXTURE_MAG_FILTER, m_GlMaxFilter);
+	glTexParameteri(m_GLtexType, GL_TEXTURE_WRAP_S, m_GlWrapS);
+	glTexParameteri(m_GLtexType, GL_TEXTURE_WRAP_T, m_GlWrapT);
 	UnBind();
 }
 
-void OpenGL::Texture::SetWrapping(unsigned int wrap_s /*= GL_REPEAT*/, unsigned int wrap_t /*= GL_REPEAT*/)
+void OpenGL::Texture::SetWrapping(unsigned int wrap_s /*= GL_REPEAT*/, unsigned int wrap_t /*= GL_REPEAT*/, unsigned int wrap_r /* =GL_CLAMP_TO_EDGE*/ )
 {
-	glWrapS = wrap_s;
-	glWrapT = wrap_t;
+	m_GlWrapS = wrap_s;
+	m_GlWrapT = wrap_t;
+	m_GlWrapR = wrap_r;
 }
 
 void OpenGL::Texture::SetFiltering(unsigned int minFilter /*= GL_NEAREST*/, unsigned int maxFilter /*= GL_LINEAR*/)
 {
-	glMinfilter = minFilter;
-	glMaxFilter = maxFilter;
+	m_GlMinfilter = minFilter;
+	m_GlMaxFilter = maxFilter;
 }
 
 bool OpenGL::Texture::Use(unsigned int id /* = 0 */) const
@@ -185,7 +214,7 @@ bool OpenGL::Texture::Use(unsigned int id /* = 0 */) const
 		return false;
 
 	glActiveTexture(GL_TEXTURE0 + id);
-	glBindTexture(Type2GL(type), textureID);
+	glBindTexture(Type2GL(m_Type), m_TextureID);
 	return true;
 }
 
@@ -193,22 +222,22 @@ void OpenGL::Texture::UnBind()
 {
 	if (!IsValid())
 		return;
-	glBindTexture(Type2GL(type), 0);
+	glBindTexture(Type2GL(m_Type), 0);
 }
 
 unsigned int OpenGL::Texture::GetID() const
 {
-	return textureID;
+	return m_TextureID;
 }
 
 unsigned int OpenGL::Texture::getGLType() const
 {
-	return this->GL_Type;
+	return this->m_GLtexType;
 }
 
 bool OpenGL::Texture::IsValid() const
 {
-	return textureID != 0 && type != ENUM_TYPE_NOT_VALID;
+	return m_TextureID != 0 && m_Type != ENUM_TYPE_NOT_VALID;
 }
 
 
@@ -224,6 +253,82 @@ std::string OpenGL::Texture::getName() const
 {
 	return m_TexName;
 }
+
+void OpenGL::Texture::init()
+{
+	this->m_TexName = "defuseTexture";
+	this->m_Channel = GL_RGB;
+	this->m_Type = ENUM_TYPE_NOT_VALID;
+	this->m_GlWrapS = GL_CLAMP_TO_EDGE;
+	this->m_GlWrapT = GL_CLAMP_TO_EDGE;
+	this->m_GlWrapR = GL_CLAMP_TO_EDGE;
+
+	this->m_GlMinfilter = GL_NEAREST;
+	this->m_GlMaxFilter = GL_LINEAR;
+	this->m_GLtexType = GL_TEXTURE_2D;
+}
+
+void OpenGL::Texture::constructEmptyCubemap(unsigned int internalFormat, unsigned int widthSize, unsigned int heightSize)
+{
+	glGenTextures(1, &m_TextureID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, m_TextureID);
+	this->m_Channel = GL_RGB;
+	for (unsigned int i = 0; i < 6; ++i)
+	{
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalFormat, widthSize, widthSize, 0, m_Channel, GL_FLOAT, nullptr);
+	}
+
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, m_GlWrapS);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, m_GlWrapT);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, m_GlWrapR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, m_GlMinfilter);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, m_GlMaxFilter);
+}
+
+
+
+
+bool OpenGL::Texture::Load(const std::vector<std::string> & skybox)
+{
+	if (IsValid()) {
+		printf("ERROR: The texture is valid already.\n");
+
+		return false;
+	}
+
+	glGenTextures(1, &m_TextureID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, m_TextureID);
+	
+	int width;
+	int height;
+	for (size_t i = 0; i < skybox.size(); i++)
+	{
+		//Image image(skybox[i].c_str());
+		stbi_set_flip_vertically_on_load(false);
+		unsigned char* data = stbi_load(skybox[i].c_str(), &width, &height, &m_Channel, 0);
+
+		if (data == nullptr)
+		{
+			printf("Cubemap texture failed to load at path: %s\n", skybox[i].c_str());
+			m_Type = ENUM_TYPE_NOT_VALID;
+			m_GLtexType = 0;
+			return false;
+		}
+		
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+	}
+
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, m_GlMinfilter);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, m_GlMaxFilter);
+	//包围盒设置
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, m_GlWrapS);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, m_GlWrapT);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, m_GlWrapR);
+
+	UnBind();
+	return true;
+}
+
 
 unsigned int OpenGL::Texture::Type2GL(ENUM_TYPE type)
 {
@@ -256,47 +361,4 @@ std::string OpenGL::Texture::Type2Str(ENUM_TYPE type)
 	default:
 		return "UNKNOWN_TYPE";
 	}
-}
-
-bool OpenGL::Texture::Load(const std::vector<std::string> & skybox)
-{
-	if (IsValid()) {
-		printf("ERROR: The texture is valid already.\n");
-
-		return false;
-	}
-
-	glGenTextures(1, &textureID);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
-	
-	int width;
-	int height;
-	for (size_t i = 0; i < skybox.size(); i++)
-	{
-		//Image image(skybox[i].c_str());
-		stbi_set_flip_vertically_on_load(false);
-		unsigned char* data = stbi_load(skybox[i].c_str(), &width, &height, &channel, 0);
-
-		if (data == nullptr)
-		{
-			printf("Cubemap texture failed to load at path: %s\n", skybox[i].c_str());
-			type = ENUM_TYPE_NOT_VALID;
-			GL_Type = 0;
-			return false;
-		}
-		
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-	}
-
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	//包围盒设置
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
-	type = ENUM_TYPE_CUBE_MAP;
-	GL_Type = GL_TEXTURE_CUBE_MAP;
-	UnBind();
-	return true;
 }
