@@ -39,7 +39,7 @@ int main()
 
 	// glfw: initialize and configure
 	Glfw::GetInstance()->Init(SCR_WIDTH, SCR_HEIGHT, windowTitle.c_str());
-	//Glfw::GetInstance()->LockCursor();
+	Glfw::GetInstance()->LockCursor();
 
 		//注册相机, 窗口
 	Camera mainCamera(ratioWH, moveSpeed, rotateSpeed, glm::vec3(0.0f, 0.0f, 3.0f));
@@ -49,6 +49,8 @@ int main()
 	Shader equirectangularToCubemapShader("./shader/IBL/cubemap.vs", "./shader/IBL/equirectangular_to_cubemap.fs");
 	Shader backgroundShader("./shader/IBL/background.vs", "./shader/IBL/background.fs");
 	Shader pbrShader("./shader/IBL/pbr.vs", "./shader/IBL/pbr.fs");
+	Shader irradianceShader("./shader/IBL/cubemap.vs", "./shader/IBL/irradiance_convolution.fs");
+
 
 	//设置几何物体, 创建球体网格
 	Sphere   baseSphere(30);
@@ -82,6 +84,8 @@ int main()
 	//加载环境贴图
 	Texture  hdrTexture(FileSystem::getPath("resources/textures/hdr/newport_loft.hdr").c_str(), true, true, "equirectangularMap");
 	Texture  envCubemap(Texture::ENUM_TYPE_CUBE_MAP, 512, 512);
+	Texture  irradianceMap(Texture::ENUM_TYPE_CUBE_MAP, 32, 32);
+
 
 
 	// 设置6个观察方向来获取cubemap的各个面
@@ -124,6 +128,32 @@ int main()
 		cubeVAO.Draw();
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+	//由于辐照度图对所有周围的辐射值取了平均值，因此它丢失了大部分高频细节，
+	//所以我们可以以较低的分辨率（32x32）存储，并让 OpenGL 的线性滤波完成大部分工作。接下来，我们将捕捉到的帧缓冲图像缩放到新的分辨率：
+	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32);
+	//求取辐照度图
+	irradianceShader.use();
+	irradianceShader.setInt("environmentMap", 0);
+	irradianceShader.setMat4("projection", captureProjection);
+	envCubemap.Use(0);
+
+	glViewport(0, 0, 32, 32); // don't forget to configure the viewport to the capture dimensions.
+	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+	for (unsigned int i = 0; i < 6; ++i)
+	{
+		irradianceShader.setMat4("view", captureViews[i]);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, irradianceMap.GetID(), 0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		cubeVAO.Draw();
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
 
 
 
@@ -215,6 +245,9 @@ int main()
 		pbrShader.setMat4("projection", mainCamera.GetProjectionMatrix());
 		pbrShader.setMat4("view", mainCamera.GetViewMatrix());
 		pbrShader.setVec3("camPos", mainCamera.GetPos());
+		pbrShader.setInt("irradianceMap", 0);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap.GetID());
 
 		//渲染一排不同参数对比的球体
 		glm::mat4 model = glm::mat4(1.0f);
@@ -256,6 +289,7 @@ int main()
 
 		//渲染天空盒
 		backgroundShader.use();
+		backgroundShader.setInt("environmentMap", 0);
 		backgroundShader.setMat4("view", mainCamera.GetViewMatrix());
 		backgroundShader.setMat4("projection", mainCamera.GetProjectionMatrix());
 		glActiveTexture(GL_TEXTURE0);

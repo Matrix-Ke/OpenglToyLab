@@ -37,7 +37,7 @@ OpenGL::Texture::Texture(ENUM_TYPE type, unsigned int width, unsigned int height
 		this->SetFiltering(GL_LINEAR, GL_LINEAR);
 		this->m_GLtexType = GL_TEXTURE_CUBE_MAP;
 		this->m_Type = ENUM_TYPE_CUBE_MAP;
-		this->constructEmptyCubemap(GL_RGB16F, 512, 512);
+		this->constructEmptyCubemap(GL_RGB16F, width, height);
 
 		break;
 	case OpenGL::Texture::ENUM_TYPE_2D_DYNAMIC:

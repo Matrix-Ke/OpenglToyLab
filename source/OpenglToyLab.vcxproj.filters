@@ -432,5 +432,11 @@
     <None Include="shader\IBL\pbr.vs">
       <Filter>Source Files\shader\IBL</Filter>
     </None>
+    <None Include="shader\IBL\irradiance_convolution.fs">
+      <Filter>Source Files\shader\IBL</Filter>
+    </None>
+    <None Include="shader\IBL\irradiance_convolution.vs">
+      <Filter>Source Files\shader\IBL</Filter>
+    </None>
   </ItemGroup>
 </Project>

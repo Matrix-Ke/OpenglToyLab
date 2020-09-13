@@ -127,6 +127,8 @@
     <None Include="shader\IBL\background.vs" />
     <None Include="shader\IBL\equirectangular_to_cubemap.fs" />
     <None Include="shader\IBL\cubemap.vs" />
+    <None Include="shader\IBL\irradiance_convolution.fs" />
+    <None Include="shader\IBL\irradiance_convolution.vs" />
     <None Include="shader\IBL\pbr.fs" />
     <None Include="shader\IBL\pbr.vs" />
     <None Include="shader\lighting\lightCube.fs" />
