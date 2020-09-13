@@ -21,7 +21,7 @@ OpenGL::Texture::Texture(unsigned int ID /*= 0*/, ENUM_TYPE type /*= ENUM_TYPE_2
 };
 
 
-OpenGL::Texture::Texture(ENUM_TYPE type, unsigned int width, unsigned int height)
+OpenGL::Texture::Texture(ENUM_TYPE type, unsigned int width, unsigned int height, unsigned int minfilter)
 {
 	this->init();
 
@@ -37,6 +37,7 @@ OpenGL::Texture::Texture(ENUM_TYPE type, unsigned int width, unsigned int height
 		this->SetFiltering(GL_LINEAR, GL_LINEAR);
 		this->m_GLtexType = GL_TEXTURE_CUBE_MAP;
 		this->m_Type = ENUM_TYPE_CUBE_MAP;
+		this->m_GlMinfilter = minfilter;
 		this->constructEmptyCubemap(GL_RGB16F, width, height);
 
 		break;

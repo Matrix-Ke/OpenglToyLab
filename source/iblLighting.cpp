@@ -50,6 +50,8 @@ int main()
 	Shader backgroundShader("./shader/IBL/background.vs", "./shader/IBL/background.fs");
 	Shader pbrShader("./shader/IBL/pbr.vs", "./shader/IBL/pbr.fs");
 	Shader irradianceShader("./shader/IBL/cubemap.vs", "./shader/IBL/irradiance_convolution.fs");
+	Shader prefilterShader("./shader/IBL/cubemap.vs", "./shader/IBL/prefilter.fs");
+	Shader brdfShader("./shader/IBL/brdf.vs", "./shader/IBL/brdf.fs");
 
 
 	//设置几何物体, 创建球体网格
@@ -83,8 +85,13 @@ int main()
 
 	//加载环境贴图
 	Texture  hdrTexture(FileSystem::getPath("resources/textures/hdr/newport_loft.hdr").c_str(), true, true, "equirectangularMap");
-	Texture  envCubemap(Texture::ENUM_TYPE_CUBE_MAP, 512, 512);
-	Texture  irradianceMap(Texture::ENUM_TYPE_CUBE_MAP, 32, 32);
+	Texture  envCubemap(Texture::ENUM_TYPE_CUBE_MAP, 512, 512, GL_LINEAR_MIPMAP_LINEAR);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap.GetID());
+	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+	Texture  irradianceMap(Texture::ENUM_TYPE_CUBE_MAP, 32, 32, GL_LINEAR);
+	Texture  prefilterMap(Texture::ENUM_TYPE_CUBE_MAP, 128, 128, GL_LINEAR_MIPMAP_LINEAR);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap.GetID());
+	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 
 
 
@@ -93,7 +100,7 @@ int main()
 	glm::mat4 captureViews[] =
 	{
 		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f, 0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
 		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
 		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
 		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
@@ -155,10 +162,60 @@ int main()
 
 
 
+	//计算预过滤环境贴图
+	prefilterShader.use();
+	prefilterShader.setInt("environmentMap", 0);
+	prefilterShader.setMat4("projection", captureProjection);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap.GetID());
+
+	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+	unsigned int maxMipLevels = 5;
+	for (unsigned int mip = 0; mip < maxMipLevels; ++mip)
+	{
+		//根据mip的级别来设置framebuffer的大小
+		unsigned int mipWidth = 128 * std::pow(0.5, mip);
+		unsigned int mipHeight = 128 * std::pow(0.5, mip);
+		glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
+		glViewport(0, 0, mipWidth, mipHeight);
+
+		float roughness = (float)mip / (float)(maxMipLevels - 1);
+		prefilterShader.setFloat("roughness", roughness);
+		for (unsigned int i = 0; i < 6; ++i)
+		{
+			prefilterShader.setMat4("view", captureViews[i]);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterMap.GetID(), mip);
+
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			cubeVAO.Draw();
+		}
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 
 
+	// 由brdf方程公式生成lut图
+	unsigned int brdfLUTTexture;
+	glGenTextures(1, &brdfLUTTexture);
+	glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, 512, 512, 0, GL_RG, GL_FLOAT, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+	// then re-configure capture framebuffer object and render screen-space quad with BRDF shader.
+	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brdfLUTTexture, 0);
+
+	glViewport(0, 0, 512, 512);
+	brdfShader.use();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	quadVAO.Draw();
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 
 	////创建uniform buffer object 
@@ -200,6 +257,9 @@ int main()
 	//设置shader材质， 环境灯光, 等其他 uniform 变量
 	auto  settingEnvir = new LambdaOp([&] {
 		pbrShader.use();
+		pbrShader.setInt("irradianceMap", 0);
+		pbrShader.setInt("prefilterMap", 1);
+		pbrShader.setInt("brdfLUT", 2);
 		pbrShader.setVec3("albedo", 0.5f, 0.0f, 0.0f);
 		pbrShader.setFloat("ao", 1.0f);
 
@@ -245,9 +305,14 @@ int main()
 		pbrShader.setMat4("projection", mainCamera.GetProjectionMatrix());
 		pbrShader.setMat4("view", mainCamera.GetViewMatrix());
 		pbrShader.setVec3("camPos", mainCamera.GetPos());
-		pbrShader.setInt("irradianceMap", 0);
+
+		//绑定贴图
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap.GetID());
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap.GetID());
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
 
 		//渲染一排不同参数对比的球体
 		glm::mat4 model = glm::mat4(1.0f);
@@ -295,6 +360,8 @@ int main()
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap.GetID());
 		cubeVAO.Draw();
+
+		
 	});
 
 

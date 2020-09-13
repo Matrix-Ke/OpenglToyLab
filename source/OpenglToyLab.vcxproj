@@ -125,12 +125,16 @@
     <None Include="shader\getting_started\textureShader.vs" />
     <None Include="shader\IBL\background.fs" />
     <None Include="shader\IBL\background.vs" />
+    <None Include="shader\IBL\brdf.fs" />
+    <None Include="shader\IBL\brdf.vs" />
     <None Include="shader\IBL\equirectangular_to_cubemap.fs" />
     <None Include="shader\IBL\cubemap.vs" />
     <None Include="shader\IBL\irradiance_convolution.fs" />
     <None Include="shader\IBL\irradiance_convolution.vs" />
     <None Include="shader\IBL\pbr.fs" />
     <None Include="shader\IBL\pbr.vs" />
+    <None Include="shader\IBL\prefilter.fs" />
+    <None Include="shader\IBL\prefilter.vs" />
     <None Include="shader\lighting\lightCube.fs" />
     <None Include="shader\lighting\lightCube.vs" />
     <None Include="shader\lighting\lightingMaps.fs" />
