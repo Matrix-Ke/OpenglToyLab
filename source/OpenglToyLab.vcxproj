@@ -80,6 +80,7 @@
     <ClInclude Include="..\includes\util\LStorage.h" />
     <ClInclude Include="..\includes\util\mesh.h" />
     <ClInclude Include="..\includes\util\model.h" />
+    <ClInclude Include="..\includes\util\MyDelegate.h" />
     <ClInclude Include="..\includes\util\operation.h" />
     <ClInclude Include="..\includes\util\opNode.h" />
     <ClInclude Include="..\includes\util\opQueue.h" />

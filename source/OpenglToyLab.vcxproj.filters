@@ -266,6 +266,9 @@
     <ClInclude Include="..\includes\util\sphere.h">
       <Filter>oper</Filter>
     </ClInclude>
+    <ClInclude Include="..\includes\util\MyDelegate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\getting_started\camera.fs">
