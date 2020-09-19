@@ -34,11 +34,11 @@
     <ClCompile Include="5.advancedLighting\BlinnPhong.cpp" />
     <ClCompile Include="5.advancedLighting\deferredShadering.cpp" />
     <ClCompile Include="5.advancedLighting\derferShaderingPbr.cpp" />
+    <ClCompile Include="5.advancedLighting\iblLighting.cpp" />
     <ClCompile Include="5.advancedLighting\pbrLighting.cpp" />
     <ClCompile Include="5.advancedLighting\pbrLightingTexture.cpp" />
     <ClCompile Include="5.advancedLighting\shadowMap.cpp" />
     <ClCompile Include="glad.c" />
-    <ClCompile Include="iblLighting.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="oper\config.cpp" />
     <ClCompile Include="oper\eventManager.cpp" />

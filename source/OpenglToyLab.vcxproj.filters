@@ -186,7 +186,7 @@
     <ClCompile Include="5.advancedLighting\derferShaderingPbr.cpp">
       <Filter>Source Files\5.advancedLighting</Filter>
     </ClCompile>
-    <ClCompile Include="iblLighting.cpp">
+    <ClCompile Include="5.advancedLighting\iblLighting.cpp">
       <Filter>Source Files\5.advancedLighting</Filter>
     </ClCompile>
   </ItemGroup>
