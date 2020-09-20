@@ -41,7 +41,7 @@ int main()
 	Glfw::GetInstance()->Init(SCR_WIDTH, SCR_HEIGHT, windowTitle.c_str());
 	Glfw::GetInstance()->LockCursor();
 
-		//注册相机, 窗口
+	//注册相机, 窗口
 	Camera mainCamera(ratioWH, moveSpeed, rotateSpeed, glm::vec3(0.0f, 0.0f, 3.0f));
 	GStorage<Camera *>::GetInstance()->Register(str_MainCamera.c_str(), &mainCamera);
 
@@ -237,7 +237,6 @@ int main()
 
 	//渲染环境配置， 设置shader材质， 环境灯光, 等其他 uniform 变量
 	Glfw::GetInstance()->setRenderEnv(Operation::ToPtr(new LambdaOp([&] {
-
 		//开启深度测试
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
@@ -259,7 +258,7 @@ int main()
 		pbrShader.setVec3("albedo", 0.5f, 0.0f, 0.0f);
 		pbrShader.setFloat("ao", 1.0f);
 	})));
-	//settingEnvir->Run();
+
 
 
 	//更新存储的时间差。
@@ -272,6 +271,7 @@ int main()
 		lastFrame = currentFrame;
 		//std::cout << currentFrame << std::endl;
 	});
+
 
 	//更新ubo矩阵
 	glm::mat4   uboMat4Arrays[2];

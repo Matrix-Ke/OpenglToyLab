@@ -6,10 +6,12 @@
 #include <iostream>
 #include "util/GStorage.H"
 #include "util/glDebug.h"
+#include "util/MyDelegate.h"
 
 using namespace OpenGL;
 using namespace Oper;
 using namespace std;
+using namespace Delegate;
 
 Glfw::Glfw() : window(nullptr) {};
 
@@ -72,25 +74,15 @@ void  Glfw::Init(size_t width /* = 800 */, size_t height /* = 600 */, const std:
 	});
 
 	glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xPos, double yPos) {
-		static float lastX = xPos, lastY = yPos;
-		static float mousePos_XOffset, mousePos_YOffset;
-		GStorage<float *>::GetInstance()->Register("mousePos_XOffset", &mousePos_XOffset);
-		GStorage<float *>::GetInstance()->Register("mousePos_YOffset", &mousePos_YOffset);
-		//------------
-		mousePos_XOffset = xPos - lastX;
-		mousePos_YOffset = lastY - yPos;
-		lastX = xPos;
-		lastY = yPos;
-		EventManager::GetInstance()->Response(EventManager::MOUSE_MOUVE);
+		CMultiDelegate<void, double, double, bool >::GetInstance()->Response(MOUSE_MOUVE, xPos, yPos, true);
 	});
+
+
 
 	//------------
 	glfwSetScrollCallback(window, [](GLFWwindow* window, double xOffset, double yOffset) {
-		static float mouseScroll_YOffset;
-		GStorage<float *>::GetInstance()->Register("mouseScroll_YOffset", &mouseScroll_YOffset);
-		//------------
-		mouseScroll_YOffset = yOffset;
-		EventManager::GetInstance()->Response(EventManager::MOUSE_SCROLL);
+
+		CMultiDelegate<void, double>::GetInstance()->Response(MOUSE_SCROLL, yOffset);
 	});
 
 	//-------------------

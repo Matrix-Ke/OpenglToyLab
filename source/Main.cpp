@@ -1,39 +1,50 @@
 //#include "util/MyDelegate.h"  
 //using namespace Delegate;
 //
+//
+//void foofunc(int)
+//{
+//	printf("fooFunc test");
+//}
+//
 //int NormalFunc(int a)
 //{
-//	printf("ÕâÀïÊÇÆÕÍ¨º¯Êı £º%d\n", a);
+//	printf("è¿™é‡Œæ˜¯æ™®é€šå‡½æ•° ï¼š%d\n", a);
 //	return 1;
 //}
 //
+//template<typename... params>
 //class A
 //{
 //public:
+//	typedef void(*func)(params...);
 //	static int StaticFunc(int a)
 //	{
-//		printf("ÕâÀïÊÇ³ÉÔ±¾²Ì¬º¯Êı £º %d\n", a);
+//		printf("è¿™é‡Œæ˜¯æˆå‘˜é™æ€å‡½æ•° ï¼š %d\n", a);
 //		return 1;
 //	}
-//	int MemberFunc(int a)
+//	int MemberFunc(params...)
 //	{
-//		printf("ÕâÀïÊÇ³ÉÔ±·Ç¾²Ì¬º¯Êı £º %d\n", a);
+//		printf("tesat  ih\n");
 //		return 2;
 //	}
+//private:
+//	func mFunc;
 //};
 //
 //using namespace Delegate;
+//
+//typedef void(*func_ptr)(int);
+//
 //int main()
 //{
-//	//Ê×ÏÈ´´½¨ÁËÒ»¸ö·µ»ØÖµÎª void ,²ÎÊıÎªint µÄÒ»¸öÎ¯ÍĞ¡£
-//	CMultiDelegate<int, int>*   insPtr = CMultiDelegate<int, int>::GetInstance();
-//	insPtr->Register(KEYBOARD_PRESS, newDelegate(NormalFunc));
-//	insPtr->Register(KEYBOARD_PRESS, newDelegate(&A(), &A::MemberFunc));
-//	insPtr->Register(KEYBOARD_PRESS, newDelegate(A::StaticFunc));
-//
-//	CMultiDelegate<int, int>::GetInstance()->Response(KEYBOARD_PRESS, 7);
+//	A<int>   fooA;
+//	fooA.MemberFunc(3);
+//	A<void>  foob;
+//	foob.MemberFunc();
+//	
 //
 //
 //	return 0;
 //}
-//
+////
