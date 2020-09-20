@@ -235,8 +235,9 @@ int main()
 	registerInputOp->Run();
 
 
-	//渲染环境配置
-	auto initOp = new LambdaOp([]() {
+	//渲染环境配置， 设置shader材质， 环境灯光, 等其他 uniform 变量
+	Glfw::GetInstance()->setRenderEnv(Operation::ToPtr(new LambdaOp([&] {
+
 		//开启深度测试
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
@@ -250,22 +251,15 @@ int main()
 		//glEnable(GL_CULL_FACE);
 		//glCullFace(GL_BACK);
 		//glFrontFace(GL_CCW); // gl_ccw 代表的是逆时针的环绕方式
-	}, false);
-	initOp->Run();
 
-
-	//设置shader材质， 环境灯光, 等其他 uniform 变量
-	auto  settingEnvir = new LambdaOp([&] {
 		pbrShader.use();
 		pbrShader.setInt("irradianceMap", 0);
 		pbrShader.setInt("prefilterMap", 1);
 		pbrShader.setInt("brdfLUT", 2);
 		pbrShader.setVec3("albedo", 0.5f, 0.0f, 0.0f);
 		pbrShader.setFloat("ao", 1.0f);
-
-
-	});
-	settingEnvir->Run();
+	})));
+	//settingEnvir->Run();
 
 
 	//更新存储的时间差。
@@ -279,7 +273,6 @@ int main()
 		//std::cout << currentFrame << std::endl;
 	});
 
-
 	//更新ubo矩阵
 	glm::mat4   uboMat4Arrays[2];
 	auto  updateCameraUbo = new LambdaOp([&]() {
@@ -292,15 +285,11 @@ int main()
 	});
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 	auto geomtryOp = new  LambdaOp([&]() {
 
-
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
 		pbrShader.use();
 		pbrShader.setMat4("projection", mainCamera.GetProjectionMatrix());
 		pbrShader.setMat4("view", mainCamera.GetViewMatrix());
@@ -361,26 +350,21 @@ int main()
 		glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap.GetID());
 		cubeVAO.Draw();
 
-		
 	});
 
 
 	//渲染队列
 	auto renderQueue = new  OpQueue();
-	*renderQueue << updateCameraUbo << geomtryOp;
+	*renderQueue << timeOp << updateCameraUbo << geomtryOp;
 
+	Glfw::GetInstance()->SetForwardProcess(Operation::ToPtr(renderQueue));
 
-	//swap buffer 
-	auto endOp = new LambdaOp([]() {
+	Glfw::GetInstance()->SetFramerEndProcess(Operation::ToPtr(new LambdaOp([]() {
 		glfwPollEvents();
 		glfwSwapBuffers(Glfw::GetInstance()->GetWindow());
-	});
+	})));
 
-	auto opLoop = new OpQueue();
-	*opLoop << timeOp << renderQueue << endOp;
-
-	//Glfw::GetInstance()->RenderLoop(Operation(opLoop));
-
+	Glfw::GetInstance()->StartRenderLoop();
 	Glfw::GetInstance()->Terminate();
 
 	return 0;

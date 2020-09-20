@@ -18,6 +18,7 @@ build/
 *.pdb
 *.ilk
 *.idb
+*.sbr
 
 # Precompiled Headers
 *.gch

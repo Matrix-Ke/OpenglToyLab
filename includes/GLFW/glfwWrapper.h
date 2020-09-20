@@ -25,7 +25,9 @@ namespace OpenGL
 
 		void SetPostProcess(Oper::Ptr<Oper::Operation> op);
 
-		void RenderLoop();
+		void SetFramerEndProcess(Oper::Ptr<Oper::Operation> op);
+
+		void StartRenderLoop();
 
 		GLFWwindow*   GetWindow();
 		void	CloseWindow();
@@ -34,6 +36,7 @@ namespace OpenGL
 
 		int GetKey(int key);
 	protected:
+		void initProcess();
 
 	private:
 
@@ -49,7 +52,12 @@ namespace OpenGL
 		void    LoadGL();
 
 		GLFWwindow*		window;
+
+	private:
+		Oper::Ptr<Oper::OpQueue>   mRenderEnv;
 		Oper::Ptr<Oper::OpQueue>   mForwardProcess;
 		Oper::Ptr<Oper::OpQueue>   mPostProcess;
+		Oper::Ptr<Oper::OpQueue>   mFrameProcess;
+
 	};
 }

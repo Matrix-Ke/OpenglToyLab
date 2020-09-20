@@ -27,6 +27,9 @@ void  Glfw::Init(size_t width /* = 800 */, size_t height /* = 600 */, const std:
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+	//初始化渲染操作
+	initProcess();
+
 
 	//对debug版本进行GLFW调试, 需要在调用glfwCreateWindow之前完成debug_output请求
 #ifdef  _DEBUG
@@ -105,11 +108,15 @@ void Glfw::Terminate() { glfwTerminate(); }
 GLFWwindow * Glfw::GetWindow() { return window; }
 
 
-void Glfw::RenderLoop() 
+void Glfw::StartRenderLoop() 
 {
 	if (window == nullptr)
 		return;
 	//------------
+	if (mRenderEnv && mRenderEnv->IsHold())
+	{
+		mRenderEnv->Run();
+	}
 	while (!glfwWindowShouldClose(window))
 	{
 		if (mForwardProcess && mForwardProcess->IsHold() )
@@ -119,6 +126,10 @@ void Glfw::RenderLoop()
 		if (mPostProcess && mPostProcess->IsHold())
 		{
 			mPostProcess->Run();
+		}
+		if (mFrameProcess && mFrameProcess->IsHold())
+		{
+			mFrameProcess->Run();
 		}
 	}
 }
@@ -155,7 +166,10 @@ void Glfw::LoadGL() {
 
 void OpenGL::Glfw::setRenderEnv(Oper::Ptr<Oper::Operation> op)
 {
-	
+	if (mRenderEnv)
+	{
+		this->mRenderEnv->Push(op);
+	}
 }
 
 void OpenGL::Glfw::SetForwardProcess(Oper::Ptr<Oper::Operation> op)
@@ -164,10 +178,6 @@ void OpenGL::Glfw::SetForwardProcess(Oper::Ptr<Oper::Operation> op)
 	if (mForwardProcess)
 	{
 		this->mForwardProcess->Push(op);
-	}
-	else
-	{
-		this->mForwardProcess = op;
 	}
 }
 
@@ -178,9 +188,13 @@ void OpenGL::Glfw::SetPostProcess(Oper::Ptr<Oper::Operation> op)
 	{
 		this->mPostProcess->Push(op);
 	}
-	else
+}
+
+void OpenGL::Glfw::SetFramerEndProcess(Oper::Ptr<Oper::Operation> op)
+{
+	if (mFrameProcess)
 	{
-		this->mPostProcess = op;
+		this->mFrameProcess->Push(op);
 	}
 }
 
@@ -192,4 +206,12 @@ void OpenGL::Glfw::CloseWindow()
 int OpenGL::Glfw::GetKey(int key)
 {
 	return glfwGetKey(window, key);
+}
+
+void OpenGL::Glfw::initProcess()
+{
+	this->mRenderEnv = Operation::ToPtr(new OpQueue());
+	this->mForwardProcess = Operation::ToPtr(new OpQueue());
+	this->mPostProcess = Operation::ToPtr(new OpQueue());
+	this->mFrameProcess = Operation::ToPtr(new OpQueue());
 }
