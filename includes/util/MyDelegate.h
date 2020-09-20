@@ -1,28 +1,39 @@
 #pragma once
-
 #include <typeinfo.h>
+#include <map>
 #include <list>
 #include <vector>
+#include "util/singleton.h"
 
 namespace Delegate
 {
 
-	// IDelegate   提供接口的基类
+	enum ENUM_EVENT
+	{
+		//KEY = 0x00000000 ~ 0x0000FFFF
+		KEYBOARD_PRESS = 0x00010000,
+		KEYBOARD_REPEAT = 0x00020000,
+		KEYBOARD_RELEASE = 0x00040000,
+		KEYBOARD = KEYBOARD_PRESS | KEYBOARD_REPEAT | KEYBOARD_RELEASE,
+		MOUSE_SCROLL = 0x00080000,
+		MOUSE_MOUVE = 0x00080001,
+		WINDOW_ZOOM = 0x00080002,
+	};
 
+	// IDelegate   提供接口的基类
 	template<typename ReturnType, typename ...ParamType>
 	class IDelegate
 	{
 	public:
-		IDelegate(){}
-		virtual ~IDelegate(){}
+		IDelegate() {}
+		virtual ~IDelegate() {}
 		virtual bool isType(const std::type_info& _type) = 0;
 		virtual ReturnType invoke(ParamType ... params) = 0;
 		virtual bool compare(IDelegate<ReturnType, ParamType...> *_delegate) const = 0;
 	};
 
-	
-	//StaticDelegate 普通函数的委托
 
+	//StaticDelegate 普通函数的委托
 	template<typename ReturnType, typename ...ParamType>
 	class CStaticDelegate :
 		public IDelegate<ReturnType, ParamType...>
@@ -44,11 +55,10 @@ namespace Delegate
 			return cast->mFunc == mFunc;
 		}
 
-		virtual ~CStaticDelegate(){}
+		virtual ~CStaticDelegate() {}
 	private:
 		Func mFunc;
 	};
-
 
 	//普通函数的委托特化版本
 	template<typename ReturnType, typename ...ParamType>
@@ -73,10 +83,12 @@ namespace Delegate
 			return cast->mFunc == mFunc;
 		}
 
-		virtual ~CStaticDelegate(){}
+		virtual ~CStaticDelegate() {}
 	private:
 		Func mFunc;
 	};
+
+
 
 	//成员函数委托
 	template<typename T, typename ReturnType, typename ...ParamType>
@@ -102,8 +114,8 @@ namespace Delegate
 			return cast->mObject == mObject && cast->mMethod == mMethod;
 		}
 
-		CMethodDelegate(){}
-		virtual ~CMethodDelegate(){}
+		CMethodDelegate() {}
+		virtual ~CMethodDelegate() {}
 	private:
 		T * mObject;
 		Method mMethod;
@@ -111,7 +123,7 @@ namespace Delegate
 
 	//成员函数委托特化
 	template<typename T, typename ReturnType, typename ...ParamType>
-	class CMethodDelegate<T,ReturnType (T:: *)(ParamType...)> :
+	class CMethodDelegate<T, ReturnType(T:: *)(ParamType...)> :
 		public IDelegate<ReturnType, ParamType...>
 	{
 	public:
@@ -119,7 +131,7 @@ namespace Delegate
 
 		CMethodDelegate(T * _object, Method _method) : mObject(_object), mMethod(_method) { }
 
-		virtual bool isType(const std::type_info& _type) { return typeid(CMethodDelegate<T,ReturnType(T:: *)(ParamType...)>) == _type; }
+		virtual bool isType(const std::type_info& _type) { return typeid(CMethodDelegate<T, ReturnType(T:: *)(ParamType...)>) == _type; }
 
 		virtual ReturnType invoke(ParamType...params)
 		{
@@ -133,196 +145,140 @@ namespace Delegate
 			return cast->mObject == mObject && cast->mMethod == mMethod;
 		}
 
-		CMethodDelegate(){}
-		virtual ~CMethodDelegate(){}
+		CMethodDelegate() {}
+		virtual ~CMethodDelegate() {}
 	private:
 		T * mObject;
 		Method mMethod;
 	};
 
-	
 
 
 	//多播委托
 	template<typename ReturnType, typename ...ParamType>
-	class CMultiDelegate
+	class CMultiDelegate : public Singleton<CMultiDelegate<ReturnType, ParamType... >>
 	{
-		
+
 	public:
-		
+
 		typedef std::list<IDelegate<ReturnType, ParamType...>*> ListDelegate;
 		typedef typename ListDelegate::iterator ListDelegateIterator;
 		typedef typename ListDelegate::const_iterator ConstListDelegateIterator;
 
-		CMultiDelegate() { }
-		~CMultiDelegate() { clear(); }
-
-		bool empty() const
+		
+		void Response(size_t event, ParamType... params)
 		{
-			for (ConstListDelegateIterator iter = mListDelegates.begin(); iter != mListDelegates.end(); ++iter)
+			auto it = mDirectory.find(event);
+			if (it != mDirectory.end())
 			{
-				if (*iter) return false;
-			}
-			return true;
-		}
-
-		void clear()
-		{
-			for (ListDelegateIterator iter = mListDelegates.begin(); iter != mListDelegates.end(); ++iter)
-			{
-				if (*iter)
+				ListDelegateIterator iter = it->second.begin();
+				while (iter != it->second.end())
 				{
-					delete (*iter);
-					(*iter) = nullptr;
-				}
-			}
-		}
-
-
-		CMultiDelegate<ReturnType, ParamType...>& operator+=(IDelegate<ReturnType, ParamType...>* _delegate)
-		{
-			for (ListDelegateIterator iter = mListDelegates.begin(); iter != mListDelegates.end(); ++iter)
-			{
-				if ((*iter) && (*iter)->compare(_delegate))
-				{
-					delete _delegate;
-					return *this;
-				}
-			}
-			mListDelegates.push_back(_delegate);
-			return *this;
-		}
-
-		CMultiDelegate<ReturnType, ParamType...>& operator-=(IDelegate<ReturnType, ParamType...>* _delegate)
-		{
-			for (ListDelegateIterator iter = mListDelegates.begin(); iter != mListDelegates.end(); ++iter)
-			{
-				if ((*iter) && (*iter)->compare(_delegate))
-				{
-					if ((*iter) != _delegate) delete (*iter);       //避免同一个地址被delete两次
-					(*iter) = 0;
-					break;
-				}
-			}
-			delete _delegate;
-			return *this;
-		}
-
-		std::vector<ReturnType> operator()(ParamType... params)
-		{
-			ListDelegateIterator iter = mListDelegates.begin();
-			std::vector<ReturnType> _Results;
-			while (iter != mListDelegates.end())
-			{
-				if (0 == (*iter))
-				{
-					iter = mListDelegates.erase(iter);
-				}
-				else
-				{
-					_Results.push_back((*iter)->invoke(params...));
+					(*iter)->invoke(params...);
 					++iter;
 				}
 			}
-			return _Results;
+				
+		};
+
+
+		void Register(size_t _event, IDelegate<ReturnType, ParamType...>* _delegate)
+		{
+			auto iter = mDirectory.find(_event);
+			if (iter != mDirectory.end())
+			{
+				iter->second.push_back(_delegate);
+			}
+			else
+			{
+				mDirectory[_event] = ListDelegate(1, _delegate);
+			}
 		}
+
+
+		bool Empty() const
+		{
+			return mDirectory.empty();
+		}
+
+		void Clear()
+		{
+			mDirectory.clear();
+		}
+
+		friend class Singleton<CMultiDelegate>;
+	protected:
+		CMultiDelegate() { }
+		~CMultiDelegate() { mDirectory.clear(); }
 	private:
 		CMultiDelegate<ReturnType, ParamType...>(const CMultiDelegate& _event);
 		CMultiDelegate<ReturnType, ParamType...>& operator=(const CMultiDelegate& _event);
 
 	private:
-		ListDelegate mListDelegates;
+		std::map<size_t, ListDelegate> mDirectory;
 	};
 
+	//多播委托返回值为void的特化版本
 	template< typename ...ParamType>
-	class CMultiDelegate<void, ParamType...>
+	class CMultiDelegate<void, ParamType...>  : public Singleton<CMultiDelegate<void, ParamType...>>
 	{
 
 	public:
-
 		typedef std::list<IDelegate<void, ParamType...>*> ListDelegate;
 		typedef typename ListDelegate::iterator ListDelegateIterator;
 		typedef typename ListDelegate::const_iterator ConstListDelegateIterator;
 
-		CMultiDelegate() { }
-		~CMultiDelegate() { clear(); }
 
-		bool empty() const
+	public:
+		void Response(size_t event, ParamType... params) 
 		{
-			for (ConstListDelegateIterator iter = mListDelegates.begin(); iter != mListDelegates.end(); ++iter)
+			auto it = mDirectory.find(event);
+			if (it != mDirectory.end())
 			{
-				if (*iter) return false;
-			}
-			return true;
-		}
-
-		void clear()
-		{
-			for (ListDelegateIterator iter = mListDelegates.begin(); iter != mListDelegates.end(); ++iter)
-			{
-				if (*iter)
-				{
-					delete (*iter);
-					(*iter) = nullptr;
-				}
-			}
-		}
-
-		CMultiDelegate<void, ParamType...>& operator+=(IDelegate<void, ParamType...>* _delegate)
-		{
-			for (ListDelegateIterator iter = mListDelegates.begin(); iter != mListDelegates.end(); ++iter)
-			{
-				if ((*iter) && (*iter)->compare(_delegate))
-				{
-					delete _delegate;
-					return *this;
-				}
-			}
-			mListDelegates.push_back(_delegate);
-			return *this;
-		}
-
-		CMultiDelegate<void, ParamType...>& operator-=(IDelegate<void, ParamType...>* _delegate)
-		{
-			for (ListDelegateIterator iter = mListDelegates.begin(); iter != mListDelegates.end(); ++iter)
-			{
-				if ((*iter) && (*iter)->compare(_delegate))
-				{
-					if ((*iter) != _delegate) delete (*iter);       //避免同一个地址被delete两次
-					(*iter) = 0;
-					break;
-				}
-			}
-			delete _delegate;
-			return *this;
-		}
-
-		void operator()(ParamType... params)
-		{
-			ListDelegateIterator iter = mListDelegates.begin();
-			while (iter != mListDelegates.end())
-			{
-				if (0 == (*iter))
-				{
-					iter = mListDelegates.erase(iter);
-				}
-				else
+				ListDelegateIterator iter = it->second.begin();
+				while (iter != it->second.end())
 				{
 					(*iter)->invoke(params...);
 					++iter;
 				}
 			}
 		}
+
+		void Register(size_t _event, IDelegate<void, ParamType...>* _delegate)
+		{
+			auto iter = mDirectory.find(_event);
+			if (iter != mDirectory.end())
+			{
+				iter->second.push_back(_delegate);
+			}
+			else
+			{
+				mDirectory[_event] = ListDelegate(1, _delegate);
+			}
+		}
+
+		bool Empty() const
+		{
+			return mDirectory.empty();
+		}
+
+		void Clear()
+		{
+			mDirectory.clear();
+		}
+
+		friend class Singleton<CMultiDelegate<void, ParamType...>>;
+	protected:
+		CMultiDelegate() { }
+		~CMultiDelegate() { mDirectory.clear(); }
+
 	private:
 		CMultiDelegate<void, ParamType...>(const CMultiDelegate& _event);
 		CMultiDelegate<void, ParamType...>& operator=(const CMultiDelegate& _event);
 
 	private:
-		ListDelegate mListDelegates;
+		std::map<size_t, ListDelegate> mDirectory;
 	};
-
-
-
 
 
 	template< typename T>
@@ -330,8 +286,8 @@ namespace Delegate
 	{
 		return new CStaticDelegate<T>(func);
 	}
-	template< typename T,typename F>
-	CMethodDelegate<T,F>* newDelegate(T * _object, F func)
+	template< typename T, typename F>
+	CMethodDelegate<T, F>* newDelegate(T * _object, F func)
 	{
 		return new CMethodDelegate<T, F>(_object, func);
 	}
