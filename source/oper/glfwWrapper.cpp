@@ -105,28 +105,25 @@ void Glfw::Terminate() { glfwTerminate(); }
 GLFWwindow * Glfw::GetWindow() { return window; }
 
 
-void Glfw::RenderLoop(Ptr<Operation>  op) 
+void Glfw::RenderLoop() 
 {
 	if (window == nullptr)
-		Init();
+		return;
 	//------------
-	bool loop = op != nullptr;
 	while (!glfwWindowShouldClose(window))
 	{
-		if (loop)
+		if (mForwardProcess && mForwardProcess->IsHold() )
 		{
-			op->Run();
-			if (!op->IsHold())
-				loop = false;
+			mForwardProcess->Run();
+		}
+		if (mPostProcess && mPostProcess->IsHold())
+		{
+			mPostProcess->Run();
 		}
 	}
 }
 
 
-void Glfw::RenderLoop(Operation * op) 
-{
-	RenderLoop(Operation::ToPtr(op));
-}
 
 void Glfw::CB_FrameBuffSize(GLFWwindow* window, int width, int height) 
 {
@@ -153,6 +150,37 @@ void Glfw::LoadGL() {
 	{
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		exit(1);
+	}
+}
+
+void OpenGL::Glfw::setRenderEnv(Oper::Ptr<Oper::Operation> op)
+{
+	
+}
+
+void OpenGL::Glfw::SetForwardProcess(Oper::Ptr<Oper::Operation> op)
+{
+	//Oper::Operation* ptr = this->mForwardProcess-><<
+	if (mForwardProcess)
+	{
+		this->mForwardProcess->Push(op);
+	}
+	else
+	{
+		this->mForwardProcess = op;
+	}
+}
+
+void OpenGL::Glfw::SetPostProcess(Oper::Ptr<Oper::Operation> op)
+{
+	//Oper::Operation* ptr = this->mForwardProcess-><<
+	if (mPostProcess)
+	{
+		this->mPostProcess->Push(op);
+	}
+	else
+	{
+		this->mPostProcess = op;
 	}
 }
 
