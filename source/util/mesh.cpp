@@ -87,9 +87,9 @@ void Mesh::Draw(Shader shader)
 				number = std::to_string(diffuseNr++);//default  name == "texture_diffuse1"
 				//throw exception("undefined texture type");
 
-			glActiveTexture(GL_TEXTURE0 + i);
-			glUniform1i(glGetUniformLocation(shader.getID(), (name + number).c_str()), i);
-			glBindTexture(GL_TEXTURE_2D, textures[i].id);
+			//glActiveTexture(GL_TEXTURE0 + i);
+			//glUniform1i(glGetUniformLocation(shader.getID(), (name + number).c_str()), i);
+			//glBindTexture(GL_TEXTURE_2D, textures[i].id);
 		}
 
 	}

@@ -189,6 +189,9 @@
     <ClCompile Include="5.advancedLighting\iblLighting.cpp">
       <Filter>Source Files\5.advancedLighting</Filter>
     </ClCompile>
+    <ClCompile Include="5.advancedLighting\iblSenceTest.cpp">
+      <Filter>Source Files\5.advancedLighting</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\includes\util\camera.h">
@@ -451,6 +454,12 @@
       <Filter>Source Files\shader\IBL</Filter>
     </None>
     <None Include="shader\IBL\brdf.vs">
+      <Filter>Source Files\shader\IBL</Filter>
+    </None>
+    <None Include="shader\IBL\gunPbr.fs">
+      <Filter>Source Files\shader\IBL</Filter>
+    </None>
+    <None Include="shader\IBL\gunPbr.vs">
       <Filter>Source Files\shader\IBL</Filter>
     </None>
   </ItemGroup>

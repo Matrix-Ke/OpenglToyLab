@@ -35,6 +35,7 @@
     <ClCompile Include="5.advancedLighting\deferredShadering.cpp" />
     <ClCompile Include="5.advancedLighting\derferShaderingPbr.cpp" />
     <ClCompile Include="5.advancedLighting\iblLighting.cpp" />
+    <ClCompile Include="5.advancedLighting\iblSenceTest.cpp" />
     <ClCompile Include="5.advancedLighting\pbrLighting.cpp" />
     <ClCompile Include="5.advancedLighting\pbrLightingTexture.cpp" />
     <ClCompile Include="5.advancedLighting\shadowMap.cpp" />
@@ -130,6 +131,8 @@
     <None Include="shader\IBL\brdf.vs" />
     <None Include="shader\IBL\equirectangular_to_cubemap.fs" />
     <None Include="shader\IBL\cubemap.vs" />
+    <None Include="shader\IBL\gunPbr.fs" />
+    <None Include="shader\IBL\gunPbr.vs" />
     <None Include="shader\IBL\irradiance_convolution.fs" />
     <None Include="shader\IBL\irradiance_convolution.vs" />
     <None Include="shader\IBL\pbr.fs" />
