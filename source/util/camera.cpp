@@ -2,21 +2,23 @@
 #include "util/camera.h"
 
 #include <iostream>
+#include "util/GStorage.H"
 
 using namespace OpenGL;
 using namespace std;
+using namespace Oper;
 
-const float Camera::RATIO_WH = 1.0f;
-const float Camera::NEAR_PLANE = 0.01f;
-const float Camera::FAR_PLANE = 100.0f;
-const float Camera::YAW = -90.0f;
-const float Camera::PITCH = 0.0f;
-const float Camera::ZOOM = 45.0f;
+const double Camera::RATIO_WH = 1.0f;
+const double Camera::NEAR_PLANE = 0.01f;
+const double Camera::FAR_PLANE = 100.0f;
+const double Camera::YAW = -90.0f;
+const double Camera::PITCH = 0.0f;
+const double Camera::ZOOM = 45.0f;
 const Camera::ENUM_Projection Camera::PROJECTION_MODE = Camera::PROJECTION_PERSEPCTIVE;
 
 
 
-Camera::Camera(float rationWH, float moveSpeed, float rotateSpeed, glm::vec3 position, float nearPlane, float farPlane, glm::vec3 up, float yaw, float pitch, ENUM_Projection projectionMode)
+Camera::Camera(double rationWH, double moveSpeed, double rotateSpeed, glm::vec3 position, double nearPlane, double farPlane, glm::vec3 up, double yaw, double pitch, ENUM_Projection projectionMode)
 	: rationWH(rationWH), nearPlane(nearPlane), farPlane(farPlane), Front(glm::vec3(0.0f, 0.0f, -1.0f)), Zoom(ZOOM), projectionMode(projectionMode)
 {
 	//------------
@@ -51,10 +53,17 @@ glm::vec3 & Camera::GetFront()
 	return Front;
 }
 
-void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch) 
+void OpenGL::Camera::ProcessMouseMovement(double xPos, double yPos, bool constrainPitch /*= true*/) 
 {
-	xoffset *= MouseSensitivity;
-	yoffset *= MouseSensitivity;
+	static double lastX = xPos, lastY = yPos;
+
+	double mousePos_XOffset = xPos - lastX;
+	double mousePos_YOffset = lastY - yPos; // reversed since y-coordinates go from bottom to top
+	lastX = xPos;
+	lastY = yPos;
+
+	double xoffset = mousePos_XOffset *  MouseSensitivity;
+	double yoffset = mousePos_YOffset *  MouseSensitivity;
 
 	Yaw += xoffset;
 	Pitch += yoffset;
@@ -73,7 +82,7 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPi
 }
 
 // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-void Camera::ProcessKeyboard(ENUM_Movement direction, float deltaTime) 
+void Camera::ProcessKeyboard(ENUM_Movement direction, double deltaTime) 
 {
 	float velocity = MovementSpeed * deltaTime;
 	if (direction == MOVE_FORWARD)
@@ -100,7 +109,8 @@ glm::mat4 Camera::GetViewMatrix()
 }
 
 // Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
-void Camera::ProcessMouseScroll(float yoffset) {
+void Camera::ProcessMouseScroll(double yoffset) 
+{
 	if (Zoom >= 1.0f && Zoom <= 45.0f)
 		Zoom -= yoffset;
 	else if (Zoom <= 1.0f)
@@ -140,7 +150,7 @@ glm::mat4 Camera::GetProjectionMatrix() {
 	}
 }
 
-void OpenGL::Camera::SetZoom(float zoom)
+void OpenGL::Camera::SetZoom(double zoom)
 {
 	this->Zoom = zoom;
 }

@@ -6,10 +6,12 @@
 #include <iostream>
 #include "util/GStorage.H"
 #include "util/glDebug.h"
+#include "util/MyDelegate.h"
 
 using namespace OpenGL;
 using namespace Oper;
 using namespace std;
+using namespace Delegate;
 
 Glfw::Glfw() : window(nullptr) {};
 
@@ -26,6 +28,9 @@ void  Glfw::Init(size_t width /* = 800 */, size_t height /* = 600 */, const std:
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+	//初始化渲染操作
+	initProcess();
 
 
 	//对debug版本进行GLFW调试, 需要在调用glfwCreateWindow之前完成debug_output请求
@@ -69,25 +74,15 @@ void  Glfw::Init(size_t width /* = 800 */, size_t height /* = 600 */, const std:
 	});
 
 	glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xPos, double yPos) {
-		static float lastX = xPos, lastY = yPos;
-		static float mousePos_XOffset, mousePos_YOffset;
-		GStorage<float *>::GetInstance()->Register("mousePos_XOffset", &mousePos_XOffset);
-		GStorage<float *>::GetInstance()->Register("mousePos_YOffset", &mousePos_YOffset);
-		//------------
-		mousePos_XOffset = xPos - lastX;
-		mousePos_YOffset = lastY - yPos;
-		lastX = xPos;
-		lastY = yPos;
-		EventManager::GetInstance()->Response(EventManager::MOUSE_MOUVE);
+		CMultiDelegate<void, double, double, bool >::GetInstance()->Response(MOUSE_MOUVE, xPos, yPos, true);
 	});
+
+
 
 	//------------
 	glfwSetScrollCallback(window, [](GLFWwindow* window, double xOffset, double yOffset) {
-		static float mouseScroll_YOffset;
-		GStorage<float *>::GetInstance()->Register("mouseScroll_YOffset", &mouseScroll_YOffset);
-		//------------
-		mouseScroll_YOffset = yOffset;
-		EventManager::GetInstance()->Response(EventManager::MOUSE_SCROLL);
+
+		CMultiDelegate<void, double>::GetInstance()->Response(MOUSE_SCROLL, yOffset);
 	});
 
 	//-------------------
@@ -105,28 +100,33 @@ void Glfw::Terminate() { glfwTerminate(); }
 GLFWwindow * Glfw::GetWindow() { return window; }
 
 
-void Glfw::RenderLoop(Ptr<Operation>  op) 
+void Glfw::StartRenderLoop() 
 {
 	if (window == nullptr)
-		Init();
+		return;
 	//------------
-	bool loop = op != nullptr;
+	if (mRenderEnv && mRenderEnv->IsHold())
+	{
+		mRenderEnv->Run();
+	}
 	while (!glfwWindowShouldClose(window))
 	{
-		if (loop)
+		if (mForwardProcess && mForwardProcess->IsHold() )
 		{
-			op->Run();
-			if (!op->IsHold())
-				loop = false;
+			mForwardProcess->Run();
+		}
+		if (mPostProcess && mPostProcess->IsHold())
+		{
+			mPostProcess->Run();
+		}
+		if (mFrameProcess && mFrameProcess->IsHold())
+		{
+			mFrameProcess->Run();
 		}
 	}
 }
 
 
-void Glfw::RenderLoop(Operation * op) 
-{
-	RenderLoop(Operation::ToPtr(op));
-}
 
 void Glfw::CB_FrameBuffSize(GLFWwindow* window, int width, int height) 
 {
@@ -156,6 +156,40 @@ void Glfw::LoadGL() {
 	}
 }
 
+void OpenGL::Glfw::setRenderEnv(Oper::Ptr<Oper::Operation> op)
+{
+	if (mRenderEnv)
+	{
+		this->mRenderEnv->Push(op);
+	}
+}
+
+void OpenGL::Glfw::SetForwardProcess(Oper::Ptr<Oper::Operation> op)
+{
+	//Oper::Operation* ptr = this->mForwardProcess-><<
+	if (mForwardProcess)
+	{
+		this->mForwardProcess->Push(op);
+	}
+}
+
+void OpenGL::Glfw::SetPostProcess(Oper::Ptr<Oper::Operation> op)
+{
+	//Oper::Operation* ptr = this->mForwardProcess-><<
+	if (mPostProcess)
+	{
+		this->mPostProcess->Push(op);
+	}
+}
+
+void OpenGL::Glfw::SetFramerEndProcess(Oper::Ptr<Oper::Operation> op)
+{
+	if (mFrameProcess)
+	{
+		this->mFrameProcess->Push(op);
+	}
+}
+
 void OpenGL::Glfw::CloseWindow()
 {
 	glfwSetWindowShouldClose(window, true);
@@ -164,4 +198,12 @@ void OpenGL::Glfw::CloseWindow()
 int OpenGL::Glfw::GetKey(int key)
 {
 	return glfwGetKey(window, key);
+}
+
+void OpenGL::Glfw::initProcess()
+{
+	this->mRenderEnv = Operation::ToPtr(new OpQueue());
+	this->mForwardProcess = Operation::ToPtr(new OpQueue());
+	this->mPostProcess = Operation::ToPtr(new OpQueue());
+	this->mFrameProcess = Operation::ToPtr(new OpQueue());
 }

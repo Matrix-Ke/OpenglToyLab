@@ -5,6 +5,7 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "util/eventManager.h"
+#include "util/opQueue.h"
 
 
 namespace OpenGL
@@ -18,9 +19,15 @@ namespace OpenGL
 
 		void Terminate();
 
-		void RenderLoop(Oper::Operation* op = nullptr);
+		void setRenderEnv(Oper::Ptr<Oper::Operation> op);
 
-		void RenderLoop(Oper::Ptr<Oper::Operation> op);
+		void SetForwardProcess(Oper::Ptr<Oper::Operation> op);
+
+		void SetPostProcess(Oper::Ptr<Oper::Operation> op);
+
+		void SetFramerEndProcess(Oper::Ptr<Oper::Operation> op);
+
+		void StartRenderLoop();
 
 		GLFWwindow*   GetWindow();
 		void	CloseWindow();
@@ -29,6 +36,7 @@ namespace OpenGL
 
 		int GetKey(int key);
 	protected:
+		void initProcess();
 
 	private:
 
@@ -43,6 +51,13 @@ namespace OpenGL
 		void    GenWindow(size_t width = 800, size_t height = 600, const std::string & title = "title");
 		void    LoadGL();
 
-		GLFWwindow* window;
+		GLFWwindow*		window;
+
+	private:
+		Oper::Ptr<Oper::OpQueue>   mRenderEnv;
+		Oper::Ptr<Oper::OpQueue>   mForwardProcess;
+		Oper::Ptr<Oper::OpQueue>   mPostProcess;
+		Oper::Ptr<Oper::OpQueue>   mFrameProcess;
+
 	};
 }

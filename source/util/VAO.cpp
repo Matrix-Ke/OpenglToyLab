@@ -34,8 +34,9 @@ VAO::VAO(float const * data, unsigned int dataSize, const std::vector<unsigned i
 		if (attrLen[i] == 0)
 			continue;
 
-		glVertexAttribPointer(i, attrLen[i], GL_FLOAT, GL_FALSE, patchLen * sizeof(float), (void*)(accu * sizeof(float)));
 		glEnableVertexAttribArray(i);
+		glVertexAttribPointer(i, attrLen[i], GL_FLOAT, GL_FALSE, patchLen * sizeof(float), (void*)(accu * sizeof(float)));
+		
 		accu += attrLen[i];
 	}
 	attrNum = attrLen.size();

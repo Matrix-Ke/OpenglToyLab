@@ -29,6 +29,11 @@ namespace Define
 	const std::string  windowTitle = "windowTitle";
 	const std::string  str_BlinnPhong = "str_BlinnPhong";
 
+	//材质球行列数
+	const int nrRows = 7;
+	const int nrColumns = 7;
+	const float spacing = 2.5;
+
 
 	//# 相机移动速度, 参考值 10
 	const float moveSpeed = 20;
@@ -41,6 +46,19 @@ namespace Define
 	const glm::vec3 light_ambient = glm::vec3(0.3f, 0.3f, 0.3f);
 	const glm::vec3 light_diffuse = glm::vec3(1.0f, 1.0f, 1.0f);
 	const glm::vec3 light_specular = glm::vec3(0.5f, 0.5f, 0.5f);
+
+	const glm::vec3 lightPositions[] = {
+		glm::vec3(-10.0f,  10.0f, 10.0f),
+		glm::vec3(10.0f,  10.0f, 10.0f),
+		glm::vec3(-10.0f, -10.0f, 10.0f),
+		glm::vec3(10.0f, -10.0f, 10.0f),
+	};
+	const glm::vec3 lightColors[] = {
+		glm::vec3(300.0f, 300.0f, 300.0f),
+		glm::vec3(300.0f, 300.0f, 300.0f),
+		glm::vec3(300.0f, 300.0f, 300.0f),
+		glm::vec3(300.0f, 300.0f, 300.0f)
+	};
 
 	//材质相关
 	const float material_shininess = 64.0f;	

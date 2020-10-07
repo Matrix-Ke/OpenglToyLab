@@ -11,7 +11,7 @@
 #include <util/Camera.h>
 #include "Defines.h"
 #include "util/shader.h"
-
+#include "util/MyDelegate.h"
 
 
 
@@ -19,6 +19,7 @@ using namespace Oper;
 using namespace OpenGL;
 using namespace Define;
 using namespace std;
+using namespace Delegate;
 
 void RegisterInput::Run()
 {
@@ -29,27 +30,17 @@ void RegisterInput::Run()
 
 void RegisterInput::RegisterMouse()
 {
-	EventManager::GetInstance()->Register(EventManager::MOUSE_MOUVE, []() {
-		auto mainCamera = *GStorage<Camera *>::GetInstance()->GetPtr(str_MainCamera);
-		if (mainCamera == nullptr)
-		{
-			std::cout << "main camera is init failed" << std::endl;
-			return;
-		}
-		auto xOffset = **GStorage<float *>::GetInstance()->GetPtr("mousePos_XOffset");
-		auto yOffset = **GStorage<float *>::GetInstance()->GetPtr("mousePos_YOffset");
-		mainCamera->ProcessMouseMovement(xOffset, yOffset);
-	});
-	EventManager::GetInstance()->Register(EventManager::MOUSE_SCROLL, []() {
-		auto mainCamera = *GStorage<Camera *>::GetInstance()->GetPtr(str_MainCamera);
-		if (mainCamera == nullptr)
-		{
-			std::cout << "main camera is init failed" << std::endl;
-			return;
-		}
-		auto mouseScroll_YOffset = **GStorage<float *>::GetInstance()->GetPtr("mouseScroll_YOffset");
-		mainCamera->ProcessMouseScroll(mouseScroll_YOffset);
-	});
+
+	auto mainCamera = *GStorage<Camera *>::GetInstance()->GetPtr(str_MainCamera);
+	if (mainCamera != nullptr)
+	{
+		CMultiDelegate<void, double, double, bool >::GetInstance()->Register(MOUSE_MOUVE, newDelegate(mainCamera, &Camera::ProcessMouseMovement));
+		CMultiDelegate<void, double>::GetInstance()->Register(MOUSE_SCROLL, newDelegate(mainCamera, &Camera::ProcessMouseScroll));
+	}
+	else
+	{
+		throw exception("mainCamera is not create!!!");
+	}
 }
 
 void RegisterInput::RegisterKey() 

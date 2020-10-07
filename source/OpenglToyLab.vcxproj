@@ -34,6 +34,7 @@
     <ClCompile Include="5.advancedLighting\BlinnPhong.cpp" />
     <ClCompile Include="5.advancedLighting\deferredShadering.cpp" />
     <ClCompile Include="5.advancedLighting\derferShaderingPbr.cpp" />
+    <ClCompile Include="5.advancedLighting\iblLighting.cpp" />
     <ClCompile Include="5.advancedLighting\pbrLighting.cpp" />
     <ClCompile Include="5.advancedLighting\pbrLightingTexture.cpp" />
     <ClCompile Include="5.advancedLighting\shadowMap.cpp" />
@@ -79,6 +80,7 @@
     <ClInclude Include="..\includes\util\LStorage.h" />
     <ClInclude Include="..\includes\util\mesh.h" />
     <ClInclude Include="..\includes\util\model.h" />
+    <ClInclude Include="..\includes\util\MyDelegate.h" />
     <ClInclude Include="..\includes\util\operation.h" />
     <ClInclude Include="..\includes\util\opNode.h" />
     <ClInclude Include="..\includes\util\opQueue.h" />
@@ -122,6 +124,18 @@
     <None Include="shader\getting_started\shader.vs" />
     <None Include="shader\getting_started\textureShader.fs" />
     <None Include="shader\getting_started\textureShader.vs" />
+    <None Include="shader\IBL\background.fs" />
+    <None Include="shader\IBL\background.vs" />
+    <None Include="shader\IBL\brdf.fs" />
+    <None Include="shader\IBL\brdf.vs" />
+    <None Include="shader\IBL\equirectangular_to_cubemap.fs" />
+    <None Include="shader\IBL\cubemap.vs" />
+    <None Include="shader\IBL\irradiance_convolution.fs" />
+    <None Include="shader\IBL\irradiance_convolution.vs" />
+    <None Include="shader\IBL\pbr.fs" />
+    <None Include="shader\IBL\pbr.vs" />
+    <None Include="shader\IBL\prefilter.fs" />
+    <None Include="shader\IBL\prefilter.vs" />
     <None Include="shader\lighting\lightCube.fs" />
     <None Include="shader\lighting\lightCube.vs" />
     <None Include="shader\lighting\lightingMaps.fs" />
@@ -235,6 +249,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)../includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -242,6 +257,9 @@
       <AdditionalLibraryDirectories>$(SolutionDir)../lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>glfw3.lib;opengl32.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>

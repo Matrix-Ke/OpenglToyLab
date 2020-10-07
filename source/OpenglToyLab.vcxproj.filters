@@ -55,6 +55,9 @@
     <Filter Include="Source Files\shader\pbrShader">
       <UniqueIdentifier>{19ddf96c-4365-4dc1-a0d5-ad31362eff22}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\shader\IBL">
+      <UniqueIdentifier>{06e98f1b-34fc-4326-81c7-0c841c61ebf5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="1.getting_started\hello_window.cpp">
@@ -183,6 +186,9 @@
     <ClCompile Include="5.advancedLighting\derferShaderingPbr.cpp">
       <Filter>Source Files\5.advancedLighting</Filter>
     </ClCompile>
+    <ClCompile Include="5.advancedLighting\iblLighting.cpp">
+      <Filter>Source Files\5.advancedLighting</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\includes\util\camera.h">
@@ -259,6 +265,9 @@
     </ClInclude>
     <ClInclude Include="..\includes\util\sphere.h">
       <Filter>oper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\util\MyDelegate.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -407,6 +416,42 @@
     </None>
     <None Include="shader\pbrShader\simple_sphere.vs">
       <Filter>Source Files\shader\pbrShader</Filter>
+    </None>
+    <None Include="shader\IBL\cubemap.vs">
+      <Filter>Source Files\shader\IBL</Filter>
+    </None>
+    <None Include="shader\IBL\equirectangular_to_cubemap.fs">
+      <Filter>Source Files\shader\IBL</Filter>
+    </None>
+    <None Include="shader\IBL\background.fs">
+      <Filter>Source Files\shader\IBL</Filter>
+    </None>
+    <None Include="shader\IBL\background.vs">
+      <Filter>Source Files\shader\IBL</Filter>
+    </None>
+    <None Include="shader\IBL\pbr.fs">
+      <Filter>Source Files\shader\IBL</Filter>
+    </None>
+    <None Include="shader\IBL\pbr.vs">
+      <Filter>Source Files\shader\IBL</Filter>
+    </None>
+    <None Include="shader\IBL\irradiance_convolution.fs">
+      <Filter>Source Files\shader\IBL</Filter>
+    </None>
+    <None Include="shader\IBL\irradiance_convolution.vs">
+      <Filter>Source Files\shader\IBL</Filter>
+    </None>
+    <None Include="shader\IBL\prefilter.fs">
+      <Filter>Source Files\shader\IBL</Filter>
+    </None>
+    <None Include="shader\IBL\prefilter.vs">
+      <Filter>Source Files\shader\IBL</Filter>
+    </None>
+    <None Include="shader\IBL\brdf.fs">
+      <Filter>Source Files\shader\IBL</Filter>
+    </None>
+    <None Include="shader\IBL\brdf.vs">
+      <Filter>Source Files\shader\IBL</Filter>
     </None>
   </ItemGroup>
 </Project>
