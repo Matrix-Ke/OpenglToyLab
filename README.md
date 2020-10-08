@@ -1,4 +1,10 @@
-# ToyLab
+# OpenGLToyLab
+* #### 该项目是学习 [learnopengl链接](https://learnopengl.com/) 后的编码总结， 部分代码是自己对图形API的封装应用 
+* #### 文档部分包含自己学习PBR渲染的笔记， 其中包含： 辐射度量学，渲染方程推导， IBL公式理解推导。
+* #### 图片部分采用了知乎大佬 [杨超wantnon](https://www.zhihu.com/people/wantnon) 的分享
+* #### 目前还有很多BUG，代码会不定时更新。。。
+
+## 图形API部分
 ### 1. 光照
 #### 1.1 基础光照
 * **法线矩阵**被定义为「模型矩阵左上角的逆矩阵的转置矩阵」。注意，大部分的资源都会将法线矩阵定义为应用到模型-观察矩阵(Model-view Matrix)上的操作，但是由于我们只在世界空间中进行操作（不是在观察空间），我们只使用模型矩阵。
@@ -56,3 +62,65 @@ This provides the best performance gain if the fragment shader is expensive, or 
 #### 3.1 phong模型
 * Blinn-Phong和Phong的镜面反射唯一不同之处在于，要测量法线和半程向量之间的角度，而不是视线方向和反射向量之间的夹角。
 
+
+
+## 渲染理论部分
+### 1.1 辐射度量学
+![picture](/resources/document/幻灯片1.JPG)
+![picture](/resources/document/幻灯片2.JPG)
+![picture](/resources/document/幻灯片3.JPG)
+![picture](/resources/document/幻灯片4.JPG)
+![picture](/resources/document/幻灯片5.JPG)
+![picture](/resources/document/幻灯片6.JPG)
+![picture](/resources/document/幻灯片7.JPG)
+
+### 1.2 Brdf双向反射分布函数理解
+
+![picture](/resources/document/幻灯片8.JPG)
+![picture](/resources/document/幻灯片9.JPG)
+![picture](/resources/document/幻灯片10.JPG)
+![picture](/resources/document/幻灯片11.JPG)
+![picture](/resources/document/幻灯片12.JPG)
+![picture](/resources/document/幻灯片13.JPG)
+![picture](/resources/document/幻灯片14.JPG)
+![picture](/resources/document/幻灯片15.JPG)
+![picture](/resources/document/幻灯片16.JPG)
+![picture](/resources/document/幻灯片17.JPG)
+![picture](/resources/document/幻灯片18.JPG)
+![picture](/resources/document/幻灯片19.JPG)
+![picture](/resources/document/幻灯片21.JPG)
+![picture](/resources/document/幻灯片22.JPG)
+![picture](/resources/document/幻灯片23.JPG)
+![picture](/resources/document/幻灯片24.JPG)
+![picture](/resources/document/幻灯片25.JPG)
+![picture](/resources/document/幻灯片26.JPG)
+![picture](/resources/document/幻灯片27.JPG)
+![picture](/resources/document/幻灯片28.JPG)
+![picture](/resources/document/幻灯片29.JPG)
+![picture](/resources/document/幻灯片30.JPG)
+![picture](/resources/document/幻灯片31.JPG)
+![picture](/resources/document/幻灯片32.JPG)
+![picture](/resources/document/幻灯片33.JPG)
+![picture](/resources/document/幻灯片34.JPG)
+![picture](/resources/document/幻灯片35.JPG)
+![picture](/resources/document/幻灯片36.JPG)
+![picture](/resources/document/幻灯片37.JPG)
+
+### 1.3 Ibl基于图像的照明推导
+
+![picture](/resources/document/幻灯片38.JPG)
+![picture](/resources/document/幻灯片39.JPG)
+![picture](/resources/document/幻灯片40.JPG)
+![picture](/resources/document/幻灯片41.JPG)
+![picture](/resources/document/幻灯片42.JPG)
+![picture](/resources/document/幻灯片43.JPG)
+![picture](/resources/document/幻灯片44.JPG)
+
+### 1.4 理解采样
+
+![picture](/resources/document/幻灯片45.JPG)
+![picture](/resources/document/幻灯片46.JPG)
+![picture](/resources/document/幻灯片47.JPG)
+![picture](/resources/document/幻灯片48.JPG)
+![picture](/resources/document/幻灯片49.JPG)
+![picture](/resources/document/幻灯片50.JPG)
